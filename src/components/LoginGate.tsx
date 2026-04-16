@@ -49,13 +49,13 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-center mb-2 text-white glow-text">EMU Console</h2>
-        <p className="text-emu-highlight/80 text-center mb-8 text-sm">Restricted Access</p>
+        <p className="text-emu-highlight/80 text-center mb-8 text-sm">Accesso Limitato</p>
         
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <input 
               type="password" 
-              placeholder="Enter Password"
+              placeholder="Inserire Password"
               className={cn(
                 "w-full bg-emu-base/50 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all",
                 error ? "border-emu-highlight focus:ring-emu-highlight" : "border-emu-border focus:ring-emu-accent glow-shadow"
@@ -72,7 +72,7 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
                   exit={{ opacity: 0, height: 0 }} 
                   className="text-emu-highlight text-sm mt-2 font-medium"
                 >
-                  Incorrect password
+                  Password errata
                 </motion.p>
               )}
             </AnimatePresence>
@@ -81,7 +81,7 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
             type="submit"
             className="w-full bg-emu-accent hover:bg-emu-highlight text-emu-base font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
           >
-            Authenticate <ArrowRight className="w-5 h-5" />
+            Autenticazione <ArrowRight className="w-5 h-5" />
           </button>
         </form>
       </motion.div>

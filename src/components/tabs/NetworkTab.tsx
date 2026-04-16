@@ -18,21 +18,21 @@ export function NetworkTab() {
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormInput 
             name="profileName" 
-            label="Profile Name" 
+            label="Nome Profilo" 
             tab="network"
-            tooltip="The unique identifier for this configuration profile across the Glink environment." 
+            tooltip="L'identificativo unico per questo profilo di configurazione nell'ambiente Glink." 
           />
           <FormInput 
             name="hostname" 
-            label="Server Hostname / IP" 
+            label="Hostname Server / IP" 
             tab="network"
-            tooltip="The IP address or DNS hostname of your AS400 terminal server." 
+            tooltip="L'indirizzo IP o l'hostname DNS del server terminale AS400." 
           />
           <FormSelect 
             name="ibm5250Model" 
-            label="IBM 5250 Model" 
+            label="Modello IBM 5250" 
             tab="network"
-            tooltip="TN5250 emulation defines the terminal protocol layout. For interactive displays, use 3179-2 (24x80 resolution). 3812-1 is designated exclusively for TN5250 printer emulation endpoints, not interactive screens." 
+            tooltip="L'emulazione TN5250 definisce il layout del protocollo del terminale. Per i display interattivi, utilizzare 3179-2 (risoluzione 24x80). Il modello 3812-1 è destinato esclusivamente agli endpoint di emulazione stampante TN5250, non agli schermi interattivi." 
             options={[
               { value: 2, label: '3179-2 (24x80)' },
               { value: 5, label: '3477-FC' },
@@ -41,15 +41,15 @@ export function NetworkTab() {
           />
           <FormInput 
             name="licenseKey" 
-            label="License Key" 
+            label="Chiave di Licenza" 
             tab="network"
-            tooltip="Your Glink license activation key." 
+            tooltip="La tua chiave di attivazione della licenza Glink." 
           />
           <FormInput 
             name="e2kServer" 
-            label="E2K Server URL" 
+            label="URL Server E2K" 
             tab="network"
-            tooltip="Endpoint for E2K Server configuration." 
+            tooltip="Endpoint per la configurazione del Server E2K." 
             placeholder="http://192.168.x.x:6000::" 
           />
         </div>

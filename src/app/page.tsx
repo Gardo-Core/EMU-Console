@@ -24,7 +24,7 @@ export default function Home() {
     resolver: zodResolver(configSchema),
     defaultValues: {
       deviceTemplate: "cipherlab95",
-      profileName: "PLURI",
+      profileName: "EMU Console",
       hostname: "ASP.BLUSYS.IT",
       ibm5250Model: 7,
       licenseKey: "L5ZSFM99EJSQC3FD",
@@ -58,7 +58,7 @@ export default function Home() {
       password: "",
       enableAutoLogin: false,
       scriptName: "autologin.scrgl",
-      scriptContent: `WAIT "User . . . . . ."\nTYPE $USER$\nENTER\nWAIT "Password . . . . . ."\nTYPE $PASS$\nENTER`,
+      scriptContent: `WAIT "Utente . . . . . ."\nTYPE $USER$\nENTER\nWAIT "Password . . . . . ."\nTYPE $PASS$\nENTER`,
     },
     mode: "onChange"
   });
@@ -84,8 +84,8 @@ export default function Home() {
            await generateDownload(finalIni, `${values.profileName}_${values.deviceTemplate}.ini`);
        }
     } catch(err) {
-       console.error("Failed to generate", err);
-       alert("Error generating INI.");
+       console.error("Insuccesso nella generazione", err);
+       alert("Errore durante la generazione dell'INI.");
     } finally {
        setIsGenerating(false);
     }
@@ -97,10 +97,10 @@ export default function Home() {
         <FormProvider {...methods}>
           <div className="h-screen w-screen overflow-hidden flex flex-row bg-[#051821] text-white">
             
-            {/* Left Global Navigation */}
+            {/* Navigazione Globale Sinistra */}
             <LeftNav appMode={appMode} setAppMode={setAppMode} />
 
-            {/* Main App Content Wrapper */}
+            {/* Wrapper Contenuto App Principale */}
             <div className="flex-1 flex flex-col min-w-0 relative h-full">
               
               <TopBar setActiveTab={setActiveTab} setAppMode={setAppMode} />
@@ -117,7 +117,7 @@ export default function Home() {
                   ) : (
                     <div className="flex flex-row w-full max-w-[1600px] gap-8 p-4 md:p-8 h-full">
                       
-                      {/* Central Workspace (Scrollable configuration grid) */}
+                      {/* Spazio di Lavoro Centrale (Griglia di configurazione scorrevole) */}
                       <div className="flex flex-col flex-1 min-w-[500px] overflow-hidden relative">
                         <div className="sticky top-0 z-20 pb-4 bg-[#051821]">
                           <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
@@ -128,7 +128,7 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* The Right Sticky Panel (Preview Monitor) */}
+                      {/* Il pannello fisso a destra (Monitor di Anteprima) */}
                       <div className="hidden lg:block shrink-0 w-[400px] h-full overflow-hidden pb-4">
                          <TerminalPreview />
                       </div>
@@ -137,7 +137,7 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Universal Action Bar (Fixed footer) */}
+                {/* Barra delle Azioni Universale (Footer fisso) */}
                 {appMode === "configurator" && (
                   <ActionBar isGenerating={isGenerating} />
                 )}

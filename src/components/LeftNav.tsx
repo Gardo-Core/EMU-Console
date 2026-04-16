@@ -11,6 +11,7 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
       
       <button 
         type="button"
+        title="Configuratore"
         className={cn(
           "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
           appMode === "configurator" 
@@ -24,6 +25,7 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
 
       <button 
         type="button"
+        title="Confronto INI"
         className={cn(
           "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
           appMode === "compare" 

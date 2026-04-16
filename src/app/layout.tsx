@@ -17,6 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "EMU Console",
   description: "AS400 TN5250 INI Configurator",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

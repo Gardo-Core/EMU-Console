@@ -23,6 +23,7 @@ export function CompareView() {
   const scrollRef2 = useRef<HTMLDivElement>(null);
   
   const handleScroll = (source: 1 | 2) => {
+    // Sincronizza lo scroll tra i riquadri
     if (source === 1 && scrollRef1.current && scrollRef2.current) {
       scrollRef2.current.scrollTop = scrollRef1.current.scrollTop;
     } else if (source === 2 && scrollRef1.current && scrollRef2.current) {
@@ -51,7 +52,7 @@ export function CompareView() {
     const lines1 = t1.split(/\r?\n/);
     const lines2 = t2.split(/\r?\n/);
     
-    // Very basic mapping logic fitting the UI specs (Monkey-proof exact matches)
+    // Logica di mappatura molto semplice (corrispondenze esatte a prova di errore)
     const map1: DiffLine[] = [];
     const map2: DiffLine[] = [];
     
@@ -66,12 +67,12 @@ export function CompareView() {
          map2.push({ type: 'unchanged', text: l2 });
        } else if (l1 && !l2) {
          map1.push({ type: 'removed', text: l1 });
-         map2.push({ type: 'removed', text: "" }); // Pad
+         map2.push({ type: 'removed', text: "" }); // Riempimento
        } else if (!l1 && l2) {
-         map1.push({ type: 'added', text: "" }); // Pad
+         map1.push({ type: 'added', text: "" }); // Riempimento
          map2.push({ type: 'added', text: l2 });
        } else {
-         // Both exist but are different -> modification
+         // Entrambi esistono ma sono diversi -> modifica
          map1.push({ type: 'modified', text: l1 });
          map2.push({ type: 'modified', text: l2 });
        }
@@ -84,17 +85,17 @@ export function CompareView() {
   return (
     <div className="grid grid-cols-2 h-full gap-4 p-4 lg:p-8">
       
-      {/* Pane 1 */}
+      {/* Riquadro 1 */}
       <div className="flex flex-col h-full bg-[#1A4645]/20 backdrop-blur-md border border-[#266867]/50 rounded-xl overflow-hidden">
         <div className="h-12 bg-[#1A4645]/50 border-b border-[#266867] flex items-center px-4 font-mono text-sm shrink-0">
           <FileJson className="w-4 h-4 mr-2 text-emu-highlight" />
-          <span className="text-white/80">{file1.name || "Upload File 1"}</span>
+          <span className="text-white/80">{file1.name || "Carica File 1"}</span>
         </div>
         
         {!file1.text ? (
           <label className="flex-1 m-4 border-2 border-dashed border-[#266867] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-[#1A4645]/20 transition-colors">
             <UploadCloud className="w-10 h-10 text-emu-highlight/50 mb-4" />
-            <span className="text-white/60 font-medium font-sans">Drop Base .ini File</span>
+            <span className="text-white/60 font-medium font-sans">Trascina il file .ini di base</span>
             <input type="file" accept=".ini,.glinki,text/plain" className="hidden" onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 1)} />
           </label>
         ) : (
@@ -105,7 +106,7 @@ export function CompareView() {
                 line.type === 'unchanged' && "opacity-50 border-transparent",
                 line.type === 'removed' && "bg-red-500/20 border-red-500/50 text-red-200",
                 line.type === 'modified' && "bg-[#F8BC24]/20 border-[#F8BC24]/50 text-white",
-                line.type === 'added' && "border-transparent opacity-0" // Blank pad
+                line.type === 'added' && "border-transparent opacity-0" // Riempimento vuoto
               )}>
                 <span className="inline-block w-8 text-white/30 select-none border-r border-[#266867]/30 mr-4">{idx + 1}</span>
                 {line.text || " "}
@@ -115,17 +116,17 @@ export function CompareView() {
         )}
       </div>
 
-      {/* Pane 2 */}
+      {/* Riquadro 2 */}
       <div className="flex flex-col h-full bg-[#1A4645]/20 backdrop-blur-md border border-[#266867]/50 rounded-xl overflow-hidden">
         <div className="h-12 bg-[#1A4645]/50 border-b border-[#266867] flex items-center px-4 font-mono text-sm shrink-0">
           <FileJson className="w-4 h-4 mr-2 text-emu-highlight" />
-          <span className="text-white/80">{file2.name || "Upload Target File"}</span>
+          <span className="text-white/80">{file2.name || "Carica File di Destinazione"}</span>
         </div>
         
         {!file2.text ? (
           <label className="flex-1 m-4 border-2 border-dashed border-[#266867] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-[#1A4645]/20 transition-colors">
             <UploadCloud className="w-10 h-10 text-emu-highlight/50 mb-4" />
-            <span className="text-white/60 font-medium font-sans">Drop Target .ini File</span>
+            <span className="text-white/60 font-medium font-sans">Trascina il file .ini di destinazione</span>
             <input type="file" accept=".ini,.glinki,text/plain" className="hidden" onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 2)} />
           </label>
         ) : (
@@ -136,7 +137,7 @@ export function CompareView() {
                 line.type === 'unchanged' && "opacity-50 border-transparent",
                 line.type === 'added' && "bg-[#F58800]/20 border-[#F58800]/50 text-[#F58800]",
                 line.type === 'modified' && "bg-[#F8BC24]/20 border-[#F8BC24]/50 text-white",
-                line.type === 'removed' && "border-transparent opacity-0" // Blank pad
+                line.type === 'removed' && "border-transparent opacity-0" // Riempimento vuoto
               )}>
                 <span className="inline-block w-8 text-white/30 select-none border-r border-[#266867]/30 mr-4">{idx + 1}</span>
                 {line.text || " "}
@@ -145,7 +146,6 @@ export function CompareView() {
           </div>
         )}
       </div>
-
     </div>
   );
 }

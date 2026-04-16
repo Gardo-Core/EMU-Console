@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export const TABS = [
-  { id: "network", label: "Network & Host", icon: Wifi },
-  { id: "security", label: "Security & Auth", icon: Shield },
-  { id: "behavior", label: "Behavior", icon: Settings },
-  { id: "appearance", label: "Appearance", icon: Palette },
+  { id: "network", label: "Rete e Host", icon: Wifi },
+  { id: "security", label: "Sicurezza e Autenticazione", icon: Shield },
+  { id: "behavior", label: "Comportamento", icon: Settings },
+  { id: "appearance", label: "Aspetto", icon: Palette },
   { id: "hardware", label: "Hardware", icon: ScanBarcode },
-  { id: "help", label: "Help & Docs", icon: BookOpen },
+  { id: "help", label: "Aiuto e Documentazione", icon: BookOpen },
 ] as const;
 
 export type TabId = typeof TABS[number]["id"];

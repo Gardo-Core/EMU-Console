@@ -20,20 +20,20 @@ export function validateIni(content: string): IniError[] {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith(';') || trimmed.startsWith('#')) return;
 
-    // Detect file sections [file:xxx]
+    // Rileva sezioni dei file [file:xxx]
     if (trimmed.startsWith('[file:')) {
       currentFile = trimmed;
       currentSection = null;
       return;
     }
 
-    // Detect internal sections [xxx]
+    // Rileva sezioni interne [xxx]
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       currentSection = trimmed;
       return;
     }
 
-    // Key-value pairs
+    // Coppie chiave-valore
     if (trimmed.includes('=')) {
       const [key, value] = trimmed.split('=').map(s => s.trim());
       
@@ -41,11 +41,11 @@ export function validateIni(content: string): IniError[] {
       if (validationMetadata[key]) {
         const metadata = validationMetadata[key];
         
-        // Basic syntax checks (placeholder for more complex logic)
+        // Controlli sintassici di base (segnaposto per logiche più complesse)
         if (key === 'hostname' && value.includes(' ')) {
           errors.push({
             line: index + 1,
-            message: "Host addresses cannot contain spaces.",
+            message: "Gli indirizzi host non possono contenere spazi.",
             advice: metadata.advice,
             ref: metadata.ref,
             key
@@ -55,7 +55,7 @@ export function validateIni(content: string): IniError[] {
         if (key.includes('Color') && !value.match(/^#[0-9a-fA-F]{6}$/)) {
           errors.push({
             line: index + 1,
-            message: "Invalid hex color format (e.g., #FF00FF).",
+            message: "Formato colore hex non valido (es. #FF00FF).",
             advice: metadata.advice,
             ref: metadata.ref,
             key
@@ -63,14 +63,14 @@ export function validateIni(content: string): IniError[] {
         }
       }
     } else if (!trimmed.startsWith('[') && trimmed.length > 0) {
-       // Found text that is neither a section nor a key-value pair
-       // In some sections like [file:v_key], the second line is just the license key
+       // Trovato testo che non è né una sezione né una coppia chiave-valore
+       // In alcune sezioni come [file:v_key], la seconda riga è solo la chiave di licenza
        if (currentFile === '[file:v_key]') {
-          // This is expected
+          // Questo è previsto
        } else {
          errors.push({
             line: index + 1,
-            message: "Malformed line: Expected key=value or [section].",
+            message: "Riga malformata: prevista chiave=valore o [sezione].",
             isWarning: true
           });
        }
@@ -92,7 +92,7 @@ export function parseIniToValues(content: string): Record<string, any> {
     if (trimmed.includes('=') && !trimmed.startsWith(';') && !trimmed.startsWith('#')) {
       const [key, value] = trimmed.split('=').map(s => s.trim());
       
-      // Attempt to coerce types based on expected values
+      // Tenta di forzare i tipi in base ai valori previsti
       if (value === 'true') values[key] = true;
       else if (value === 'false') values[key] = false;
       else if (!isNaN(Number(value)) && value !== '') values[key] = Number(value);

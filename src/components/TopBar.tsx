@@ -21,13 +21,13 @@ export function TopBar({
   const { searchTerm, setSearchTerm, matches, activeMatchIndex, goToNextMatch } = useSearch();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const profileName = watch("profileName") || "Untitled Profile";
+  const profileName = watch("profileName") || "Profilo Senza Nome";
   const isDirty = Object.keys(formState.dirtyFields).length > 0;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      e.stopPropagation(); // Stop propagation to form
+      e.stopPropagation(); // Ferma la propagazione al form
       
       if (matches.length > 0) {
         goToNextMatch(setActiveTab, setAppMode);
@@ -35,7 +35,7 @@ export function TopBar({
     }
   };
 
-  // Keyboard shortcut listener (Cmd+K / Ctrl+K)
+  // Listener per la scorciatoia da tastiera (Cmd+K / Ctrl+K)
   useEffect(() => {
     const handleGlobalKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -50,17 +50,26 @@ export function TopBar({
   return (
     <div className="h-14 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-6 shrink-0 z-40 sticky top-0">
       
-      {/* Left: Profile Name & Unsaved Indicator */}
-      <div className="flex items-center gap-3">
-        <h2 className="text-white font-medium tracking-tight text-sm">
-          {profileName}
-        </h2>
-        {isDirty && (
-          <div className="w-2 h-2 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Unsaved Changes" />
-        )}
+      {/* Sinistra: Logo e Nome Profilo */}
+      <div className="flex items-center gap-6">
+        <div className="flex items-baseline gap-1 select-none">
+          <span className="text-white font-bold tracking-tight text-lg">EMU</span>
+          <span className="text-white font-thin tracking-tight text-lg" style={{ fontWeight: 100 }}>Console</span>
+        </div>
+        
+        <div className="h-4 w-px bg-[#266867]/50 hidden sm:block" />
+        
+        <div className="flex items-center gap-3">
+          <h2 className="text-white/60 font-medium tracking-tight text-[11px] uppercase tracking-wide">
+            {profileName}
+          </h2>
+          {isDirty && (
+            <div className="w-2 h-2 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
+          )}
+        </div>
       </div>
 
-      {/* Center: Search Field */}
+      {/* Centro: Campo di Ricerca */}
       <div className="hidden md:flex items-center relative group">
         <div className="absolute left-3 text-white/30 group-focus-within:text-emu-highlight transition-colors">
           <Search className="w-3.5 h-3.5" />
@@ -71,7 +80,7 @@ export function TopBar({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Search parameters or INI..."
+          placeholder="Cerca parametri o INI..."
           className="bg-[#1A4645]/40 focus:bg-[#1A4645]/60 border border-[#266867]/40 focus:border-emu-highlight/50 rounded-full pl-9 pr-24 py-1.5 transition-all text-white text-xs w-64 focus:w-96 outline-none placeholder:text-white/20"
         />
         <div className="absolute right-3 flex items-center gap-2">
@@ -100,10 +109,10 @@ export function TopBar({
         </div>
       </div>
 
-      {/* Right: View mode / Expert toggle */}
+      {/* Destra: Modalità visualizzazione / Expert toggle */}
       <div className="flex items-center gap-4">
-        {/* We can incorporate an "Expert Mode" toggle here later if needed, tracking state */}
-        <span className="text-xs text-emu-highlight/60 uppercase tracking-widest font-semibold hidden sm:block">Configuration Studio</span>
+        {/* Possiamo incorporare un toggle "Expert Mode" qui in seguito se necessario */}
+        <span className="text-xs text-emu-highlight/60 uppercase tracking-widest font-semibold hidden sm:block">Studio di Configurazione</span>
       </div>
 
     </div>

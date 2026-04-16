@@ -8,41 +8,41 @@ export interface ValidationRule {
 
 export const validationMetadata: Record<string, ValidationRule> = {
   hostname: {
-    advice: "Administrator's Note: Host addresses must be valid IPv4, IPv6, or RFC 1123 compliant domain names. Ensure the host is reachable from the device network segment.",
-    ref: "Ref: Administrator's Guide Page 83"
+    advice: "Nota dell'Amministratore: Gli indirizzi host devono essere IPv4, IPv6 validi o nomi di dominio conformi a RFC 1123. Assicurarsi che l'host sia raggiungibile dal segmento di rete del dispositivo.",
+    ref: "Rif: Guida dell'Amministratore Pagina 83"
   },
   ibm5250Model: {
-    advice: "System Policy: Selecting the correct model ensures proper screen buffer allocation (Model 2: 24x80, Model 5: 27x132). Incorrect parity may lead to display truncation.",
-    ref: "Ref: Administrator's Guide Page 15"
+    advice: "Policy di Sistema: La selezione del modello corretto garantisce l'allocazione appropriata del buffer dello schermo (Modello 2: 24x80, Modello 5: 27x132). Una parità errata può causare il troncamento della visualizzazione.",
+    ref: "Rif: Guida dell'Amministratore Pagina 15"
   },
   licenseKey: {
-    advice: "Security Warning: License keys are non-transferable and tied to the workstation ID. Verify the checksum before deployment.",
-    ref: "Ref: Administrator's Guide Page 42"
+    advice: "Avviso di Sicurezza: Le chiavi di licenza non sono trasferibili e sono legate all'ID della workstation. Verificare il checksum prima della distribuzione.",
+    ref: "Rif: Guida dell'Amministratore Pagina 42"
   },
   fontSize: {
-    advice: "UI Optimization: Font sizes below 12px or above 36px may yield sub-optimal readability on standard ruggedized mobile displays.",
-    ref: "Ref: Administrator's Guide Page 91"
+    advice: "Ottimizzazione UI: Dimensioni del font inferiori a 12px o superiori a 36px potrebbero compromettere la leggibilità sui display dei dispositivi mobili rugged standard.",
+    ref: "Rif: Guida dell'Amministratore Pagina 91"
   },
   scrColor: {
-    advice: "Ergonomics: Use Index 0 (Black) for power savings on OLED displays or Index 7 (White) for high-contrast environments.",
-    ref: "Ref: Administrator's Guide Page 104"
+    advice: "Ergonomia: Utilizzare l'Indice 0 (Nero) per risparmio energetico su display OLED o l'Indice 7 (Bianco) per ambienti ad alto contrasto.",
+    ref: "Rif: Guida dell'Amministratore Pagina 104"
   },
   stsColor: {
-    advice: "Status Visibility: The status line color should provide sufficient contrast against the background to ensure MW (Message Wait) indicators are visible.",
-    ref: "Ref: Administrator's Guide Page 105"
+    advice: "Visibilità Stato: Il colore della riga di stato deve fornire un contrasto sufficiente con lo sfondo per garantire che gli indicatori MW (Message Wait) siano visibili.",
+    ref: "Rif: Guida dell'Amministratore Pagina 105"
   },
   profileName: {
-    advice: "Organizational Standard: Profile names must be alphanumeric. Use naming conventions that allow for easy MDM distribution auditing.",
-    ref: "Ref: Administrator's Guide Page 22"
+    advice: "Standard Organizzativo: I nomi dei profili devono essere alfanumerici. Utilizzare convenzioni di denominazione che consentano un facile auditing della distribuzione MDM.",
+    ref: "Rif: Guida dell'Amministratore Pagina 22"
   },
   dpadLeftMacro: {
-    advice: "Synthesis Rule: Macros must use caret notation (e.g., ^M for Enter) for control characters. Literal 'ESC' strings will be rejected by the interpreter.",
-    ref: "Ref: Administrator's Guide Page 204",
+    advice: "Regola di Sintesi: Le macro devono utilizzare la notazione caret (es. ^M per Invio) per i caratteri di controllo. Le stringhe letterali 'ESC' verranno rifiutate dall'interprete.",
+    ref: "Rif: Guida dell'Amministratore Pagina 204",
     autoFix: (val: string) => val.replace(/ESC/gi, "^[").replace(/ENTER/gi, "^M")
   },
   dpadRightMacro: {
-    advice: "Synthesis Rule: Macros must use caret notation. Avoid mixing literal escape sequences with plain text without proper caret delimiters.",
-    ref: "Ref: Administrator's Guide Page 204",
+    advice: "Regola di Sintesi: Le macro devono utilizzare la notazione caret. Evitare di mischiare sequenze di escape letterali con testo semplice senza i delimitatori caret appropriati.",
+    ref: "Rif: Guida dell'Amministratore Pagina 204",
     autoFix: (val: string) => val.replace(/ESC/gi, "^[").replace(/ENTER/gi, "^M")
   }
 };
@@ -50,42 +50,42 @@ export const validationMetadata: Record<string, ValidationRule> = {
 export const configSchema = z.object({
   deviceTemplate: z.enum(['cipherlab95', 'newlandN7', 'plus995']),
   
-  // Network & Host
-  profileName: z.string().min(1, "Empty names are not permitted by system policy").max(30).regex(/^[A-Za-z0-9_]+$/, "Alphanumeric and underscores only as per Admin Guide Page 22"),
-  hostname: z.string().min(1, 'Host identification is mandatory for session negotiation'),
+  // Rete e Host
+  profileName: z.string().min(1, "I nomi vuoti non sono consentiti dalla policy di sistema").max(30).regex(/^[A-Za-z0-9_]+$/, "Solo caratteri alfanumerici e underscore come da Guida Admin Pagina 22"),
+  hostname: z.string().min(1, "L'identificazione dell'host è obbligatoria per la negoziazione della sessione"),
   ibm5250Model: z.coerce.number().int().min(2).max(7),
-  licenseKey: z.string().min(1, "License key required for enterprise activation"),
-  e2kServer: z.string().min(1, "E2K Server endpoint must be specified for managed deployments"),
+  licenseKey: z.string().min(1, "Chiave di licenza richiesta per l'attivazione enterprise"),
+  e2kServer: z.string().min(1, "L'endpoint del Server E2K deve essere specificato per le distribuzioni gestite"),
   
-  // Behavior
+  // Comportamento
   autoConnect: z.boolean(),
   noAutoLock: z.boolean(),
   showKeyboard: z.coerce.number(),
   orientation: z.coerce.number(),
   cfgPassword: z.string().optional(),
   
-  // Appearance
+  // Aspetto
   fontSize: z.coerce.number().int().min(8).max(48),
-  colorMagenta: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  colorCyan: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  colorBlue: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  colorYellow: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  colorWhite: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  colorGreen: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  colorRed: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
+  colorMagenta: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
+  colorCyan: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
+  colorBlue: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
+  colorYellow: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
+  colorWhite: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
+  colorGreen: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
+  colorRed: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Formato colore hex non valido"),
   scrColor: z.coerce.number(),
   stsColor: z.coerce.number(),
   
-  // Hardware & Macros
-  barcodeEnable: z.coerce.number().min(0, "Invalid range").max(20, "Out of system bounds"),
+  // Hardware e Macro
+  barcodeEnable: z.coerce.number().min(0, "Intervallo non valido").max(20, "Fuori dai limiti di sistema"),
   barcodeDoAfter: z.coerce.number().min(0).max(5),
   barcodeShow: z.boolean(),
   barcodeUseKeymap: z.boolean(),
   anyCmdResets: z.boolean().default(true),
-  dpadLeftMacro: z.string().regex(/^([ -~]|\^\$[a-fA-F0-9]{2})*$/, "Macro syntax error: Use ^$Hex for control codes as per Page 204").optional(),
-  dpadRightMacro: z.string().regex(/^([ -~]|\^\$[a-fA-F0-9]{2})*$/, "Macro syntax error: Use ^$Hex for control codes as per Page 204").optional(),
+  dpadLeftMacro: z.string().regex(/^([ -~]|\^\$[a-fA-F0-9]{2})*$/, "Errore sintassi macro: Usa ^$Hex per i codici di controllo come da Pagina 204").optional(),
+  dpadRightMacro: z.string().regex(/^([ -~]|\^\$[a-fA-F0-9]{2})*$/, "Errore sintassi macro: Usa ^$Hex per i codici di controllo come da Pagina 204").optional(),
 
-  // Security & Automation
+  // Sicurezza e Automazione
   userId: z.string().optional(),
   useSystemUser: z.boolean().default(false),
   askUserId: z.boolean().default(false),

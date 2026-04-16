@@ -14,11 +14,11 @@ function ScreenContent() {
   
   const fontSize = values.fontSize || 29;
   
-  // Dynamic color resolution based on indices
-  // Glink Indices: 0:Black, 1:Red, 2:Green, 3:Blue, 4:Magenta, 5:Yellow, 6:Cyan, 7:White
+  // Risoluzione dinamica dei colori basata sugli indici
+  // Indici Glink: 0:Nero, 1:Rosso, 2:Verde, 3:Blu, 4:Magenta, 5:Giallo, 6:Ciano, 7:Bianco
   const getColorByIndex = (index: number) => {
     switch (index) {
-      case 0: return "#000000"; // Black is usually fixed or maps to a hidden property, but we'll use #000
+      case 0: return "#000000"; // Il nero è solitamente fisso o mappa a una proprietà nascosta, ma useremo #000
       case 1: return values.colorRed || "#f01818";
       case 2: return values.colorGreen || "#24d830";
       case 3: return values.colorBlue || "#7890f0";
@@ -38,7 +38,7 @@ function ScreenContent() {
   const stsTextColor = (stsColor === 0) ? values.colorWhite : "#ffffff";
 
   const host = (values.hostname || "ASP.BLUSYS.IT").slice(0, 15).padEnd(15, ' ');
-  const profile = (values.profileName || "PLURI").slice(0, 15).padEnd(15, ' ');
+  const profile = (values.profileName || "EMU Console").slice(0, 15).padEnd(15, ' ');
   
   return (
     <div className="flex flex-col h-full bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[12px] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10">
@@ -46,17 +46,17 @@ function ScreenContent() {
          <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
          
          <div style={{ fontSize: `${Math.max(10, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="whitespace-pre sm:origin-top-left">
-{`                            SIGN ON
+{`                            ACCESSO
                                               
-                                  System  . . . :  `}<span style={{ color: getColorByIndex(5) }}>{host}</span>{`
-                                  Subsystem . . :  QINTER
+                                  Sistema . . . :  `}<span style={{ color: getColorByIndex(5) }}>{host}</span>{`
+                                  Sottosistema  :  QINTER
                                   Display . . . :  `}<span style={{ color: getColorByIndex(5) }}>{profile}</span>{`
 
-  User  . . . . . . . . . .   [`}<span style={{ color: getColorByIndex(7) }}>          </span>{`]
-  Password  . . . . . . . .   
-  Program/procedure . . . .   [`}<span style={{ color: getColorByIndex(1) }}>          </span>{`]
-  Menu  . . . . . . . . . .   [`}<span style={{ color: getColorByIndex(4) }}>          </span>{`]
-  Current library . . . . .   [`}<span style={{ color: getColorByIndex(6) }}>          </span>{`]
+   Utente. . . . . . . . . .  [`}<span style={{ color: getColorByIndex(7) }}>          </span>{`]
+  Password. . . . . . . . .  
+   Programma/procedura . . .  [`}<span style={{ color: getColorByIndex(1) }}>          </span>{`]
+   Menu. . . . . . . . . . .  [`}<span style={{ color: getColorByIndex(4) }}>          </span>{`]
+   Libreria corrente . . . .  [`}<span style={{ color: getColorByIndex(6) }}>          </span>{`]
 
 `}
          </div>
@@ -67,7 +67,7 @@ function ScreenContent() {
        </div>
        
        <div className="h-12 bg-gradient-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
-         {['Esc', 'F1', 'F3', 'F4', 'F12', 'Enter'].map(btn => (
+         {['Esc', 'F1', 'F3', 'F4', 'F12', 'Invio'].map(btn => (
            <motion.div 
              key={btn} 
              whileTap={{ scale: 0.9 }}
@@ -90,7 +90,7 @@ function RawIniContent() {
   const { watch, setValue } = useFormContext();
   const { searchTerm } = useSearch();
   const values = watch();
-  const [iniContent, setIniContent] = useState<string>("Loading INI template...");
+  const [iniContent, setIniContent] = useState<string>("Caricamento del template INI...");
   const [errors, setErrors] = useState<IniError[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -125,7 +125,7 @@ function RawIniContent() {
            setErrors(validateIni(finalIni));
          }
       } catch (err) {
-         setIniContent("Error resolving live INI payload.");
+         setIniContent("Errore nella risoluzione del payload INI dal vivo.");
       }
     };
     fetchTemplate();
@@ -176,7 +176,7 @@ function RawIniContent() {
           {errors.length > 0 && (
             <div className="flex items-center gap-1.5 text-orange-400 animate-pulse">
               <AlertCircle className="w-3.5 h-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">{errors.length} Format Alerts</span>
+              <span className="text-[10px] font-bold uppercase tracking-tighter">{errors.length} Avvisi di Formato</span>
             </div>
           )}
        </div>
@@ -224,7 +224,7 @@ function RawIniContent() {
                 {errors.slice(0, 2).map((err, i) => (
                   <div key={i} className="flex flex-col">
                     <div className="flex items-center gap-2 text-orange-400 font-bold text-[10px] uppercase">
-                      Line {err.line}: {err.message}
+                      Linea {err.line}: {err.message}
                     </div>
                     {err.advice && (
                       <div className="text-white/60 text-[10px] italic leading-tight mt-0.5">
@@ -263,7 +263,7 @@ export function TerminalPreview() {
            mode === 'visual' ? "bg-emu-accent text-[#051821] shadow-md" : "text-white/60 hover:text-white hover:bg-white/5"
          )}
        >
-         <TerminalSquare className="w-3.5 h-3.5" /> Visual
+         <TerminalSquare className="w-3.5 h-3.5" /> Visuale
        </button>
        <button 
          type="button"
@@ -273,7 +273,7 @@ export function TerminalPreview() {
            mode === 'raw' ? "bg-emu-highlight text-[#051821] shadow-md" : "text-white/60 hover:text-white hover:bg-white/5"
          )}
        >
-         <FileCode className="w-3.5 h-3.5" /> Raw INI
+         <FileCode className="w-3.5 h-3.5" /> INI Grezzo
        </button>
     </div>
   );

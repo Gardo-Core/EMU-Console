@@ -2,47 +2,47 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { TabId } from "@/components/TabNavigation";
 import { AppMode } from "@/components/LeftNav";
 
-// Static registry of searchable fields to support cross-tab navigation
+// Registro statico dei campi ricercabili per supportare la navigazione cross-tab
 const FIELD_REGISTRY: { id: string; label: string; tab: TabId }[] = [
-  // Network
-  { id: "profileName", label: "Profile Name", tab: "network" },
-  { id: "hostname", label: "Server Hostname / IP", tab: "network" },
-  { id: "ibm5250Model", label: "IBM 5250 Model", tab: "network" },
-  { id: "licenseKey", label: "License Key", tab: "network" },
-  { id: "e2kServer", label: "E2K Server URL", tab: "network" },
-  // Security
-  { id: "userId", label: "User ID", tab: "security" },
-  { id: "useSystemUser", label: "System ID ($USER$)", tab: "security" },
-  { id: "askUserId", label: "Ask at Connect", tab: "security" },
+  // Rete
+  { id: "profileName", label: "Nome Profilo", tab: "network" },
+  { id: "hostname", label: "Hostname Server / IP", tab: "network" },
+  { id: "ibm5250Model", label: "Modello IBM 5250", tab: "network" },
+  { id: "licenseKey", label: "Chiave di Licenza", tab: "network" },
+  { id: "e2kServer", label: "URL Server E2K", tab: "network" },
+  // Sicurezza
+  { id: "userId", label: "ID Utente", tab: "security" },
+  { id: "useSystemUser", label: "ID di Sistema ($USER$)", tab: "security" },
+  { id: "askUserId", label: "Chiedi alla Connessione", tab: "security" },
   { id: "password", label: "Password", tab: "security" },
-  { id: "askPassword", label: "Ask at Connect", tab: "security" },
-  { id: "enableAutoLogin", label: "Enable Auto Log In", tab: "security" },
-  { id: "scriptName", label: "Script Filename", tab: "security" },
-  // Behavior
-  { id: "autoConnect", label: "Auto-Connect", tab: "behavior" },
-  { id: "noAutoLock", label: "Disable Screen Lock", tab: "behavior" },
-  { id: "anyCmdResets", label: "Any Cmd Key Resets Error", tab: "behavior" },
-  { id: "showKeyboard", label: "Show Keyboard Mode", tab: "behavior" },
-  { id: "orientation", label: "Screen Orientation", tab: "behavior" },
-  { id: "cfgPassword", label: "Profile Password", tab: "behavior" },
-  // Appearance
-  { id: "fontSize", label: "Font Size", tab: "appearance" },
-  { id: "scrColor", label: "Background", tab: "appearance" },
-  { id: "stsColor", label: "Status Line", tab: "appearance" },
+  { id: "askPassword", label: "Chiedi alla Connessione", tab: "security" },
+  { id: "enableAutoLogin", label: "Abilita Log In Automatico", tab: "security" },
+  { id: "scriptName", label: "Nome File Script", tab: "security" },
+  // Comportamento
+  { id: "autoConnect", label: "Auto-Connessione", tab: "behavior" },
+  { id: "noAutoLock", label: "Disabilita Blocco Schermo", tab: "behavior" },
+  { id: "anyCmdResets", label: "Qualsiasi Tasto CMD Resetta Errore", tab: "behavior" },
+  { id: "showKeyboard", label: "Modalità Mostra Tastiera", tab: "behavior" },
+  { id: "orientation", label: "Orientamento Schermo", tab: "behavior" },
+  { id: "cfgPassword", label: "Password Profilo", tab: "behavior" },
+  // Aspetto
+  { id: "fontSize", label: "Dimensione Font", tab: "appearance" },
+  { id: "scrColor", label: "Sfondo", tab: "appearance" },
+  { id: "stsColor", label: "Riga di Stato", tab: "appearance" },
   { id: "colorMagenta", label: "Magenta", tab: "appearance" },
-  { id: "colorCyan", label: "Cyan", tab: "appearance" },
-  { id: "colorBlue", label: "Blue", tab: "appearance" },
-  { id: "colorYellow", label: "Yellow", tab: "appearance" },
-  { id: "colorWhite", label: "White", tab: "appearance" },
-  { id: "colorGreen", label: "Green", tab: "appearance" },
-  { id: "colorRed", label: "Red", tab: "appearance" },
+  { id: "colorCyan", label: "Ciano", tab: "appearance" },
+  { id: "colorBlue", label: "Blu", tab: "appearance" },
+  { id: "colorYellow", label: "Giallo", tab: "appearance" },
+  { id: "colorWhite", label: "Bianco", tab: "appearance" },
+  { id: "colorGreen", label: "Verde", tab: "appearance" },
+  { id: "colorRed", label: "Rosso", tab: "appearance" },
   // Hardware
-  { id: "barcodeEnable", label: "Integration Mode", tab: "hardware" },
-  { id: "barcodeDoAfter", label: "Post-Scan Action", tab: "hardware" },
-  { id: "barcodeShow", label: "Visual Feedback", tab: "hardware" },
-  { id: "barcodeUseKeymap", label: "Use Keyboard Map", tab: "hardware" },
-  { id: "dpadLeftMacro", label: "D-Pad Left (Hex)", tab: "hardware" },
-  { id: "dpadRightMacro", label: "D-Pad Right (Hex)", tab: "hardware" },
+  { id: "barcodeEnable", label: "Modalità Integrazione", tab: "hardware" },
+  { id: "barcodeDoAfter", label: "Azione Post-Scansione", tab: "hardware" },
+  { id: "barcodeShow", label: "Feedback Visivo", tab: "hardware" },
+  { id: "barcodeUseKeymap", label: "Usa Mappa Tastiera", tab: "hardware" },
+  { id: "dpadLeftMacro", label: "D-Pad Sinistra (Hex)", tab: "hardware" },
+  { id: "dpadRightMacro", label: "D-Pad Destra (Hex)", tab: "hardware" },
 ];
 
 interface Match {

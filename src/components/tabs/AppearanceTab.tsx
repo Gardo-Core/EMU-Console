@@ -16,30 +16,30 @@ export function AppearanceTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Screen Geometry</h3>
+        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Geometria Schermo</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
-          <Slider name="fontSize" label="Font Size" tab="appearance" tooltip="Terminal font size in pixels." min={8} max={48} />
+          <Slider name="fontSize" label="Dimensione Font" tab="appearance" tooltip="Dimensione del carattere del terminale in pixel." min={8} max={48} />
           
           <div className="col-span-12 h-px bg-[#266867]/30 my-2" />
 
           <FormSelect 
             name="scrColor" 
-            label="Background" 
+            label="Sfondo" 
             tab="appearance"
-            tooltip="Index color for the main terminal background." 
+            tooltip="Indice del colore per lo sfondo principale del terminale." 
             options={[
-              { value: 0, label: 'Black' },
-              { value: 7, label: 'White / Default' },
+              { value: 0, label: 'Nero' },
+              { value: 7, label: 'Bianco / Predefinito' },
             ]} 
           />
           <FormSelect 
             name="stsColor" 
-            label="Status Line" 
+            label="Riga di Stato" 
             tab="appearance"
-            tooltip="Index color for the bottom status line." 
+            tooltip="Indice del colore per la riga di stato inferiore." 
             options={[
-              { value: 0, label: 'Black' },
-              { value: 3, label: 'Blue / Default' },
+              { value: 0, label: 'Nero' },
+              { value: 3, label: 'Blu / Predefinito' },
             ]} 
           />
         </div>
@@ -49,15 +49,15 @@ export function AppearanceTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Palette Remapping</h3>
+        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Rimappatura Tavolozza</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
-          <ColorPicker name="colorMagenta" label="Magenta" tab="appearance" tooltip="Substitute color for AS400 Magenta" />
-          <ColorPicker name="colorCyan" label="Cyan" tab="appearance" tooltip="Substitute color for AS400 Cyan" />
-          <ColorPicker name="colorBlue" label="Blue" tab="appearance" tooltip="Substitute color for AS400 Blue" />
-          <ColorPicker name="colorYellow" label="Yellow" tab="appearance" tooltip="Substitute color for AS400 Yellow" />
-          <ColorPicker name="colorWhite" label="White" tab="appearance" tooltip="Substitute color for AS400 White" />
-          <ColorPicker name="colorGreen" label="Green" tab="appearance" tooltip="Substitute color for AS400 Green" />
-          <ColorPicker name="colorRed" label="Red" tab="appearance" tooltip="Substitute color for AS400 Red" />
+          <ColorPicker name="colorMagenta" label="Magenta" tab="appearance" tooltip="Colore sostitutivo per il Magenta AS400" />
+          <ColorPicker name="colorCyan" label="Ciano" tab="appearance" tooltip="Colore sostitutivo per il Ciano AS400" />
+          <ColorPicker name="colorBlue" label="Blu" tab="appearance" tooltip="Colore sostitutivo per il Blu AS400" />
+          <ColorPicker name="colorYellow" label="Giallo" tab="appearance" tooltip="Colore sostitutivo per il Giallo AS400" />
+          <ColorPicker name="colorWhite" label="Bianco" tab="appearance" tooltip="Colore sostitutivo per il Bianco AS400" />
+          <ColorPicker name="colorGreen" label="Verde" tab="appearance" tooltip="Colore sostitutivo per il Verde AS400" />
+          <ColorPicker name="colorRed" label="Rosso" tab="appearance" tooltip="Colore sostitutivo per il Rosso AS400" />
         </div>
       </motion.div>
     </div>

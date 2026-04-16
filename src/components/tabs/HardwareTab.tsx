@@ -16,37 +16,37 @@ export function HardwareTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Barcode Scanner Integration</h3>
+        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Integrazione Lettore Barcode</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormSelect 
             name="barcodeEnable" 
-            label="Integration Mode" 
+            label="Modalità Integrazione" 
             tab="hardware"
-            tooltip="Mode in which the hardware scanner interfaces with Glink (Device specific values like 2, 10, or 15)." 
+            tooltip="Modalità in cui lo scanner hardware si interfaccia con Glink (valori specifici del dispositivo come 2, 10 o 15)." 
             options={[
-              { value: 0, label: 'Disabled' },
+              { value: 0, label: 'Disabilitato' },
               { value: 2, label: 'Intent API (2)' },
-              { value: 10, label: 'Keyboard wedge (10)' },
-              { value: 15, label: 'Advanced wedge (15)' }
+              { value: 10, label: 'Emulazione tastiera (10)' },
+              { value: 15, label: 'Emulazione avanzata (15)' }
             ]} 
           />
           <FormSelect 
             name="barcodeDoAfter" 
-            label="Post-Scan Action" 
+            label="Azione Post-Scansione" 
             tab="hardware"
-            tooltip="Determines the action taken immediately after a barcode is successfully scanned." 
+            tooltip="Determina l'azione intrapresa immediatamente dopo la scansione corretta di un codice a barre." 
             options={[
-              { value: 0, label: 'None' },
+              { value: 0, label: 'Nessuna' },
               { value: 1, label: 'Tab' },
-              { value: 2, label: 'Enter' },
-              { value: 3, label: 'Field Exit' }
+              { value: 2, label: 'Invio' },
+              { value: 3, label: 'Uscita Campo (Field Exit)' }
             ]} 
           />
           
           <div className="col-span-12 h-px bg-[#266867]/30 my-2" />
           
-          <ToggleSwitch name="barcodeShow" label="Visual Feedback" tab="hardware" tooltip="Briefly display the scanned barcode text on screen." />
-          <ToggleSwitch name="barcodeUseKeymap" label="Use Keyboard Map" tab="hardware" tooltip="Run the scanned result through the custom keyboard mappings before transmission." />
+          <ToggleSwitch name="barcodeShow" label="Feedback Visivo" tab="hardware" tooltip="Visualizza brevemente il testo del codice a barre scansionato sullo schermo." />
+          <ToggleSwitch name="barcodeUseKeymap" label="Usa Mappa Tastiera" tab="hardware" tooltip="Elabora il risultato scansionato attraverso le mappature personalizzate della tastiera prima della trasmissione." />
         </div>
       </motion.div>
 
@@ -54,21 +54,21 @@ export function HardwareTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Rugged Device Macros</h3>
+        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Macro per Dispositivi Rugged</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormInput 
             name="dpadLeftMacro" 
-            label="D-Pad Left (Hex)" 
+            label="D-Pad Sinistra (Hex)" 
             tab="hardware"
             placeholder="^$1b" 
-            tooltip="Hardware directional pad mappings. Macros support standard text and hex combinations using ^$Hex format (e.g., ^$1b for Escape)." 
+            tooltip="Mappature del pad direzionale hardware. Le macro supportano combinazioni di testo standard ed esadecimali utilizzando il formato ^$Hex (es. ^$1b per Escape)." 
           />
           <FormInput 
             name="dpadRightMacro" 
-            label="D-Pad Right (Hex)" 
+            label="D-Pad Destra (Hex)" 
             tab="hardware"
             placeholder="^$09" 
-            tooltip="Hardware directional pad mappings. Use ^$Hex format to map native 5250 emulator keystrokes." 
+            tooltip="Mappature del pad direzionale hardware. Usa il formato ^$Hex per mappare la pressione dei tasti nativi dell'emulatore 5250." 
           />
         </div>
       </motion.div>

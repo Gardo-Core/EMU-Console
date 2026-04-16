@@ -4,18 +4,18 @@ import { hashPassword } from './password';
 export function mergeTemplate(baseContent: string, values: ConfigFormValues, oldProfileName: string): string {
   let lines = baseContent.split(/\r?\n/);
   
-  // We identify [file:xxx] to know where we are conceptually
+  // Identifichiamo [file:xxx] per sapere dove ci troviamo concettualmente
   let currentSection = '';
   
   let finalUserId = values.askUserId ? '*' : (values.userId || '');
   let finalPassword = values.askPassword ? '*' : (values.password || '');
   
-  // Assemble the Glink Host format string
+  // Assembla la stringa del formato Glink Host
   let hostString = values.hostname;
   if (finalUserId) hostString += ` -du ${finalUserId}`;
   if (finalPassword) hostString += ` -d? ${finalPassword}`;
   if (values.enableAutoLogin && values.scriptName) {
-      // Points exactly to script parameter
+      // Punta esattamente al parametro dello script
       hostString += ` /S ${values.scriptName}`;
   }
 
@@ -56,7 +56,7 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
           if (line.startsWith('[file:')) currentSection = line;
       }
       
-      // Update profile name everywhere it bounds sections or acts as value
+      // Aggiorna il nome del profilo ovunque delimiti sezioni o funga da valore
       if (line.trim() === `[${oldProfileName}]`) {
           lines[i] = `[${values.profileName}]`;
           continue;
@@ -73,14 +73,14 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
          continue;
       }
 
-      // Handle license key which resides right after [file:v_key]
+      // Gestisce la chiave di licenza che si trova subito dopo [file:v_key]
       if (line.trim() === '[file:v_key]') {
          vKeyIndex = i;
       } else if (vKeyIndex !== -1 && i === vKeyIndex + 1 && !line.includes('=')) {
          lines[i] = values.licenseKey;
       }
 
-      // Normal key=value updates
+      // Aggiornamenti normali chiave=valore
       const eqIdx = line.indexOf('=');
       if (eqIdx > 0) {
           const key = line.substring(0, eqIdx).trim();
@@ -94,15 +94,15 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
       }
   }
 
-  // Inject any missing keys in barcode section mostly
-  // Some templates don't define certain barcode flags, we inject them into [file:printers]
+  // Inserisce eventuali chiavi mancanti, principalmente nella sezione barcode
+  // Alcuni template non definiscono determinati flag barcode, li inseriamo in [file:printers]
   const printItems = ['print.bcenable', 'print.bcdoafter', 'print.bcshow', 'print.bcusekeymap'];
   const missingPrint = printItems.filter(k => !usedKeys.has(k) && (keyUpdates as any)[k] !== undefined);
   
   if (missingPrint.length > 0) {
       const printersSectionIdx = lines.findIndex(l => l.trim() === '[file:printers]');
       if (printersSectionIdx !== -1) {
-          // find the end of the printers section or next [file:...]
+          // trova la fine della sezione printers o il prossimo [file:...]
           let injectionIdx = printersSectionIdx + 1;
           for (let i = printersSectionIdx + 1; i < lines.length; i++) {
               if (lines[i].startsWith('[')) {
@@ -116,7 +116,7 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
       }
   }
 
-  // Inject keyboard macro keys if missing
+  // Inserisce i tasti macro della tastiera se mancanti
   const keysItems = ['keyboard.kc.4_DpadLeft', 'keyboard.kc.5_DpadRight'];
   const missingKeys = keysItems.filter(k => !usedKeys.has(k) && (keyUpdates as any)[k] !== undefined);
   
@@ -142,8 +142,9 @@ export async function generateDownload(
     scriptContent?: string, 
     scriptFilename?: string
 ) {
+    ) {
     if (scriptContent && scriptFilename) {
-        // Dynamic import to avoid SSR errors
+        // Import dinamico per evitare errori SSR
         const JSZip = (await import('jszip')).default;
         const saveAs = (await import('file-saver')).saveAs;
         
