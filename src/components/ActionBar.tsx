@@ -11,7 +11,7 @@ export function ActionBar({ isGenerating }: { isGenerating: boolean }) {
   const errs = Object.keys(formState.errors);
 
   const fileString = (enableAutoLogin && scriptName) 
-    ? `config.ini + ${scriptName}.ini`
+    ? `config.ini + ${scriptName}`
     : `config.ini`;
 
   return (
@@ -20,7 +20,7 @@ export function ActionBar({ isGenerating }: { isGenerating: boolean }) {
       {/* Contenuto di sinistra: Status info */}
       <div className="flex flex-col mb-2 sm:mb-0 items-center sm:items-start">
         <span className="text-emu-accent text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-0.5">
-          Pronto per la generazione
+          Pronto per il download
         </span>
         <span className="text-white/60 font-mono text-[11px] sm:text-sm">
           {fileString}
