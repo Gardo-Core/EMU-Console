@@ -19,10 +19,10 @@ type FileState = {
 export function CompareView() {
   const [file1, setFile1] = useState<FileState>({ name: null, text: null, lines: [] });
   const [file2, setFile2] = useState<FileState>({ name: null, text: null, lines: [] });
-  
+
   const scrollRef1 = useRef<HTMLDivElement>(null);
   const scrollRef2 = useRef<HTMLDivElement>(null);
-  
+
   const handleScroll = (source: 1 | 2) => {
     // Sincronizza lo scroll tra i riquadri
     if (source === 1 && scrollRef1.current && scrollRef2.current) {
@@ -52,24 +52,24 @@ export function CompareView() {
   const computeDiff = (t1: string, t2: string) => {
     const lines1 = t1.split(/\r?\n/);
     const lines2 = t2.split(/\r?\n/);
-    
+
     // Use the robust diff engine for sequence alignment and sync padding
     const { map1, map2 } = generateSideBySide(lines1, lines2);
-    
+
     setFile1(prev => ({ ...prev, lines: map1 }));
     setFile2(prev => ({ ...prev, lines: map2 }));
   };
 
   return (
     <div className="grid grid-cols-2 h-full gap-4 p-4 lg:p-8">
-      
+
       {/* Riquadro 1 */}
       <div className="flex flex-col h-full bg-[#1A4645]/20 backdrop-blur-md border border-[#266867]/50 rounded-xl overflow-hidden">
         <div className="h-12 bg-[#1A4645]/50 border-b border-[#266867] flex items-center px-4 font-mono text-sm shrink-0">
           <FileJson className="w-4 h-4 mr-2 text-emu-highlight" />
           <span className="text-white/80">{file1.name || "Carica File 1"}</span>
         </div>
-        
+
         {!file1.text ? (
           <label className="flex-1 m-4 border-2 border-dashed border-[#266867] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-[#1A4645]/20 transition-colors">
             <UploadCloud className="w-10 h-10 text-emu-highlight/50 mb-4" />
@@ -98,9 +98,9 @@ export function CompareView() {
       <div className="flex flex-col h-full bg-[#1A4645]/20 backdrop-blur-md border border-[#266867]/50 rounded-xl overflow-hidden">
         <div className="h-12 bg-[#1A4645]/50 border-b border-[#266867] flex items-center px-4 font-mono text-sm shrink-0">
           <FileJson className="w-4 h-4 mr-2 text-emu-highlight" />
-          <span className="text-white/80">{file2.name || "Carica File di Destinazione"}</span>
+          <span className="text-white/80">{file2.name || "Carica File 2"}</span>
         </div>
-        
+
         {!file2.text ? (
           <label className="flex-1 m-4 border-2 border-dashed border-[#266867] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-[#1A4645]/20 transition-colors">
             <UploadCloud className="w-10 h-10 text-emu-highlight/50 mb-4" />
