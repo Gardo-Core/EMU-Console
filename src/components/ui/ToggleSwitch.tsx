@@ -43,24 +43,24 @@ export function ToggleSwitch({
     <div 
       ref={containerRef}
       className={cn(
-        "col-span-12 grid grid-cols-12 gap-4 items-center group relative p-1 rounded-lg transition-all duration-500",
+        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
         isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label Region (4 columns) */}
-      <div className="col-span-12 sm:col-span-4 flex items-center justify-between lg:justify-start lg:gap-2">
+      {/* Label & Tooltip Region */}
+      <div className="flex items-center gap-2 flex-1">
         <label className={cn(
-          "text-sm font-medium transition-colors duration-300",
-          isMatched ? "text-emu-highlight" : "text-white/80 group-hover:text-emu-highlight"
+          "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
+          isMatched ? "text-emu-highlight" : "text-white/60 group-hover:text-emu-highlight"
         )}>
           {label}
         </label>
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Input Region (8 columns) */}
-      <div className="col-span-12 sm:col-span-8 flex justify-start">
+      {/* Input Region */}
+      <div className="flex justify-end sm:flex-none">
         <motion.div 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

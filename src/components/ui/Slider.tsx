@@ -47,29 +47,29 @@ export function Slider({
     <div 
       ref={containerRef}
       className={cn(
-        "col-span-12 grid grid-cols-12 gap-4 items-center group relative p-2 rounded-lg transition-all duration-500",
+        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
         isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label Region (4 columns) */}
-      <div className="col-span-12 sm:col-span-4 flex items-center justify-between lg:justify-start lg:gap-2">
+      {/* Label & Tooltip Region */}
+      <div className="flex items-center gap-2 flex-1">
         <label className={cn(
-          "text-sm font-medium transition-colors duration-300",
-          isMatched ? "text-emu-highlight" : "text-white/80 group-hover:text-emu-highlight"
+          "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
+          isMatched ? "text-emu-highlight" : "text-white/60 group-hover:text-emu-highlight"
         )}>
           {label}
         </label>
         <div className="flex items-center gap-2">
-           <span className="bg-[#051821]/50 border border-[#266867]/50 px-2 py-0.5 rounded text-[10px] text-emu-accent font-mono min-w-[24px] text-center">
+           <span className="bg-[#051821]/50 border border-[#266867]/50 px-1.5 py-0.5 rounded text-[10px] text-emu-accent font-mono min-w-[20px] text-center">
              {value}
            </span>
            <InfoTooltip content={tooltip} />
         </div>
       </div>
       
-      {/* Input Region (8 columns) */}
-      <div className="col-span-12 sm:col-span-8 relative flex flex-col pt-2">
+      {/* Input Region */}
+      <div className="sm:w-1/2 w-full relative flex flex-col">
         <div className="relative w-full h-6 flex items-center group/slider">
           {/* Custom Notched Track Background */}
           <div 

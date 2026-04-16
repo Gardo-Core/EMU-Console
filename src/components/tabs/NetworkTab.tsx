@@ -13,7 +13,7 @@ export function NetworkTab() {
     <div className="space-y-6">
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
+        className="glass-card shadow-xl"
       >
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormInput 

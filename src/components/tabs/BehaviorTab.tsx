@@ -14,7 +14,7 @@ export function BehaviorTab() {
     <div className="space-y-6">
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
+        className="glass-card shadow-xl"
       >
         <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Esecuzione e logica UI</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
@@ -51,7 +51,7 @@ export function BehaviorTab() {
 
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
+        className="glass-card shadow-xl"
       >
         <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Blocco configurazione</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">

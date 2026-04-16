@@ -37,7 +37,7 @@ export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
           initial="initial"
           animate="enter"
           exit="exit"
-          className="w-full glass-panel shadow-2xl min-h-full"
+          className="w-full min-h-full"
         >
           {renderTab()}
         </motion.div>

@@ -53,25 +53,25 @@ export function FormSelect({
     <div 
       ref={containerRef}
       className={cn(
-        "col-span-12 grid grid-cols-12 gap-4 items-center group relative p-1 rounded-lg transition-all duration-500",
+        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
         isOpen ? "z-[60]" : "z-10",
         isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label Region (4 columns) */}
-      <div className="col-span-12 sm:col-span-4 flex items-center justify-between lg:justify-start lg:gap-2">
+      {/* Label & Tooltip Region */}
+      <div className="flex items-center gap-2 flex-1">
         <label className={cn(
-          "text-sm font-medium transition-colors duration-300",
-          isMatched ? "text-emu-highlight" : "text-white/50 group-focus-within:text-emu-highlight"
+          "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
+          isMatched ? "text-emu-highlight" : "text-white/60 group-focus-within:text-emu-highlight"
         )}>
           {label}
         </label>
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Input Region (8 columns) */}
-      <div className="col-span-12 sm:col-span-8 relative">
+      {/* Input Region */}
+      <div className="sm:w-1/2 w-full relative">
         <motion.div
            animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
            transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
@@ -103,7 +103,8 @@ export function FormSelect({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
-                  className="absolute left-0 right-0 top-full mt-2 z-[70] bg-[#051821]/95 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl ring-1 ring-white/5"
+                  className="absolute left-0 right-0 top-full mt-2 z-[70] bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5"
+                  style={{ WebkitBackdropFilter: "blur(24px) saturate(150%)" }}
                 >
                   <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
                     {options.map(opt => (

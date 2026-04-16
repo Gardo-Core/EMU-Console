@@ -26,11 +26,11 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
 
   return (
     <div 
-      className="relative flex items-center ml-2" 
+      className="relative flex items-center ml-1 flex-shrink-0" 
       onMouseEnter={() => setOpen(true)} 
       onMouseLeave={() => setOpen(false)}
     >
-      <HelpCircle className="w-4 h-4 text-emu-highlight/70 cursor-help" />
+      <HelpCircle className="w-4 h-4 text-emu-highlight/70 cursor-help flex-shrink-0" />
       <AnimatePresence>
         {open && (
           <motion.div
