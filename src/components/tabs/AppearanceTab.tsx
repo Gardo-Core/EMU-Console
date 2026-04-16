@@ -49,7 +49,7 @@ export function AppearanceTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-base font-semibold text-emu-highlight mb-6">Rimappatura tavolozza</h3>
+        <h3 className="text-sm font-bold text-emu-highlight mb-6">Geometria schermo</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <ColorPicker name="colorMagenta" label="Magenta" tab="appearance" tooltip="Colore sostitutivo per il Magenta AS400" />
           <ColorPicker name="colorCyan" label="Ciano" tab="appearance" tooltip="Colore sostitutivo per il Ciano AS400" />
