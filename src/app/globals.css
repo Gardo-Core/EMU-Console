@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-emu-base: #051821;
+  --color-emu-surface: #1A4645;
+  --color-emu-border: #266867;
+  --color-emu-accent: #F58800;
+  --color-emu-highlight: #F8BC24;
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-emu-base);
+  color: #ffffff;
+}
+
+/* Glassmorphism pane */
+.glass-panel {
+  background: rgba(26, 70, 69, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(38, 104, 103, 0.5);
+}
+
+.glass-card {
+  background: rgba(26, 70, 69, 0.7);
+  border: 1px solid rgba(38, 104, 103, 0.6);
+  border-radius: 0.75rem;
+}
+
+
+/* Glow classes */
+.glow-text {
+  text-shadow: 0 0 10px rgba(245, 136, 0, 0.5);
+}
+
+.glow-shadow {
+  transition: box-shadow 0.2s ease-out;
+}
+.glow-shadow:hover, .glow-shadow:focus-within {
+  box-shadow: 0 0 15px rgba(245, 136, 0, 0.3);
+}
+
+/* Form inputs overrides */
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 0.25rem;
+}
+
+/* Custom scrollbar for dark UI */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-emu-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-emu-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-emu-surface);
 }

@@ -1,0 +1,54 @@
+"use client";
+
+import { Settings, Palette, ScanBarcode, Split, BookOpen, Wifi, Shield } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+export const TABS = [
+  { id: "network", label: "Network & Host", icon: Wifi },
+  { id: "security", label: "Security & Auth", icon: Shield },
+  { id: "behavior", label: "Behavior", icon: Settings },
+  { id: "appearance", label: "Appearance", icon: Palette },
+  { id: "hardware", label: "Hardware", icon: ScanBarcode },
+  { id: "help", label: "Help & Docs", icon: BookOpen },
+] as const;
+
+export type TabId = typeof TABS[number]["id"];
+
+export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSelect: (id: TabId) => void }) {
+  return (
+    <div className="flex w-full space-x-1 p-1 bg-emu-surface/50 border border-emu-border rounded-xl">
+      {TABS.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = activeTab === tab.id;
+
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => onSelect(tab.id)}
+            className={cn(
+              "relative flex flex-1 items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors outline-none",
+              isActive ? "text-emu-base" : "text-white/70 hover:text-white hover:bg-white/5"
+            )}
+            style={{
+              WebkitTapHighlightColor: "transparent",
+            }}
+          >
+            {isActive && (
+              <motion.span
+                layoutId="bubble"
+                className="absolute inset-0 z-0 bg-emu-accent rounded-lg"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
+            )}
+            <span className="relative z-10 flex items-center gap-2">
+              <Icon className="w-4 h-4" />
+              <span className="hidden sm:inline">{tab.label}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}

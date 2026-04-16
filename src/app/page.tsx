@@ -1,65 +1,145 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import LoginGate from "@/components/LoginGate";
+import { TabNavigation, TabId } from "@/components/TabNavigation";
+import { AnimatedTabContent } from "@/components/AnimatedTabContent";
+import { TerminalPreview } from "@/components/TerminalPreview";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { configSchema, ConfigFormValues } from "@/lib/schema";
+import { mergeTemplate, generateDownload } from "@/lib/template";
+import { LeftNav, AppMode } from "@/components/LeftNav";
+import { TopBar } from "@/components/TopBar";
+import { ActionBar } from "@/components/ActionBar";
+import { CompareView } from "@/components/CompareView";
 
 export default function Home() {
+  const [appMode, setAppMode] = useState<AppMode>("configurator");
+  const [activeTab, setActiveTab] = useState<TabId>("network");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const methods = useForm({
+    resolver: zodResolver(configSchema),
+    defaultValues: {
+      deviceTemplate: "cipherlab95",
+      profileName: "PLURI",
+      hostname: "ASP.BLUSYS.IT",
+      ibm5250Model: 7,
+      licenseKey: "L5ZSFM99EJSQC3FD",
+      e2kServer: "http://192.168.3.100:6000::",
+      autoConnect: true,
+      noAutoLock: true,
+      showKeyboard: 2,
+      orientation: 1,
+      cfgPassword: "",
+      fontSize: 29,
+      colorMagenta: "#ff00ff",
+      colorCyan: "#58f0f0",
+      colorBlue: "#7890f0",
+      colorYellow: "#ffff00",
+      colorWhite: "#ffffff",
+      colorGreen: "#24d830",
+      colorRed: "#f01818",
+      scrColor: 0,
+      stsColor: 3,
+      barcodeEnable: 10,
+      barcodeDoAfter: 2,
+      barcodeShow: false,
+      barcodeUseKeymap: false,
+      anyCmdResets: true,
+      dpadLeftMacro: "^$1b",
+      dpadRightMacro: "^$09",
+      askUserId: false,
+      useSystemUser: false,
+      userId: "",
+      askPassword: true,
+      password: "",
+      enableAutoLogin: false,
+      scriptName: "autologin.scrgl",
+      scriptContent: `WAIT "User . . . . . ."\nTYPE $USER$\nENTER\nWAIT "Password . . . . . ."\nTYPE $PASS$\nENTER`,
+    },
+    mode: "onChange"
+  });
+
+  const handleGenerate = async (values: any) => {
+    setIsGenerating(true);
+    try {
+       const templateName = values.deviceTemplate === 'cipherlab95' ? 'Configuration_Cipherlab_95.ini' : 
+                            values.deviceTemplate === 'newlandN7' ? 'Configuration_NewlandN7.ini' : 
+                            'Configuration_PLUS995.ini';
+                            
+       let oldProfile = values.deviceTemplate === 'newlandN7' ? 'Test' : 'PLURI';
+       
+       const res = await fetch(`/templates/${templateName}`);
+       if (!res.ok) throw new Error("Template not found");
+       const baseText = await res.text();
+       
+       const finalIni = mergeTemplate(baseText, values, oldProfile);
+       
+       if (values.enableAutoLogin && values.scriptName && values.scriptContent) {
+           await generateDownload(finalIni, `${values.profileName}_${values.deviceTemplate}.ini`, values.scriptContent, values.scriptName);
+       } else {
+           await generateDownload(finalIni, `${values.profileName}_${values.deviceTemplate}.ini`);
+       }
+    } catch(err) {
+       console.error("Failed to generate", err);
+       alert("Error generating INI.");
+    } finally {
+       setIsGenerating(false);
+    }
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <LoginGate>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(handleGenerate)} className="h-screen w-screen overflow-hidden flex flex-row bg-[#051821] text-white">
+          
+          {/* Left Global Navigation */}
+          <LeftNav appMode={appMode} setAppMode={setAppMode} />
+
+          {/* Main App Content Wrapper */}
+          <div className="flex-1 flex flex-col min-w-0 relative h-full">
+            
+            <TopBar />
+
+            {/* Viewport content area */}
+            <div className="flex-1 overflow-hidden relative flex flex-row justify-center pb-20">
+              
+              {appMode === "compare" ? (
+                <div className="flex-1 h-full w-full">
+                  <CompareView />
+                </div>
+              ) : (
+                <div className="flex flex-row w-full max-w-[1600px] gap-8 p-4 md:p-8 h-full">
+                  
+                  {/* Central Workspace (Scrollable configuration grid) */}
+                  <div className="flex flex-col flex-1 min-w-[500px] overflow-hidden relative">
+                    <div className="sticky top-0 z-20 pb-4 bg-[#051821]">
+                      <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-12">
+                      <AnimatedTabContent activeTab={activeTab} />
+                    </div>
+                  </div>
+
+                  {/* The Right Sticky Panel (Preview Monitor) */}
+                  <div className="hidden lg:block shrink-0 w-[400px] h-full overflow-hidden pb-4">
+                     <TerminalPreview />
+                  </div>
+
+                </div>
+              )}
+            </div>
+
+            {/* Universal Action Bar (Fixed footer) */}
+            {appMode === "configurator" && (
+              <ActionBar isGenerating={isGenerating} />
+            )}
+          </div>
+        </form>
+      </FormProvider>
+    </LoginGate>
   );
 }
