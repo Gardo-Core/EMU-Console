@@ -4,30 +4,51 @@ import { InfoTooltip } from "./InfoTooltip";
 import { useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useSearch } from "@/contexts/SearchContext";
 
 import { validationMetadata } from "@/lib/validationSchemas";
-import { AlertTriangle, Zap } from "lucide-react";
+import { AlertTriangle, Zap, Eye, EyeOff } from "lucide-react";
+import { TabId } from "../TabNavigation";
 
 export function FormInput({ 
   name, 
   label, 
   tooltip, 
+  tab,
   type = "text", 
   placeholder 
 }: { 
   name: string, 
   label: string, 
   tooltip: string, 
+  tab: TabId,
   type?: string,
   placeholder?: string
 }) {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const { searchTerm, activeMatchIndex, matches } = useSearch();
   const error = errors[name]?.message as string;
   const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const metadata = (validationMetadata as any)[name];
   const currentValue = watch(name);
+
+  const isMatched = searchTerm && (
+    label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const isActiveMatch = matches[activeMatchIndex]?.id === name;
+
+  // Search Jump Logic
+  useEffect(() => {
+    if (isActiveMatch && containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [isActiveMatch]);
   
   // if standard placeholder is empty, fall back to label
   const activePlaceholder = placeholder || label;
@@ -39,11 +60,22 @@ export function FormInput({
     }
   };
 
+  const inputType = type === "password" ? (showPassword ? "text" : "password") : type;
+
   return (
-    <div className="col-span-12 grid grid-cols-12 gap-4 items-center group relative">
+    <div 
+      ref={containerRef}
+      className={cn(
+        "col-span-12 grid grid-cols-12 gap-4 items-center group relative p-1 rounded-lg transition-all duration-500",
+        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
+        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
+    )}>
       {/* Label Region (4 columns) */}
       <div className="col-span-12 sm:col-span-4 flex items-center justify-between lg:justify-start lg:gap-2">
-        <label className="text-sm font-medium text-white/50 group-focus-within:text-emu-highlight transition-colors">
+        <label className={cn(
+          "text-sm font-medium transition-colors duration-300",
+          isMatched ? "text-emu-highlight" : "text-white/50 group-focus-within:text-emu-highlight"
+        )}>
           {label}
         </label>
         <InfoTooltip content={tooltip} />
@@ -54,9 +86,10 @@ export function FormInput({
         <motion.div
           animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
           transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
+          className="relative flex items-center"
         >
           <motion.input
-            type={type}
+            type={inputType}
             placeholder={activePlaceholder}
             {...register(name)}
             onFocus={() => setIsFocused(true)}
@@ -69,11 +102,25 @@ export function FormInput({
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             className={cn(
               "w-full bg-[#051821]/50 backdrop-blur-sm border rounded-md px-4 py-2.5 text-white font-mono text-sm focus:outline-none focus:ring-1 transition-all placeholder-white/10",
+              type === "password" ? "pr-10" : "",
               error 
                 ? "border-[#F58800] ring-1 ring-[#F58800]/20 shadow-[0_0_15px_rgba(245,136,0,0.2)]" 
                 : "border-[#266867]/50 hover:border-emu-border focus:border-emu-highlight focus:ring-emu-highlight/20"
             )}
           />
+          {type === "password" && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 text-white/30 hover:text-emu-highlight transition-colors p-1"
+            >
+              {showPassword ? (
+                <Eye className="w-4 h-4" />
+              ) : (
+                <EyeOff className="w-4 h-4" />
+              )}
+            </button>
+          )}
         </motion.div>
 
         <AnimatePresence>

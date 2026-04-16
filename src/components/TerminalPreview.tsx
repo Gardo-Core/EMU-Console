@@ -83,13 +83,28 @@ function ScreenContent() {
 
 import { validateIni, parseIniToValues, IniError } from "@/lib/iniValidator";
 import { AlertCircle } from "lucide-react";
+import { useRef } from "react";
+import { useSearch } from "@/contexts/SearchContext";
 
 function RawIniContent() {
   const { watch, setValue } = useFormContext();
+  const { searchTerm } = useSearch();
   const values = watch();
   const [iniContent, setIniContent] = useState<string>("Loading INI template...");
   const [errors, setErrors] = useState<IniError[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lineNumbersRef = useRef<HTMLDivElement>(null);
+  const highlightRef = useRef<HTMLDivElement>(null);
+
+  // Sync scroll between textarea, line numbers, and highlight layer
+  const handleScroll = () => {
+    if (textareaRef.current) {
+      if (lineNumbersRef.current) lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+      if (highlightRef.current) highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+    }
+  };
 
   // Sync from Form to INI (Only when not actively editing the text area)
   useEffect(() => {
@@ -135,6 +150,22 @@ function RawIniContent() {
     }
   };
 
+  const lineNumbers = iniContent.split('\n').length;
+
+  // Function to highlight search term in the mirrored layer
+  const getHighlightedContent = () => {
+    if (!searchTerm || searchTerm.length < 2) return iniContent;
+    
+    // Escape HTML special characters
+    const escaped = iniContent
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return escaped.replace(regex, '<mark className="bg-emu-highlight/40 text-transparent rounded-sm ring-1 ring-emu-highlight">$1</mark>');
+  };
+
   return (
     <div className="h-full w-full bg-[#051821] border border-[#266867] rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
        <div className="bg-[#1A4645] px-4 py-2 border-b border-[#266867] flex items-center justify-between shrink-0">
@@ -150,15 +181,37 @@ function RawIniContent() {
           )}
        </div>
        
-       <div className="flex-1 relative overflow-hidden group/editor">
+       <div className="flex-1 relative overflow-hidden flex group/editor">
+          {/* Main Input Area (Standard Textarea) */}
           <textarea
+            ref={textareaRef}
             value={iniContent}
             onChange={handleIniChange}
+            onScroll={handleScroll}
             onFocus={() => setIsEditing(true)}
             onBlur={() => setIsEditing(false)}
             spellCheck={false}
-            className="w-full h-full bg-transparent p-4 font-mono text-sm leading-tight text-[#a1a1aa] resize-none focus:outline-none custom-scrollbar selection:bg-emu-highlight/30"
+            className="flex-1 h-full bg-transparent p-4 pr-14 font-mono text-sm leading-tight text-[#a1a1aa] resize-none focus:outline-none custom-scrollbar selection:bg-emu-highlight/30 whitespace-pre z-10"
           />
+
+          {/* Highlight Mirror Layer (Behind the textarea) */}
+          <div 
+            ref={highlightRef}
+            className="absolute inset-0 p-4 pr-14 font-mono text-sm leading-tight text-transparent whitespace-pre overflow-hidden pointer-events-none select-none z-0"
+            dangerouslySetInnerHTML={{ __html: getHighlightedContent() + '\n\n' }}
+          />
+
+          {/* Right Gutter for Line Numbers */}
+          <div 
+            ref={lineNumbersRef}
+            className="absolute right-0 top-0 bottom-0 w-12 bg-[#051821] border-l border-[#266867]/30 py-4 overflow-hidden pointer-events-none select-none flex flex-col pt-4 z-20"
+          >
+            {Array.from({ length: lineNumbers }).map((_, i) => (
+              <div key={i} className="text-[10px] font-mono text-[#266867] h-[1.25rem] flex items-center justify-center">
+                {(i + 1).toString().padStart(2, '0')}
+              </div>
+            ))}
+          </div>
           
           <AnimatePresence>
             {errors.length > 0 && (
@@ -166,7 +219,7 @@ function RawIniContent() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute bottom-4 left-4 right-4 bg-orange-500/10 backdrop-blur-md border border-orange-500/20 p-3 rounded-lg flex flex-col gap-2 shadow-xl z-10"
+                className="absolute bottom-4 left-4 right-14 bg-orange-500/10 backdrop-blur-md border border-orange-500/20 p-3 rounded-lg flex flex-col gap-2 shadow-xl z-30"
               >
                 {errors.slice(0, 2).map((err, i) => (
                   <div key={i} className="flex flex-col">
@@ -180,11 +233,6 @@ function RawIniContent() {
                     )}
                   </div>
                 ))}
-                {errors.length > 2 && (
-                  <div className="text-[9px] text-orange-400/50 uppercase font-black text-center mt-1">
-                    + {errors.length - 2} more issues identified
-                  </div>
-                )}
               </motion.div>
             )}
           </AnimatePresence>

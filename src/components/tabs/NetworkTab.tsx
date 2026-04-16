@@ -13,22 +13,25 @@ export function NetworkTab() {
     <div className="space-y-6">
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl"
+        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormInput 
             name="profileName" 
             label="Profile Name" 
+            tab="network"
             tooltip="The unique identifier for this configuration profile across the Glink environment." 
           />
           <FormInput 
             name="hostname" 
             label="Server Hostname / IP" 
+            tab="network"
             tooltip="The IP address or DNS hostname of your AS400 terminal server." 
           />
           <FormSelect 
             name="ibm5250Model" 
             label="IBM 5250 Model" 
+            tab="network"
             tooltip="TN5250 emulation defines the terminal protocol layout. For interactive displays, use 3179-2 (24x80 resolution). 3812-1 is designated exclusively for TN5250 printer emulation endpoints, not interactive screens." 
             options={[
               { value: 2, label: '3179-2 (24x80)' },
@@ -39,11 +42,13 @@ export function NetworkTab() {
           <FormInput 
             name="licenseKey" 
             label="License Key" 
+            tab="network"
             tooltip="Your Glink license activation key." 
           />
           <FormInput 
             name="e2kServer" 
             label="E2K Server URL" 
+            tab="network"
             tooltip="Endpoint for E2K Server configuration." 
             placeholder="http://192.168.x.x:6000::" 
           />

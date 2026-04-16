@@ -14,17 +14,18 @@ export function AppearanceTab() {
     <div className="space-y-6">
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl"
+        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
         <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Screen Geometry</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
-          <Slider name="fontSize" label="Font Size" tooltip="Terminal font size in pixels." min={8} max={48} />
+          <Slider name="fontSize" label="Font Size" tab="appearance" tooltip="Terminal font size in pixels." min={8} max={48} />
           
           <div className="col-span-12 h-px bg-[#266867]/30 my-2" />
 
           <FormSelect 
             name="scrColor" 
             label="Background" 
+            tab="appearance"
             tooltip="Index color for the main terminal background." 
             options={[
               { value: 0, label: 'Black' },
@@ -34,6 +35,7 @@ export function AppearanceTab() {
           <FormSelect 
             name="stsColor" 
             label="Status Line" 
+            tab="appearance"
             tooltip="Index color for the bottom status line." 
             options={[
               { value: 0, label: 'Black' },
@@ -45,17 +47,17 @@ export function AppearanceTab() {
 
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl"
+        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
         <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Palette Remapping</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
-          <ColorPicker name="colorMagenta" label="Magenta" tooltip="Substitute color for AS400 Magenta" />
-          <ColorPicker name="colorCyan" label="Cyan" tooltip="Substitute color for AS400 Cyan" />
-          <ColorPicker name="colorBlue" label="Blue" tooltip="Substitute color for AS400 Blue" />
-          <ColorPicker name="colorYellow" label="Yellow" tooltip="Substitute color for AS400 Yellow" />
-          <ColorPicker name="colorWhite" label="White" tooltip="Substitute color for AS400 White" />
-          <ColorPicker name="colorGreen" label="Green" tooltip="Substitute color for AS400 Green" />
-          <ColorPicker name="colorRed" label="Red" tooltip="Substitute color for AS400 Red" />
+          <ColorPicker name="colorMagenta" label="Magenta" tab="appearance" tooltip="Substitute color for AS400 Magenta" />
+          <ColorPicker name="colorCyan" label="Cyan" tab="appearance" tooltip="Substitute color for AS400 Cyan" />
+          <ColorPicker name="colorBlue" label="Blue" tab="appearance" tooltip="Substitute color for AS400 Blue" />
+          <ColorPicker name="colorYellow" label="Yellow" tab="appearance" tooltip="Substitute color for AS400 Yellow" />
+          <ColorPicker name="colorWhite" label="White" tab="appearance" tooltip="Substitute color for AS400 White" />
+          <ColorPicker name="colorGreen" label="Green" tab="appearance" tooltip="Substitute color for AS400 Green" />
+          <ColorPicker name="colorRed" label="Red" tab="appearance" tooltip="Substitute color for AS400 Red" />
         </div>
       </motion.div>
     </div>

@@ -13,6 +13,7 @@ import { LeftNav, AppMode } from "@/components/LeftNav";
 import { TopBar } from "@/components/TopBar";
 import { ActionBar } from "@/components/ActionBar";
 import { CompareView } from "@/components/CompareView";
+import { SearchProvider } from "@/contexts/SearchContext";
 
 export default function Home() {
   const [appMode, setAppMode] = useState<AppMode>("configurator");
@@ -91,55 +92,60 @@ export default function Home() {
   }
 
   return (
-    <LoginGate>
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(handleGenerate)} className="h-screen w-screen overflow-hidden flex flex-row bg-[#051821] text-white">
-          
-          {/* Left Global Navigation */}
-          <LeftNav appMode={appMode} setAppMode={setAppMode} />
-
-          {/* Main App Content Wrapper */}
-          <div className="flex-1 flex flex-col min-w-0 relative h-full">
+    <SearchProvider>
+      <LoginGate>
+        <FormProvider {...methods}>
+          <div className="h-screen w-screen overflow-hidden flex flex-row bg-[#051821] text-white">
             
-            <TopBar />
+            {/* Left Global Navigation */}
+            <LeftNav appMode={appMode} setAppMode={setAppMode} />
 
-            {/* Viewport content area */}
-            <div className="flex-1 overflow-hidden relative flex flex-row justify-center pb-20">
+            {/* Main App Content Wrapper */}
+            <div className="flex-1 flex flex-col min-w-0 relative h-full">
               
-              {appMode === "compare" ? (
-                <div className="flex-1 h-full w-full">
-                  <CompareView />
-                </div>
-              ) : (
-                <div className="flex flex-row w-full max-w-[1600px] gap-8 p-4 md:p-8 h-full">
-                  
-                  {/* Central Workspace (Scrollable configuration grid) */}
-                  <div className="flex flex-col flex-1 min-w-[500px] overflow-hidden relative">
-                    <div className="sticky top-0 z-20 pb-4 bg-[#051821]">
-                      <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
+              <TopBar setActiveTab={setActiveTab} setAppMode={setAppMode} />
+
+              <form 
+                onSubmit={methods.handleSubmit(handleGenerate)} 
+                className="flex-1 overflow-hidden relative flex flex-col pt-0 pb-20"
+              >
+                <div className="flex-1 overflow-hidden relative flex flex-row justify-center">
+                  {appMode === "compare" ? (
+                    <div className="flex-1 h-full w-full">
+                      <CompareView />
                     </div>
-                    
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-12">
-                      <AnimatedTabContent activeTab={activeTab} />
+                  ) : (
+                    <div className="flex flex-row w-full max-w-[1600px] gap-8 p-4 md:p-8 h-full">
+                      
+                      {/* Central Workspace (Scrollable configuration grid) */}
+                      <div className="flex flex-col flex-1 min-w-[500px] overflow-hidden relative">
+                        <div className="sticky top-0 z-20 pb-4 bg-[#051821]">
+                          <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-12">
+                          <AnimatedTabContent activeTab={activeTab} />
+                        </div>
+                      </div>
+
+                      {/* The Right Sticky Panel (Preview Monitor) */}
+                      <div className="hidden lg:block shrink-0 w-[400px] h-full overflow-hidden pb-4">
+                         <TerminalPreview />
+                      </div>
+
                     </div>
-                  </div>
-
-                  {/* The Right Sticky Panel (Preview Monitor) */}
-                  <div className="hidden lg:block shrink-0 w-[400px] h-full overflow-hidden pb-4">
-                     <TerminalPreview />
-                  </div>
-
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* Universal Action Bar (Fixed footer) */}
-            {appMode === "configurator" && (
-              <ActionBar isGenerating={isGenerating} />
-            )}
+                {/* Universal Action Bar (Fixed footer) */}
+                {appMode === "configurator" && (
+                  <ActionBar isGenerating={isGenerating} />
+                )}
+            </form>
           </div>
-        </form>
+        </div>
       </FormProvider>
-    </LoginGate>
+      </LoginGate>
+    </SearchProvider>
   );
 }

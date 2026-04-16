@@ -54,6 +54,7 @@ export function SecurityTab() {
                 <FormInput 
                   name="userId" 
                   label="User ID" 
+                  tab="security"
                   tooltip="The TN5250 sign-on User ID. Use $USER$ to map to local system variable."
                   placeholder="Enter User ID" 
                 />
@@ -71,11 +72,13 @@ export function SecurityTab() {
               <ToggleSwitch 
                 name="useSystemUser" 
                 label="System ID ($USER$)" 
+                tab="security"
                 tooltip="When active, automatically injects the system's resolved username at execution time." 
               />
               <ToggleSwitch 
                 name="askUserId" 
                 label="Ask at Connect" 
+                tab="security"
                 tooltip="If checked, ignores the supplied string and prompts the user securely when the emulator launches." 
               />
             </div>
@@ -95,6 +98,7 @@ export function SecurityTab() {
                   name="password" 
                   type="password" 
                   label="Password" 
+                  tab="security"
                   tooltip="Explicitly storing passwords in .ini files exposes them statically. We recommend keeping the interactive prompt enabled."
                   placeholder="••••••••" 
                 />
@@ -112,6 +116,7 @@ export function SecurityTab() {
                <ToggleSwitch 
                 name="askPassword" 
                 label="Ask at Connect" 
+                tab="security"
                 tooltip="If checked, leaves the password out of the configuration file entirely, preserving high security. The user will be safely prompted upon host resolution." 
               />
             </div>
@@ -133,6 +138,7 @@ export function SecurityTab() {
           <ToggleSwitch 
             name="enableAutoLogin" 
             label="Enable Auto Log In" 
+            tab="security"
             tooltip="Automates the login sequence by sending keystrokes to the host immediately after connection. Uses Glink's .scrgl scripting engine." 
           />
           
@@ -157,6 +163,7 @@ export function SecurityTab() {
                     <FormInput 
                       name="scriptName" 
                       label="Script Filename" 
+                      tab="security"
                       placeholder="autologin.scrgl" 
                       tooltip="The localized script file that the emulator will target or create natively." 
                     />
