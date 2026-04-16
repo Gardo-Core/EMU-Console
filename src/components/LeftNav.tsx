@@ -9,6 +9,17 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
   return (
     <div className="w-16 h-full bg-[#051821] border-r border-[#266867]/50 flex flex-col items-center py-6 gap-6 sticky top-0 shrink-0 z-50">
       
+      {/* Brand Logo - Top Left */}
+      <div className="w-10 h-10 flex items-center justify-center mb-2">
+        <img 
+          src="/asset/Emu_Icon.svg" 
+          alt="EMU" 
+          className="w-5 h-5 opacity-80 hover:opacity-100 transition-opacity" 
+        />
+      </div>
+
+      <div className="w-8 h-px bg-[#266867]/30" />
+      
       <button 
         type="button"
         title="Configuratore"
