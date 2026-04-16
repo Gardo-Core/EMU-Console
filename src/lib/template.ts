@@ -142,7 +142,6 @@ export async function generateDownload(
     scriptContent?: string, 
     scriptFilename?: string
 ) {
-    ) {
     if (scriptContent && scriptFilename) {
         // Import dinamico per evitare errori SSR
         const JSZip = (await import('jszip')).default;
