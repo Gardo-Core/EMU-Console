@@ -45,7 +45,7 @@ function ScreenContent() {
        <div className="flex-1 overflow-auto p-4 relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
          <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
          
-         <div style={{ fontSize: `${Math.max(10, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="whitespace-pre sm:origin-top-left">
+         <div style={{ fontSize: `${Math.max(4, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="whitespace-pre sm:origin-top-left">
 {`                            ACCESSO
                                               
                                   Sistema . . . :  `}<span style={{ color: getColorByIndex(5) }}>{host}</span>{`
@@ -60,7 +60,7 @@ function ScreenContent() {
 
 `}
          </div>
-         <div className="absolute bottom-0 left-0 right-0 px-2 py-1 flex items-center justify-between font-mono" style={{ fontSize: `${Math.max(9, fontSize * 0.35)}px`, backgroundColor: stsBgColor, color: stsTextColor }}>
+         <div className="absolute bottom-0 left-0 right-0 px-2 py-1 flex items-center justify-between font-mono" style={{ fontSize: `${Math.max(4, fontSize * 0.35)}px`, backgroundColor: stsBgColor, color: stsTextColor }}>
            <span>MW</span>
            <span>000/000</span>
          </div>
