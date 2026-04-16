@@ -7,7 +7,7 @@ export type AppMode = "configurator" | "compare";
 
 export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode: (mode: AppMode) => void }) {
   return (
-    <div className="w-16 h-full bg-[#051821] border-r border-[#266867]/50 flex flex-col items-center py-3 gap-6 sticky top-0 shrink-0 z-50">
+    <div className="w-16 h-full bg-[#051821] border-r border-[#266867]/50 flex flex-col items-center py-1 gap-6 sticky top-0 shrink-0 z-50">
 
       {/* Brand Logo - Top Left */}
       <div className="w-[60px] h-[60px] flex items-center justify-center mb-2">
