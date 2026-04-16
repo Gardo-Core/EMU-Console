@@ -101,6 +101,14 @@ function RawIniContent() {
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
 
+  // Sync scroll between textarea, line numbers, and highlight layer
+  const handleScroll = () => {
+    if (textareaRef.current) {
+      if (lineNumbersRef.current) lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+      if (highlightRef.current) highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+    }
+  };
+
   // Sync from Form to INI with debounce and caching
   useEffect(() => {
     if (isEditing) return;
