@@ -38,13 +38,20 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
+            /* MODIFICHE PRINCIPALI QUI SOTTO */
             className={cn(
-              "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] rounded-xl border border-emu-border/60 bg-[#051821]/90 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[100] p-4 text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none isolation-auto",
+              "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] rounded-xl border border-white/10 bg-[#051821]/60 p-4 text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none z-[100]",
+              "backdrop-blur-md backdrop-saturate-150", // Aggiunto saturate per far risaltare i colori sotto
               getAlignClasses()
             )}
+            style={{ WebkitBackdropFilter: "blur(12px)" }} // Fix per Safari/iOS
           >
             {content}
-            <div className={cn("absolute top-full border-[6px] border-transparent border-t-emu-border/60", getArrowAlignClasses())} />
+            {/* Freccia del tooltip corretta per non rompere il blur */}
+            <div className={cn(
+              "absolute top-full border-[6px] border-transparent border-t-[#051821]/60", 
+              getArrowAlignClasses()
+            )} />
           </motion.div>
         )}
       </AnimatePresence>
