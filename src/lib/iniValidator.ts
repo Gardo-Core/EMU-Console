@@ -34,8 +34,10 @@ export function validateIni(content: string): IniError[] {
     }
 
     // Coppie chiave-valore
-    if (trimmed.includes('=')) {
-      const [key, value] = trimmed.split('=').map(s => s.trim());
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx > 0) {
+      const key = trimmed.substring(0, eqIdx).trim();
+      const value = trimmed.substring(eqIdx + 1).trim();
       
       // Check if key exists in our metadata
       if (validationMetadata[key]) {
@@ -89,13 +91,15 @@ export function parseIniToValues(content: string): Record<string, any> {
   
   lines.forEach(line => {
     const trimmed = line.trim();
-    if (trimmed.includes('=') && !trimmed.startsWith(';') && !trimmed.startsWith('#')) {
-      const [key, value] = trimmed.split('=').map(s => s.trim());
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx > 0 && !trimmed.startsWith(';') && !trimmed.startsWith('#')) {
+      const key = trimmed.substring(0, eqIdx).trim();
+      const value = trimmed.substring(eqIdx + 1).trim();
       
       // Tenta di forzare i tipi in base ai valori previsti
-      if (value === 'true') values[key] = true;
-      else if (value === 'false') values[key] = false;
-      else if (!isNaN(Number(value)) && value !== '') values[key] = Number(value);
+      if (value.toLowerCase() === 'true') values[key] = true;
+      else if (value.toLowerCase() === 'false') values[key] = false;
+      else if (!isNaN(Number(value)) && value !== '' && !value.startsWith('0x')) values[key] = Number(value);
       else values[key] = value;
     }
   });

@@ -45,9 +45,9 @@ export function SecurityTab() {
         {/* Sezione ID Utente */}
         <motion.div 
           variants={itemVariants}
-          className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl"
+          className="glass-card shadow-xl"
         >
-          <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Identificazione Utente</h3>
+          <h3 className="text-[var(--font-size-sm)] font-bold text-emu-highlight uppercase tracking-[0.1em] mb-6">Identificazione Utente</h3>
           <div className="grid grid-cols-12 gap-y-6 gap-x-4">
             <div className="col-span-12 relative group">
               <div className={cn("transition-opacity", askUserId ? "opacity-30 pointer-events-none" : "opacity-100")}>
@@ -88,7 +88,7 @@ export function SecurityTab() {
         {/* Sezione Password */}
         <motion.div 
           variants={itemVariants}
-          className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl"
+          className="glass-card shadow-xl"
         >
           <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Autenticazione</h3>
           <div className="grid grid-cols-12 gap-y-6 gap-x-4">
@@ -127,9 +127,9 @@ export function SecurityTab() {
       {/* Sezione Cloud/Automazione */}
       <motion.div 
         variants={itemVariants}
-        className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl"
+        className="glass-card shadow-xl"
       >
-        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6 flex items-center gap-2">
+        <h3 className="text-[var(--font-size-sm)] font-bold text-emu-highlight uppercase tracking-[0.1em] mb-6 flex items-center gap-2">
           Automazione Post-Connessione
           <InfoTooltip content="Specifica un file script da eseguire una volta stabilita la connessione all'host per automatizzare la sequenza di login." align="right" />
         </h3>

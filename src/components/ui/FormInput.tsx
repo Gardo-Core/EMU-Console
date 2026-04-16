@@ -88,26 +88,26 @@ export function FormInput({
           transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
           className="relative flex items-center"
         >
-          <motion.input
-            type={inputType}
-            placeholder={activePlaceholder}
-            {...register(name)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={(e) => {
-              register(name).onBlur(e);
-              setIsFocused(false);
-            }}
-            whileHover={{ scale: 1.005 }}
-            whileTap={{ scale: 0.995 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className={cn(
-              "w-full bg-[#051821]/50 backdrop-blur-sm border rounded-md px-4 py-2.5 text-white font-mono text-sm focus:outline-none focus:ring-1 transition-all placeholder-white/10",
-              type === "password" ? "pr-10" : "",
-              error 
-                ? "border-[#F58800] ring-1 ring-[#F58800]/20 shadow-[0_0_15px_rgba(245,136,0,0.2)]" 
-                : "border-[#266867]/50 hover:border-emu-border focus:border-emu-highlight focus:ring-emu-highlight/20"
-            )}
-          />
+        <motion.input
+          type={inputType}
+          placeholder={activePlaceholder}
+          {...register(name)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={(e) => {
+            register(name).onBlur(e);
+            setIsFocused(false);
+          }}
+          whileHover={{ scale: 1.002 }}
+          whileTap={{ scale: 0.998 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className={cn(
+            "w-full bg-[#051821]/50 backdrop-blur-md border rounded-xl px-4 py-3 text-white font-mono text-[13px] sm:text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-white/10 selection:bg-emu-accent/20",
+            type === "password" ? "pr-12" : "",
+            error 
+              ? "border-emu-accent ring-2 ring-emu-accent/20 shadow-[0_0_20px_rgba(245,136,0,0.15)]" 
+              : "border-emu-border/30 hover:border-emu-border/60 focus:border-emu-accent focus:ring-emu-accent/10"
+          )}
+        />
           {type === "password" && (
             <button
               type="button"

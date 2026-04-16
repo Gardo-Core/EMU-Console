@@ -95,10 +95,12 @@ export default function Home() {
     <SearchProvider>
       <LoginGate>
         <FormProvider {...methods}>
-          <div className="h-screen w-screen overflow-hidden flex flex-row bg-[#051821] text-white">
+          <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#051821] text-white selection:bg-emu-accent/30">
             
-            {/* Navigazione Globale Sinistra */}
-            <LeftNav appMode={appMode} setAppMode={setAppMode} />
+            {/* Navigazione Globale Sinistra - Hidden on mobile, shown on md+ */}
+            <div className="hidden md:block shrink-0">
+              <LeftNav appMode={appMode} setAppMode={setAppMode} />
+            </div>
 
             {/* Wrapper Contenuto App Principale */}
             <div className="flex-1 flex flex-col min-w-0 relative h-full">
@@ -107,29 +109,29 @@ export default function Home() {
 
               <form 
                 onSubmit={methods.handleSubmit(handleGenerate)} 
-                className="flex-1 overflow-hidden relative flex flex-col pt-0 pb-20"
+                className="flex-1 flex flex-col min-h-0 relative"
               >
-                <div className="flex-1 overflow-hidden relative flex flex-row justify-center">
+                <div className="flex-1 flex flex-row justify-center overflow-y-auto custom-scrollbar">
                   {appMode === "compare" ? (
                     <div className="flex-1 h-full w-full">
                       <CompareView />
                     </div>
                   ) : (
-                    <div className="flex flex-row w-full max-w-[1600px] gap-8 p-4 md:p-8 h-full">
+                    <div className="w-full max-w-7xl mx-auto flex flex-col xl:flex-row gap-6 p-4 sm:p-6 lg:p-8">
                       
-                      {/* Spazio di Lavoro Centrale (Griglia di configurazione scorrevole) */}
-                      <div className="flex flex-col flex-1 min-w-[500px] overflow-hidden relative">
-                        <div className="sticky top-0 z-20 pb-4 bg-[#051821]">
+                      {/* Spazio di Lavoro Centrale */}
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <div className="sticky top-0 z-20 pb-4 bg-[#051821]/95 backdrop-blur-sm">
                           <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
                         </div>
                         
-                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-12">
+                        <div className="flex-1 pb-24">
                           <AnimatedTabContent activeTab={activeTab} />
                         </div>
                       </div>
-
-                      {/* Il pannello fisso a destra (Monitor di Anteprima) */}
-                      <div className="hidden lg:block shrink-0 w-[400px] h-full overflow-hidden pb-4">
+ 
+                      {/* Il pannello a destra (Monitor di Anteprima) - Hidden below XL for better focus */}
+                      <div className="hidden xl:block shrink-0 w-full xl:w-[400px] h-fit sticky top-8">
                          <TerminalPreview />
                       </div>
 

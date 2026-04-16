@@ -10,39 +10,39 @@ import { ConfigFormValues } from "@/lib/schema";
 
 function ScreenContent() {
   const { watch } = useFormContext();
-  const values = watch();
+  // Watch only necessary fields for the screen preview
+  const values = watch(["fontSize", "hostname", "profileName", "colorRed", "colorGreen", "colorBlue", "colorMagenta", "colorYellow", "colorCyan", "colorWhite", "scrColor", "stsColor"]);
+  const [
+    fontSizeVal, hostname, profileName, colorRed, colorGreen, colorBlue, colorMagenta, colorYellow, colorCyan, colorWhite, scrColor, stsColor
+  ] = values;
   
-  const fontSize = values.fontSize || 29;
+  const fontSize = (fontSizeVal as number) || 29;
   
   // Risoluzione dinamica dei colori basata sugli indici
-  // Indici Glink: 0:Nero, 1:Rosso, 2:Verde, 3:Blu, 4:Magenta, 5:Giallo, 6:Ciano, 7:Bianco
   const getColorByIndex = (index: number) => {
     switch (index) {
-      case 0: return "#000000"; // Il nero è solitamente fisso o mappa a una proprietà nascosta, ma useremo #000
-      case 1: return values.colorRed || "#f01818";
-      case 2: return values.colorGreen || "#24d830";
-      case 3: return values.colorBlue || "#7890f0";
-      case 4: return values.colorMagenta || "#ff00ff";
-      case 5: return values.colorYellow || "#ffff00";
-      case 6: return values.colorCyan || "#58f0f0";
-      case 7: return values.colorWhite || "#ffffff";
+      case 0: return "#000000";
+      case 1: return colorRed || "#f01818";
+      case 2: return colorGreen || "#24d830";
+      case 3: return colorBlue || "#7890f0";
+      case 4: return colorMagenta || "#ff00ff";
+      case 5: return colorYellow || "#ffff00";
+      case 6: return colorCyan || "#58f0f0";
+      case 7: return colorWhite || "#ffffff";
       default: return "#ffffff";
     }
   };
 
-  const scrColor = Number(values.scrColor);
-  const stsColor = Number(values.stsColor ?? 3);
+  const bgColor = Number(scrColor) === 0 ? "#000000" : (Number(scrColor) === 7 ? colorWhite : "#000000");
+  const stsBgColor = getColorByIndex(Number(stsColor ?? 3));
+  const stsTextColor = (Number(stsColor) === 0) ? colorWhite : "#ffffff";
 
-  const bgColor = scrColor === 0 ? "#000000" : (scrColor === 7 ? values.colorWhite : "#000000");
-  const stsBgColor = getColorByIndex(stsColor);
-  const stsTextColor = (stsColor === 0) ? values.colorWhite : "#ffffff";
-
-  const host = (values.hostname || "ASP.BLUSYS.IT").slice(0, 15).padEnd(15, ' ');
-  const profile = (values.profileName || "EMUConfig").slice(0, 15).padEnd(15, ' ');
+  const host = (hostname || "ASP.BLUSYS.IT").slice(0, 15).padEnd(15, ' ');
+  const profile = (profileName || "EMUConfig").slice(0, 15).padEnd(15, ' ');
   
   return (
-    <div className="flex flex-col h-full bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[12px] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10">
-       <div className="flex-1 overflow-auto p-4 relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
+    <div className="flex flex-col h-full bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[clamp(8px,1vw,12px)] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10">
+       <div className="flex-1 overflow-auto p-[clamp(0.75rem,2vw,1.5rem)] relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
          <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
          
          <div style={{ fontSize: `${Math.max(4, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="whitespace-pre sm:origin-top-left">
@@ -86,8 +86,11 @@ import { AlertCircle } from "lucide-react";
 import { useRef } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 
+// Static cache for templates to prevent redundant network requests
+const templateCache = new Map<string, string>();
+
 function RawIniContent() {
-  const { watch, setValue } = useFormContext();
+  const { watch } = useFormContext();
   const { searchTerm } = useSearch();
   const values = watch();
   const [iniContent, setIniContent] = useState<string>("Caricamento del template INI...");
@@ -98,56 +101,46 @@ function RawIniContent() {
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
 
-  // Sync scroll between textarea, line numbers, and highlight layer
-  const handleScroll = () => {
-    if (textareaRef.current) {
-      if (lineNumbersRef.current) lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
-      if (highlightRef.current) highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-    }
-  };
-
-  // Sync from Form to INI (Only when not actively editing the text area)
+  // Sync from Form to INI with debounce and caching
   useEffect(() => {
     if (isEditing) return;
 
-    const fetchTemplate = async () => {
+    const timer = setTimeout(async () => {
       try {
-         const templateName = values.deviceTemplate === 'cipherlab95' ? 'Configuration_Cipherlab_95.ini' : 
-                              values.deviceTemplate === 'newlandN7' ? 'Configuration_NewlandN7.ini' : 
-                              'Configuration_PLUS995.ini';
-         const oldProfile = values.deviceTemplate === 'newlandN7' ? 'Test' : 'PLURI';
-         
-         const res = await fetch(`/templates/${templateName}`);
-         if (res.ok) {
-           const text = await res.text();
-           const finalIni = mergeTemplate(text, values as ConfigFormValues, oldProfile);
-           setIniContent(finalIni);
-           setErrors(validateIni(finalIni));
-         }
+        const templateName = values.deviceTemplate === 'cipherlab95' ? 'Configuration_Cipherlab_95.ini' : 
+                             values.deviceTemplate === 'newlandN7' ? 'Configuration_NewlandN7.ini' : 
+                             'Configuration_PLUS995.ini';
+        const oldProfile = values.deviceTemplate === 'newlandN7' ? 'Test' : 'PLURI';
+        
+        let text: string;
+        if (templateCache.has(templateName)) {
+          text = templateCache.get(templateName)!;
+        } else {
+          const res = await fetch(`/templates/${templateName}`);
+          if (!res.ok) throw new Error();
+          text = await res.text();
+          templateCache.set(templateName, text);
+        }
+
+        const finalIni = mergeTemplate(text, values as ConfigFormValues, oldProfile);
+        setIniContent(finalIni);
+        setErrors(validateIni(finalIni));
       } catch (err) {
-         setIniContent("Errore nella risoluzione del payload INI dal vivo.");
+        setIniContent("Errore nella risoluzione del payload INI dal vivo.");
       }
-    };
-    fetchTemplate();
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
   }, [values, isEditing]);
 
-  // Sync from INI to Form (Manual overrides)
+  // Sync from INI to Form (Disabled as per user preference to avoid overwriting)
   const handleIniChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setIniContent(newContent);
     const newErrors = validateIni(newContent);
     setErrors(newErrors);
-
-    // If no critical errors, try to sync back recognizing keys
-    if (!newErrors.some(err => !err.isWarning)) {
-      const parsedValues = parseIniToValues(newContent);
-      Object.entries(parsedValues).forEach(([key, val]) => {
-        // Only update if key exists in form and value is different
-        if (values[key] !== undefined && values[key] !== val) {
-          setValue(key, val, { shouldValidate: true, shouldDirty: true });
-        }
-      });
-    }
+    
+    // Auto-sync back to form is disabled to preserve form integrity
   };
 
   const lineNumbers = iniContent.split('\n').length;
@@ -168,15 +161,15 @@ function RawIniContent() {
 
   return (
     <div className="h-full w-full bg-[#051821] border border-[#266867] rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-       <div className="bg-[#1A4645] px-4 py-2 border-b border-[#266867] flex items-center justify-between shrink-0">
+       <div className="bg-[#1A4645] px-4 py-2.5 border-b border-emu-border/30 flex items-center justify-between shrink-0">
           <div className="flex items-center">
-            <FileCode className="w-4 h-4 text-emu-highlight mr-2" />
-            <span className="text-xs font-mono text-white/70">config.ini</span>
+            <FileCode className="w-4 h-4 text-emu-accent mr-2" />
+            <span className="text-[11px] font-mono text-white/50 tracking-wider">config.ini</span>
           </div>
           {errors.length > 0 && (
-            <div className="flex items-center gap-1.5 text-orange-400 animate-pulse">
+            <div className="flex items-center gap-1.5 text-emu-accent animate-pulse">
               <AlertCircle className="w-3.5 h-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">{errors.length} Avvisi di Formato</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{errors.length} Avvisi di Formato</span>
             </div>
           )}
        </div>
@@ -280,7 +273,7 @@ export function TerminalPreview() {
 
   if (isDesktop) {
     return (
-      <div className="sticky top-2 w-[340px] xl:w-[400px] h-full flex-shrink-0 flex flex-col z-20 pb-4">
+      <div className="sticky top-4 w-full xl:w-[25rem] h-full flex-shrink-0 flex flex-col z-20 pb-4">
          {headerContent}
          <motion.div 
            key={mode} /* Forces re-animation on switch */

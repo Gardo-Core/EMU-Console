@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Fluid Typography System */
 @theme inline {
   --color-emu-base: #051821;
   --color-emu-surface: #1A4645;
@@ -8,29 +9,54 @@
   --color-emu-highlight: #F8BC24;
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
+
+  /* Fluid Font Sizes using clamp() */
+  /* Formula: clamp(min, preferred, max) */
+  --font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.875rem);
+  --font-size-sm: clamp(0.8rem, 0.75rem + 0.25vw, 1rem); 
+  --font-size-base: clamp(0.9rem, 0.85rem + 0.3vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  --font-size-xl: clamp(1.25rem, 1.1rem + 0.8vw, 1.875rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2.25rem);
+  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.5vw, 3rem);
+  --font-size-4xl: clamp(2.25rem, 1.8rem + 2vw, 4rem);
 }
 
 :root {
   color-scheme: dark;
+  --spacing-fluid: clamp(1rem, 0.5rem + 2vw, 3rem);
 }
 
 body {
   background-color: var(--color-emu-base);
   color: #ffffff;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  overflow-x: hidden; /* Prevent horizontal scroll universally */
 }
 
-/* Glassmorphism pane */
+h1 { font-size: var(--font-size-4xl); font-weight: 800; line-height: 1.1; }
+h2 { font-size: var(--font-size-3xl); font-weight: 700; line-height: 1.2; }
+h3 { font-size: var(--font-size-2xl); font-weight: 600; line-height: 1.3; }
+h4 { font-size: var(--font-size-xl); font-weight: 600; }
+h5 { font-size: var(--font-size-lg); font-weight: 600; }
+h6 { font-size: var(--font-size-base); font-weight: 600; }
+
+/* Adaptive Glassmorphism */
 .glass-panel {
   background: rgba(26, 70, 69, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(clamp(8px, 1vw, 16px));
+  -webkit-backdrop-filter: blur(clamp(8px, 1vw, 16px));
   border: 1px solid rgba(38, 104, 103, 0.5);
+  padding: clamp(1rem, 2vw, 2rem);
 }
 
 .glass-card {
   background: rgba(26, 70, 69, 0.7);
   border: 1px solid rgba(38, 104, 103, 0.6);
-  border-radius: 0.75rem;
+  border-radius: clamp(0.5rem, 1vw, 1rem);
+  padding: clamp(0.75rem, 1.5vw, 1.5rem);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 

@@ -2,6 +2,7 @@ import { ConfigFormValues } from './schema';
 import { hashPassword } from './password';
 
 export function mergeTemplate(baseContent: string, values: ConfigFormValues, oldProfileName: string): string {
+  const lineEnding = baseContent.includes('\r\n') ? '\r\n' : '\n';
   let lines = baseContent.split(/\r?\n/);
   
   // Identifichiamo [file:xxx] per sapere dove ci troviamo concettualmente
@@ -15,7 +16,6 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
   if (finalUserId) hostString += ` -du ${finalUserId}`;
   if (finalPassword) hostString += ` -d? ${finalPassword}`;
   if (values.enableAutoLogin && values.scriptName) {
-      // Punta esattamente al parametro dello script
       hostString += ` /S ${values.scriptName}`;
   }
 
@@ -47,7 +47,6 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
   };
 
   const usedKeys = new Set<string>();
-  let vKeyIndex = -1;
 
   for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
@@ -73,10 +72,8 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
          continue;
       }
 
-      // Gestisce la chiave di licenza che si trova subito dopo [file:v_key]
-      if (line.trim() === '[file:v_key]') {
-         vKeyIndex = i;
-      } else if (vKeyIndex !== -1 && i === vKeyIndex + 1 && !line.includes('=')) {
+      // Gestisce la chiave di licenza in [file:v_key]
+      if (currentSection === '[file:v_key]' && !line.includes('=') && line.trim() !== currentSection) {
          lines[i] = values.licenseKey;
       }
 
@@ -94,46 +91,29 @@ export function mergeTemplate(baseContent: string, values: ConfigFormValues, old
       }
   }
 
-  // Inserisce eventuali chiavi mancanti, principalmente nella sezione barcode
-  // Alcuni template non definiscono determinati flag barcode, li inseriamo in [file:printers]
-  const printItems = ['print.bcenable', 'print.bcdoafter', 'print.bcshow', 'print.bcusekeymap'];
-  const missingPrint = printItems.filter(k => !usedKeys.has(k) && (keyUpdates as any)[k] !== undefined);
-  
-  if (missingPrint.length > 0) {
-      const printersSectionIdx = lines.findIndex(l => l.trim() === '[file:printers]');
-      if (printersSectionIdx !== -1) {
-          // trova la fine della sezione printers o il prossimo [file:...]
-          let injectionIdx = printersSectionIdx + 1;
-          for (let i = printersSectionIdx + 1; i < lines.length; i++) {
-              if (lines[i].startsWith('[')) {
-                  break;
+  // Inserisce eventuali chiavi mancanti
+  const sectionsToKeys: Record<string, string[]> = {
+    '[file:printers]': ['print.bcenable', 'print.bcdoafter', 'print.bcshow', 'print.bcusekeymap'],
+    '[file:keyboards]': ['keyboard.kc.4_DpadLeft', 'keyboard.kc.5_DpadRight']
+  };
+
+  for (const [section, items] of Object.entries(sectionsToKeys)) {
+      const missing = items.filter(k => !usedKeys.has(k) && (keyUpdates as any)[k] !== undefined);
+      if (missing.length > 0) {
+          const sectionIdx = lines.findIndex(l => l.trim() === section);
+          if (sectionIdx !== -1) {
+              let injectionIdx = sectionIdx + 1;
+              for (let i = sectionIdx + 1; i < lines.length; i++) {
+                  if (lines[i].startsWith('[')) break;
+                  injectionIdx = i + 1;
               }
-              injectionIdx = i + 1;
+              const paddingLines = missing.map(k => `${k}=${(keyUpdates as any)[k]}`);
+              lines.splice(injectionIdx, 0, ...paddingLines);
           }
-          
-          const paddingLines = missingPrint.map(k => `${k}=${(keyUpdates as any)[k]}`);
-          lines.splice(injectionIdx, 0, ...paddingLines);
       }
   }
 
-  // Inserisce i tasti macro della tastiera se mancanti
-  const keysItems = ['keyboard.kc.4_DpadLeft', 'keyboard.kc.5_DpadRight'];
-  const missingKeys = keysItems.filter(k => !usedKeys.has(k) && (keyUpdates as any)[k] !== undefined);
-  
-  if (missingKeys.length > 0) {
-      const keyboardSectionIdx = lines.findIndex(l => l.trim() === '[file:keyboards]');
-      if (keyboardSectionIdx !== -1) {
-          let injectionIdx = keyboardSectionIdx + 1;
-          for (let i = keyboardSectionIdx + 1; i < lines.length; i++) {
-              if (lines[i].startsWith('[')) break;
-              injectionIdx = i + 1;
-          }
-          const paddingLines = missingKeys.map(k => `${k}=${(keyUpdates as any)[k]}`);
-          lines.splice(injectionIdx, 0, ...paddingLines);
-      }
-  }
-
-  return lines.join('\n');
+  return lines.join(lineEnding);
 }
 
 export async function generateDownload(

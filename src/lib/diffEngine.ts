@@ -102,16 +102,16 @@ function backtrack(trace: { [key: number]: number }[], A: string[], B: string[],
     const prevY = prevX - prevK;
     
     while (x > prevX && y > prevY) {
-      edits.unshift({ type: EditType.EQUAL, content: A[x - 1], lineA: x - 1, lineB: y - 1 });
+      edits.push({ type: EditType.EQUAL, content: A[x - 1], lineA: x - 1, lineB: y - 1 });
       x--;
       y--;
     }
     
     if (D > 0) {
       if (x === prevX) {
-        edits.unshift({ type: EditType.INSERT, content: B[y - 1], lineB: y - 1 });
+        edits.push({ type: EditType.INSERT, content: B[y - 1], lineB: y - 1 });
       } else {
-        edits.unshift({ type: EditType.DELETE, content: A[x - 1], lineA: x - 1 });
+        edits.push({ type: EditType.DELETE, content: A[x - 1], lineA: x - 1 });
       }
     }
     
@@ -119,7 +119,7 @@ function backtrack(trace: { [key: number]: number }[], A: string[], B: string[],
     y = prevY;
   }
   
-  return edits;
+  return edits.reverse();
 }
 
 /**

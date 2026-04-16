@@ -17,7 +17,7 @@ export type TabId = typeof TABS[number]["id"];
 
 export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSelect: (id: TabId) => void }) {
   return (
-    <div className="flex w-full space-x-1 p-1 bg-emu-surface/50 border border-emu-border rounded-xl">
+    <div className="flex w-full space-x-1 p-1 bg-emu-surface/50 border border-emu-border rounded-xl overflow-x-auto no-scrollbar touch-pan-x">
       {TABS.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
@@ -28,7 +28,7 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
             type="button"
             onClick={() => onSelect(tab.id)}
             className={cn(
-              "relative flex flex-1 items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors outline-none",
+              "relative flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors outline-none shrink-0 min-w-max",
               isActive ? "text-emu-base" : "text-white/70 hover:text-white hover:bg-white/5"
             )}
             style={{
@@ -44,7 +44,7 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
             )}
             <span className="relative z-10 flex items-center gap-2">
               <Icon className="w-4 h-4" />
-              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="hidden sm:inline-block">{tab.label}</span>
             </span>
           </button>
         );

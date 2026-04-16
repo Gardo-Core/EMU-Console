@@ -39,12 +39,12 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "absolute bottom-full mb-2 w-64 p-4 bg-[#051821]/98 backdrop-blur-2xl border border-[#266867] shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-xl z-[100] text-xs text-white leading-relaxed flex flex-col gap-1 pointer-events-none",
+              "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] glass-card !bg-[#051821]/95 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[100] text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none border-emu-border/60",
               getAlignClasses()
             )}
           >
             {content}
-            <div className={cn("absolute top-full border-4 border-transparent border-t-emu-border", getArrowAlignClasses())} />
+            <div className={cn("absolute top-full border-[6px] border-transparent border-t-emu-border/60", getArrowAlignClasses())} />
           </motion.div>
         )}
       </AnimatePresence>
