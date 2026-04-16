@@ -7,7 +7,7 @@ import { AnimatedTabContent } from "@/components/AnimatedTabContent";
 import { TerminalPreview } from "@/components/TerminalPreview";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { configSchema, ConfigFormValues } from "@/lib/schema";
+import { configSchema, ConfigFormValues } from "@/lib/validationSchemas";
 import { mergeTemplate, generateDownload } from "@/lib/template";
 import { LeftNav, AppMode } from "@/components/LeftNav";
 import { TopBar } from "@/components/TopBar";

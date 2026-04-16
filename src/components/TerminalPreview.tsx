@@ -81,13 +81,20 @@ function ScreenContent() {
   );
 }
 
+import { validateIni, parseIniToValues, IniError } from "@/lib/iniValidator";
+import { AlertCircle } from "lucide-react";
+
 function RawIniContent() {
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
   const values = watch();
   const [iniContent, setIniContent] = useState<string>("Loading INI template...");
+  const [errors, setErrors] = useState<IniError[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
 
+  // Sync from Form to INI (Only when not actively editing the text area)
   useEffect(() => {
-    let active = true;
+    if (isEditing) return;
+
     const fetchTemplate = async () => {
       try {
          const templateName = values.deviceTemplate === 'cipherlab95' ? 'Configuration_Cipherlab_95.ini' : 
@@ -99,26 +106,88 @@ function RawIniContent() {
          if (res.ok) {
            const text = await res.text();
            const finalIni = mergeTemplate(text, values as ConfigFormValues, oldProfile);
-           if (active) setIniContent(finalIni);
+           setIniContent(finalIni);
+           setErrors(validateIni(finalIni));
          }
       } catch (err) {
-         if (active) setIniContent("Error resolving live INI payload.");
+         setIniContent("Error resolving live INI payload.");
       }
     };
     fetchTemplate();
-    return () => { active = false; };
-  }, [values]); // re-run strictly when values updates
+  }, [values, isEditing]);
+
+  // Sync from INI to Form (Manual overrides)
+  const handleIniChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    setIniContent(newContent);
+    const newErrors = validateIni(newContent);
+    setErrors(newErrors);
+
+    // If no critical errors, try to sync back recognizing keys
+    if (!newErrors.some(err => !err.isWarning)) {
+      const parsedValues = parseIniToValues(newContent);
+      Object.entries(parsedValues).forEach(([key, val]) => {
+        // Only update if key exists in form and value is different
+        if (values[key] !== undefined && values[key] !== val) {
+          setValue(key, val, { shouldValidate: true, shouldDirty: true });
+        }
+      });
+    }
+  };
 
   return (
-    <div className="h-full w-full bg-[#051821] border border-[#266867] rounded-xl overflow-hidden flex flex-col shadow-inner">
-       <div className="bg-[#1A4645]/50 px-4 py-2 border-b border-[#266867] flex items-center shrink-0">
-          <FileCode className="w-4 h-4 text-emu-highlight mr-2" />
-          <span className="text-xs font-mono text-white/70">config.ini</span>
+    <div className="h-full w-full bg-[#051821] border border-[#266867] rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+       <div className="bg-[#1A4645] px-4 py-2 border-b border-[#266867] flex items-center justify-between shrink-0">
+          <div className="flex items-center">
+            <FileCode className="w-4 h-4 text-emu-highlight mr-2" />
+            <span className="text-xs font-mono text-white/70">config.ini</span>
+          </div>
+          {errors.length > 0 && (
+            <div className="flex items-center gap-1.5 text-orange-400 animate-pulse">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span className="text-[10px] font-bold uppercase tracking-tighter">{errors.length} Format Alerts</span>
+            </div>
+          )}
        </div>
-       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-          <pre className="font-mono text-sm leading-tight text-[#a1a1aa] whitespace-pre-wrap select-all">
-            {iniContent}
-          </pre>
+       
+       <div className="flex-1 relative overflow-hidden group/editor">
+          <textarea
+            value={iniContent}
+            onChange={handleIniChange}
+            onFocus={() => setIsEditing(true)}
+            onBlur={() => setIsEditing(false)}
+            spellCheck={false}
+            className="w-full h-full bg-transparent p-4 font-mono text-sm leading-tight text-[#a1a1aa] resize-none focus:outline-none custom-scrollbar selection:bg-emu-highlight/30"
+          />
+          
+          <AnimatePresence>
+            {errors.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute bottom-4 left-4 right-4 bg-orange-500/10 backdrop-blur-md border border-orange-500/20 p-3 rounded-lg flex flex-col gap-2 shadow-xl z-10"
+              >
+                {errors.slice(0, 2).map((err, i) => (
+                  <div key={i} className="flex flex-col">
+                    <div className="flex items-center gap-2 text-orange-400 font-bold text-[10px] uppercase">
+                      Line {err.line}: {err.message}
+                    </div>
+                    {err.advice && (
+                      <div className="text-white/60 text-[10px] italic leading-tight mt-0.5">
+                        {err.advice}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {errors.length > 2 && (
+                  <div className="text-[9px] text-orange-400/50 uppercase font-black text-center mt-1">
+                    + {errors.length - 2} more issues identified
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
        </div>
     </div>
   );
