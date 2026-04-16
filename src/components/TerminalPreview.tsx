@@ -45,7 +45,7 @@ function ScreenContent() {
        <div className="flex-1 overflow-auto p-[clamp(0.75rem,2vw,1.5rem)] relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
          <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
          
-         <div style={{ fontSize: `${Math.max(4, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="whitespace-pre sm:origin-top-left">
+         <pre style={{ fontSize: `${Math.max(4, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="sm:origin-top-left text-inherit">
 {`                            ACCESSO
                                               
                                   Sistema . . . :  `}<span style={{ color: getColorByIndex(5) }}>{host}</span>{`
@@ -59,7 +59,7 @@ function ScreenContent() {
    Libreria corrente . . . .  [`}<span style={{ color: getColorByIndex(6) }}>          </span>{`]
 
 `}
-         </div>
+         </pre>
          <div className="absolute bottom-0 left-0 right-0 px-2 py-1 flex items-center justify-between font-mono" style={{ fontSize: `${Math.max(4, fontSize * 0.35)}px`, backgroundColor: stsBgColor, color: stsTextColor }}>
            <span>MW</span>
            <span>000/000</span>

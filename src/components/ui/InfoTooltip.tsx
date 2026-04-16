@@ -39,7 +39,7 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] glass-card !bg-[#051821]/95 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[100] text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none border-emu-border/60",
+              "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] rounded-xl border border-emu-border/60 bg-[#1A4645]/60 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[100] p-4 text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none",
               getAlignClasses()
             )}
           >

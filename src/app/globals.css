@@ -24,7 +24,7 @@
 
 :root {
   color-scheme: dark;
-  --spacing-fluid: clamp(1rem, 0.5rem + 2vw, 3rem);
+  --spacing-fluid: clamp(1rem, 0.8rem + 1vw, 2.5rem);
 }
 
 body {
@@ -45,17 +45,19 @@ h6 { font-size: var(--font-size-base); font-weight: 600; }
 /* Adaptive Glassmorphism */
 .glass-panel {
   background: rgba(26, 70, 69, 0.4);
-  backdrop-filter: blur(clamp(8px, 1vw, 16px));
-  -webkit-backdrop-filter: blur(clamp(8px, 1vw, 16px));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(38, 104, 103, 0.5);
-  padding: clamp(1rem, 2vw, 2rem);
+  padding: var(--spacing-fluid);
 }
 
 .glass-card {
-  background: rgba(26, 70, 69, 0.7);
-  border: 1px solid rgba(38, 104, 103, 0.6);
-  border-radius: clamp(0.5rem, 1vw, 1rem);
-  padding: clamp(0.75rem, 1.5vw, 1.5rem);
+  background: rgba(26, 70, 69, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(38, 104, 103, 0.4);
+  border-radius: 1rem;
+  padding: 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

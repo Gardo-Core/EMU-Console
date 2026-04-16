@@ -29,7 +29,7 @@ export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
   };
 
   return (
-    <div className="relative mt-[var(--spacing-fluid)] min-h-[500px]">
+    <div className="relative mt-4 min-h-[400px]">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
