@@ -126,7 +126,7 @@ export function SecurityTab() {
       >
         <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6 flex items-center gap-2">
           Post-Connect Automation
-          <InfoTooltip content="Specify a script file that should be executed once the connection to the host has been established to automate the login sequence." />
+          <InfoTooltip content="Specify a script file that should be executed once the connection to the host has been established to automate the login sequence." align="right" />
         </h3>
         
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
@@ -176,7 +176,7 @@ export function SecurityTab() {
                         >
                           Reset Template
                         </button>
-                        <InfoTooltip content="CRITICAL: The text inside quotes must MATCH EXACTLY what appears on the terminal screen. Glink will wait for this string before typing." />
+                        <InfoTooltip content="CRITICAL: The text inside quotes must MATCH EXACTLY what appears on the terminal screen. Glink will wait for this string before typing." align="right" />
                       </div>
                     </div>
                     
