@@ -38,7 +38,7 @@ function ScreenContent() {
   const stsTextColor = (stsColor === 0) ? values.colorWhite : "#ffffff";
 
   const host = (values.hostname || "ASP.BLUSYS.IT").slice(0, 15).padEnd(15, ' ');
-  const profile = (values.profileName || "EMU Console").slice(0, 15).padEnd(15, ' ');
+  const profile = (values.profileName || "EMUConfig").slice(0, 15).padEnd(15, ' ');
   
   return (
     <div className="flex flex-col h-full bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[12px] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10">

@@ -24,7 +24,7 @@ export default function Home() {
     resolver: zodResolver(configSchema),
     defaultValues: {
       deviceTemplate: "cipherlab95",
-      profileName: "EMU Console",
+      profileName: "EMUConfig",
       hostname: "ASP.BLUSYS.IT",
       ibm5250Model: 7,
       licenseKey: "L5ZSFM99EJSQC3FD",
