@@ -16,7 +16,7 @@ export function AppearanceTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-semibold text-emu-highlight uppercase tracking-wider mb-6">Geometria Schermo</h3>
+        <h3 className="text-[10px] font-bold text-emu-highlight/90 mb-6 tracking-wider">Geometria Schermo</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <Slider name="fontSize" label="Dimensione Font" tab="appearance" tooltip="Dimensione del carattere del terminale in pixel." min={8} max={48} />
           
@@ -49,7 +49,7 @@ export function AppearanceTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-bold text-emu-highlight mb-6">Geometria schermo</h3>
+        <h3 className="text-[10px] font-bold text-emu-highlight/90 mb-6 tracking-wider">Geometria schermo</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <ColorPicker name="colorMagenta" label="Magenta" tab="appearance" tooltip="Colore sostitutivo per il Magenta AS400" />
           <ColorPicker name="colorCyan" label="Ciano" tab="appearance" tooltip="Colore sostitutivo per il Ciano AS400" />

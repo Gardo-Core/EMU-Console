@@ -16,7 +16,7 @@ export function HardwareTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-bold text-emu-highlight mb-6">Integrazione lettore barcode</h3>
+        <h3 className="text-[10px] font-bold text-emu-highlight/90 mb-6 tracking-wider">Integrazione lettore barcode</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormSelect 
             name="barcodeEnable" 
@@ -54,7 +54,7 @@ export function HardwareTab() {
         variants={itemVariants}
         className="bg-[#1A4645]/30 backdrop-blur-md rounded-xl border border-[#266867]/50 p-6 shadow-xl relative z-10 focus-within:z-50 hover:z-20 transition-all duration-300"
       >
-        <h3 className="text-sm font-bold text-emu-highlight mb-6">Macro per dispositivi rugged</h3>
+        <h3 className="text-[10px] font-bold text-emu-highlight/90 mb-6 tracking-wider">Macro per dispositivi rugged</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
           <FormInput 
             name="dpadLeftMacro" 

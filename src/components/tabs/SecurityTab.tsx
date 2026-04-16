@@ -47,7 +47,7 @@ export function SecurityTab() {
           variants={itemVariants}
           className="glass-card shadow-xl"
         >
-          <h3 className="text-sm font-bold text-emu-highlight mb-6">Identificazione utente</h3>
+          <h3 className="text-[10px] font-bold text-emu-highlight/90 mb-6 tracking-wider">Identificazione utente</h3>
           <div className="grid grid-cols-12 gap-y-6 gap-x-4">
             <div className="col-span-12 relative group">
               <div className={cn("transition-opacity", askUserId ? "opacity-30 pointer-events-none" : "opacity-100")}>
@@ -90,7 +90,7 @@ export function SecurityTab() {
           variants={itemVariants}
           className="glass-card shadow-xl"
         >
-          <h3 className="text-sm font-bold text-emu-highlight mb-6">Autenticazione</h3>
+          <h3 className="text-[10px] font-bold text-emu-highlight/90 mb-6 tracking-wider">Autenticazione</h3>
           <div className="grid grid-cols-12 gap-y-6 gap-x-4">
             <div className="col-span-12 relative group">
               <div className={cn("transition-opacity", askPassword ? "opacity-30 pointer-events-none" : "opacity-100")}>
@@ -129,7 +129,7 @@ export function SecurityTab() {
         variants={itemVariants}
         className="glass-card shadow-xl"
       >
-        <h3 className="text-sm font-bold text-emu-highlight mb-6 flex items-center gap-2">
+        <h3 className="text-[10px] font-bold text-emu-highlight mb-6 flex items-center gap-2 tracking-wider">
           Automazione post-connessione
           <InfoTooltip content="Specifica un file script da eseguire una volta stabilita la connessione all'host per automatizzare la sequenza di login." align="right" />
         </h3>
