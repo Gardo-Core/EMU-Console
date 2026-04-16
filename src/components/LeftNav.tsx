@@ -14,7 +14,7 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
         <img 
           src="/asset/Emu_Icon.svg" 
           alt="EMU" 
-          className="w-5 h-5 opacity-80 hover:opacity-100 transition-opacity" 
+          className="w-10 h-10 opacity-80 hover:opacity-100 transition-opacity" 
         />
       </div>
 
