@@ -143,7 +143,14 @@ export function SecurityTab() {
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="col-span-12 overflow-hidden"
+                className="col-span-12"
+                onAnimationComplete={(definition: any) => {
+                  if ((definition as any).height === "auto") {
+                    // This allows tooltips to escape the clipping container
+                    const el = document.querySelector('.automation-container');
+                    if (el) (el as HTMLElement).style.overflow = 'visible';
+                  }
+                }}
               >
                 <div className="pt-4 space-y-8 border-t border-[#266867]/30">
                   <div className="relative">
