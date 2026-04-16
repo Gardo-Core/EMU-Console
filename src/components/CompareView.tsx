@@ -3,6 +3,7 @@
 import { useState, useRef, ChangeEvent } from "react";
 import { UploadCloud, FileJson } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { generateSideBySide } from "@/lib/diffEngine";
 
 type DiffLine = {
   type: 'added' | 'removed' | 'modified' | 'unchanged';
@@ -52,31 +53,8 @@ export function CompareView() {
     const lines1 = t1.split(/\r?\n/);
     const lines2 = t2.split(/\r?\n/);
     
-    // Logica di mappatura molto semplice (corrispondenze esatte a prova di errore)
-    const map1: DiffLine[] = [];
-    const map2: DiffLine[] = [];
-    
-    const maxLen = Math.max(lines1.length, lines2.length);
-    
-    for (let i = 0; i < maxLen; i++) {
-       const l1 = lines1[i] || "";
-       const l2 = lines2[i] || "";
-       
-       if (l1 === l2) {
-         map1.push({ type: 'unchanged', text: l1 });
-         map2.push({ type: 'unchanged', text: l2 });
-       } else if (l1 && !l2) {
-         map1.push({ type: 'removed', text: l1 });
-         map2.push({ type: 'removed', text: "" }); // Riempimento
-       } else if (!l1 && l2) {
-         map1.push({ type: 'added', text: "" }); // Riempimento
-         map2.push({ type: 'added', text: l2 });
-       } else {
-         // Entrambi esistono ma sono diversi -> modifica
-         map1.push({ type: 'modified', text: l1 });
-         map2.push({ type: 'modified', text: l2 });
-       }
-    }
+    // Use the robust diff engine for sequence alignment and sync padding
+    const { map1, map2 } = generateSideBySide(lines1, lines2);
     
     setFile1(prev => ({ ...prev, lines: map1 }));
     setFile2(prev => ({ ...prev, lines: map2 }));
