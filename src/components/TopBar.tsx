@@ -50,23 +50,16 @@ export function TopBar({
   return (
     <div className="h-14 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-6 shrink-0 z-40 sticky top-0">
       
-      {/* Sinistra: Logo e Nome Profilo */}
-      <div className="flex items-center gap-6">
+      {/* Sinistra: Logo */}
+      <div className="flex items-center gap-4">
         <div className="flex items-baseline gap-1 select-none">
           <span className="text-white font-bold tracking-tight text-lg">EMU</span>
           <span className="text-white font-thin tracking-tight text-lg" style={{ fontWeight: 100 }}>Console</span>
         </div>
         
-        <div className="h-4 w-px bg-[#266867]/50 hidden sm:block" />
-        
-        <div className="flex items-center gap-3">
-          <h2 className="text-white/60 font-medium tracking-tight text-[11px] uppercase tracking-wide">
-            {profileName}
-          </h2>
-          {isDirty && (
-            <div className="w-2 h-2 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
-          )}
-        </div>
+        {isDirty && (
+          <div className="w-2 h-2 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
+        )}
       </div>
 
       {/* Centro: Campo di Ricerca */}
