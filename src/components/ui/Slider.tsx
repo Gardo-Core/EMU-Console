@@ -69,14 +69,36 @@ export function Slider({
       </div>
       
       {/* Input Region (8 columns) */}
-      <div className="col-span-12 sm:col-span-8 flex items-center">
-        <input 
-          type="range" 
-          min={min} 
-          max={max} 
-          {...register(name)}
-          className="w-full h-1.5 bg-[#266867]/30 rounded-lg appearance-none cursor-pointer accent-emu-accent"
-        />
+      <div className="col-span-12 sm:col-span-8 relative flex flex-col pt-2">
+        <div className="relative w-full h-6 flex items-center group/slider">
+          {/* Custom Notched Track Background */}
+          <div 
+            className="absolute inset-x-0 h-1.5 bg-[#266867]/20 rounded-full overflow-hidden pointer-events-none"
+            style={{
+              backgroundImage: `
+                linear-gradient(90deg, #266867 1px, transparent 1px),
+                linear-gradient(90deg, rgba(38, 104, 103, 0.4) 1px, transparent 1px)
+              `,
+              backgroundSize: `calc((100% - 1px) / ${(max - min) / 5}) 100%, calc((100% - 1px) / ${max - min}) 60%`,
+              backgroundPosition: '0 0, 0 20%',
+              backgroundRepeat: 'repeat-x'
+            }}
+          />
+          
+          <input 
+            type="range" 
+            min={min} 
+            max={max} 
+            {...register(name)}
+            className="absolute inset-x-0 w-full h-1.5 bg-transparent appearance-none cursor-pointer accent-emu-accent z-10"
+          />
+        </div>
+        
+        {/* Min/Max Labels */}
+        <div className="flex justify-between mt-1 px-0.5">
+          <span className="text-[9px] text-white/30 font-mono">{min}</span>
+          <span className="text-[9px] text-white/30 font-mono">{max}</span>
+        </div>
       </div>
     </div>
   );

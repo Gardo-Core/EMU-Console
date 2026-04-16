@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, X, TerminalSquare, FileCode } from "lucide-react";
+import { Eye, X, TerminalSquare, FileCode, Copy, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { mergeTemplate } from "@/lib/template";
@@ -41,42 +41,48 @@ function ScreenContent() {
   const profile = (profileName || "EMUConfig").slice(0, 15).padEnd(15, ' ');
   
   return (
-    <div className="flex flex-col h-full bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[clamp(8px,1vw,12px)] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10">
-       <div className="flex-1 overflow-auto p-[clamp(0.75rem,2vw,1.5rem)] relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
-         <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
-         
-         <pre style={{ fontSize: `${Math.max(4, fontSize * 0.45)}px`, lineHeight: '1.2' }} className="sm:origin-top-left text-inherit">
-{`                            ACCESSO
-                                              
-                                  Sistema . . . :  `}<span style={{ color: getColorByIndex(5) }}>{host}</span>{`
-                                  Sottosistema  :  QINTER
-                                  Display . . . :  `}<span style={{ color: getColorByIndex(5) }}>{profile}</span>{`
-
-   Utente. . . . . . . . . .  [`}<span style={{ color: getColorByIndex(7) }}>          </span>{`]
-  Password. . . . . . . . .  
-   Programma/procedura . . .  [`}<span style={{ color: getColorByIndex(1) }}>          </span>{`]
-   Menu. . . . . . . . . . .  [`}<span style={{ color: getColorByIndex(4) }}>          </span>{`]
-   Libreria corrente . . . .  [`}<span style={{ color: getColorByIndex(6) }}>          </span>{`]
-
-`}
-         </pre>
-         <div className="absolute bottom-0 left-0 right-0 px-2 py-1 flex items-center justify-between font-mono" style={{ fontSize: `${Math.max(4, fontSize * 0.35)}px`, backgroundColor: stsBgColor, color: stsTextColor }}>
-           <span>MW</span>
-           <span>000/000</span>
+    <div className="flex flex-col h-full items-center justify-start py-4">
+      {/* Fixed Dimension Monitor Frame (4:5 Ratio) */}
+      <div className="w-full max-w-[400px] aspect-[4/5] bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[12px] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10 flex flex-col">
+         <div className="flex-1 overflow-auto p-4 relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
+           <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
+           
+           <div className="h-full w-full overflow-hidden flex items-start justify-start p-2">
+             <pre style={{ fontSize: `${fontSize}px`, transform: `scale(${0.4})`, transformOrigin: 'top left', lineHeight: '1.2' }} className="text-inherit">
+  {`                            ACCESSO
+                                                
+                                    Sistema . . . :  `}<span style={{ color: getColorByIndex(5) }}>{host}</span>{`
+                                    Sottosistema  :  QINTER
+                                    Display . . . :  `}<span style={{ color: getColorByIndex(5) }}>{profile}</span>{`
+  
+     Utente. . . . . . . . . .  [`}<span style={{ color: getColorByIndex(7) }}>          </span>{`]
+    Password. . . . . . . . .  
+     Programma/procedura . . .  [`}<span style={{ color: getColorByIndex(1) }}>          </span>{`]
+     Menu. . . . . . . . . . .  [`}<span style={{ color: getColorByIndex(4) }}>          </span>{`]
+     Libreria corrente . . . .  [`}<span style={{ color: getColorByIndex(6) }}>          </span>{`]
+  
+  `}
+             </pre>
+           </div>
+           
+           <div className="absolute bottom-0 left-0 right-0 px-2 py-1 flex items-center justify-between font-mono" style={{ fontSize: `12px`, backgroundColor: stsBgColor, color: stsTextColor }}>
+             <span>MW</span>
+             <span>000/000</span>
+           </div>
          </div>
-       </div>
-       
-       <div className="h-12 bg-gradient-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
-         {['Esc', 'F1', 'F3', 'F4', 'F12', 'Invio'].map(btn => (
-           <motion.div 
-             key={btn} 
-             whileTap={{ scale: 0.9 }}
-             className="bg-gradient-to-b from-zinc-600 to-zinc-700 text-white text-[11px] font-sans px-3 py-1.5 rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.5),inset_0_1px_rgba(255,255,255,0.2)] border border-zinc-800 cursor-pointer"
-           >
-             {btn}
-           </motion.div>
-         ))}
-       </div>
+         
+         <div className="h-10 bg-gradient-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
+           {['Esc', 'F1', 'F3', 'F4', 'F12', 'Invio'].map(btn => (
+             <motion.div 
+               key={btn} 
+               whileTap={{ scale: 0.9 }}
+               className="bg-gradient-to-b from-zinc-600 to-zinc-700 text-white text-[9px] font-sans px-2.5 py-1 rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.5),inset_0_1px_rgba(255,255,255,0.2)] border border-zinc-800 cursor-pointer"
+             >
+               {btn}
+             </motion.div>
+           ))}
+         </div>
+      </div>
     </div>
   );
 }
@@ -93,9 +99,16 @@ function RawIniContent() {
   const { watch } = useFormContext();
   const { searchTerm } = useSearch();
   const values = watch();
+  const [copied, setCopied] = useState(false);
   const [iniContent, setIniContent] = useState<string>("Caricamento del template INI...");
   const [errors, setErrors] = useState<IniError[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(iniContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
@@ -170,16 +183,43 @@ function RawIniContent() {
   return (
     <div className="h-full w-full bg-[#051821] border border-[#266867] rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
        <div className="bg-[#1A4645] px-4 py-2.5 border-b border-emu-border/30 flex items-center justify-between shrink-0">
-          <div className="flex items-center">
-            <FileCode className="w-4 h-4 text-emu-accent mr-2" />
-            <span className="text-[11px] font-mono text-white/50 tracking-wider">config.ini</span>
-          </div>
+        <div className="flex items-center gap-3">
+          <button 
+            type="button"
+            onClick={handleCopy}
+            className="p-1.5 rounded-md hover:bg-emu-accent/20 transition-all group/copy relative"
+            title="Copia negli appunti"
+          >
+            <AnimatePresence mode="wait">
+              {copied ? (
+                <motion.div
+                  key="check"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <Check className="w-4 h-4 text-green-400" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="copy"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="text-emu-accent group-hover/copy:scale-110 transition-transform"
+                >
+                  <Copy className="w-4 h-4" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
           {errors.length > 0 && (
             <div className="flex items-center gap-1.5 text-emu-accent animate-pulse">
               <AlertCircle className="w-3.5 h-3.5" />
-              <span className="text-[9px] font-bold uppercase tracking-widest">{errors.length} Avvisi di Formato</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{errors.length} Avvisi de Formato</span>
             </div>
           )}
+        </div>
        </div>
        
        <div className="flex-1 relative overflow-hidden flex group/editor">

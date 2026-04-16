@@ -131,7 +131,7 @@ export default function Home() {
                       </div>
  
                       {/* Il pannello a destra (Monitor di Anteprima) - Hidden below XL for better focus */}
-                      <div className="hidden xl:block shrink-0 w-full xl:w-[400px] h-fit sticky top-8">
+                      <div className="hidden xl:block shrink-0 w-full xl:w-[400px] h-[calc(100vh-12rem)] sticky top-8">
                          <TerminalPreview />
                       </div>
 
