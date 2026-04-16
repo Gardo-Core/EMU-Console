@@ -18,8 +18,8 @@ export function BehaviorTab() {
       >
         <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Esecuzione e logica UI</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">
-          <ToggleSwitch name="autoConnect" label="Auto-Connessione" tab="behavior" tooltip="Avvia automaticamente la connessione all'avvio di Glink." />
-          <ToggleSwitch name="noAutoLock" label="Disabilita Blocco Schermo" tab="behavior" tooltip="Impedisce il blocco dello schermo del dispositivo mentre Glink è in primo piano." />
+          <ToggleSwitch name="autoConnect" label="Auto-Connessione" tab="behavior" tooltip="Avvia automaticamente la connessione all'avvio di E2K Emu." />
+          <ToggleSwitch name="noAutoLock" label="Disabilita Blocco Schermo" tab="behavior" tooltip="Impedisce il blocco dello schermo del dispositivo mentre E2K Emu è in primo piano." />
           <ToggleSwitch name="anyCmdResets" label="Qualsiasi Tasto CMD Resetta Errore" tab="behavior" tooltip="Consente a tasti diversi dal tasto RESET dedicato di cancellare uno stato di errore di input AS/400 attivo, migliorando la produttività dell'utente sulle tastiere mobili limitate." />
           
           <div className="col-span-12 h-px bg-[#266867]/30 my-2" />
@@ -60,7 +60,7 @@ export function BehaviorTab() {
             label="Password Profilo" 
             tab="behavior"
             type="password" 
-            tooltip="Imposta una password amministratore per proteggere questo profilo di configurazione. Applicheremo automaticamente il formato hash Glink richiesto." 
+            tooltip="Imposta una password amministratore per proteggere questo profilo di configurazione. Applicheremo automaticamente il formato hash E2K Emu richiesto." 
             placeholder="Inserisci password personalizzata..." 
           />
         </div>

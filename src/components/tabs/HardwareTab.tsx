@@ -22,7 +22,7 @@ export function HardwareTab() {
             name="barcodeEnable" 
             label="Modalità Integrazione" 
             tab="hardware"
-            tooltip="Modalità in cui lo scanner hardware si interfaccia con Glink (valori specifici del dispositivo come 2, 10 o 15)." 
+            tooltip="Modalità in cui lo scanner hardware si interfaccia con E2K Emu (valori specifici del dispositivo come 2, 10 o 15)." 
             options={[
               { value: 0, label: 'Disabilitato' },
               { value: 2, label: 'Intent API (2)' },

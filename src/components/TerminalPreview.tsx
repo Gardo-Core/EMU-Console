@@ -11,9 +11,9 @@ import { ConfigFormValues } from "@/lib/schema";
 function ScreenContent() {
   const { watch } = useFormContext();
   // Watch only necessary fields for the screen preview
-  const values = watch(["fontSize", "hostname", "profileName", "colorRed", "colorGreen", "colorBlue", "colorMagenta", "colorYellow", "colorCyan", "colorWhite", "scrColor", "stsColor"]);
+  const values = watch(["fontSize", "hostname", "profileName", "scrColor", "stsColor"]);
   const [
-    fontSizeVal, hostname, profileName, colorRed, colorGreen, colorBlue, colorMagenta, colorYellow, colorCyan, colorWhite, scrColor, stsColor
+    fontSizeVal, hostname, profileName, scrColor, stsColor
   ] = values;
   
   const fontSize = (fontSizeVal as number) || 29;
@@ -22,20 +22,20 @@ function ScreenContent() {
   const getColorByIndex = (index: number) => {
     switch (index) {
       case 0: return "#000000";
-      case 1: return colorRed || "#f01818";
-      case 2: return colorGreen || "#24d830";
-      case 3: return colorBlue || "#7890f0";
-      case 4: return colorMagenta || "#ff00ff";
-      case 5: return colorYellow || "#ffff00";
-      case 6: return colorCyan || "#58f0f0";
-      case 7: return colorWhite || "#ffffff";
+      case 1: return "#f01818"; // Red
+      case 2: return "#24d830"; // Green
+      case 3: return "#7890f0"; // Blue
+      case 4: return "#ff00ff"; // Magenta
+      case 5: return "#ffff00"; // Yellow
+      case 6: return "#58f0f0"; // Cyan
+      case 7: return "#ffffff"; // White
       default: return "#ffffff";
     }
   };
 
-  const bgColor = Number(scrColor) === 0 ? "#000000" : (Number(scrColor) === 7 ? colorWhite : "#000000");
+  const bgColor = Number(scrColor) === 0 ? "#000000" : (Number(scrColor) === 7 ? "#ffffff" : "#000000");
   const stsBgColor = getColorByIndex(Number(stsColor ?? 3));
-  const stsTextColor = (Number(stsColor) === 0) ? colorWhite : "#ffffff";
+  const stsTextColor = (Number(stsColor) === 0) ? "#ffffff" : "#ffffff";
 
   const host = (hostname || "ASP.BLUSYS.IT").slice(0, 15).padEnd(15, ' ');
   const profile = (profileName || "EMUConfig").slice(0, 15).padEnd(15, ' ');

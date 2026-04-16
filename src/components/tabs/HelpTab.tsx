@@ -11,21 +11,21 @@ export function HelpTab() {
        </p>
        
        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mb-8">
-         <a href="/asset/Administrator GLINK.pdf#page=94" target="_blank" className="bg-emu-surface border border-emu-border hover:border-emu-highlight px-4 py-3 rounded-lg flex items-center transition-all glow-shadow">
+         <a href="/asset/Administrator GLINK.pdf#page=112" target="_blank" className="bg-emu-surface border border-emu-border hover:border-emu-highlight px-4 py-3 rounded-lg flex items-center transition-all glow-shadow">
            <FileText className="w-5 h-5 text-emu-accent mr-3 flex-shrink-0" />
            <div>
              <div className="text-sm font-medium">Modelli TN5250</div>
              <div className="text-xs opacity-50">Pagina 94</div>
            </div>
          </a>
-         <a href="/asset/Administrator GLINK.pdf#page=125" target="_blank" className="bg-emu-surface border border-emu-border hover:border-emu-highlight px-4 py-3 rounded-lg flex items-center transition-all glow-shadow">
+         <a href="/asset/Administrator GLINK.pdf#page=143" target="_blank" className="bg-emu-surface border border-emu-border hover:border-emu-highlight px-4 py-3 rounded-lg flex items-center transition-all glow-shadow">
            <FileText className="w-5 h-5 text-emu-accent mr-3 flex-shrink-0" />
            <div>
              <div className="text-sm font-medium">Opzioni SSL</div>
              <div className="text-xs opacity-50">Pagina 125</div>
            </div>
          </a>
-         <a href="/asset/Administrator GLINK.pdf#page=42" target="_blank" className="bg-emu-surface border border-emu-border hover:border-emu-highlight px-4 py-3 rounded-lg flex items-center transition-all glow-shadow">
+         <a href="/asset/Administrator GLINK.pdf#page=60" target="_blank" className="bg-emu-surface border border-emu-border hover:border-emu-highlight px-4 py-3 rounded-lg flex items-center transition-all glow-shadow">
            <FileText className="w-5 h-5 text-emu-accent mr-3 flex-shrink-0" />
            <div>
              <div className="text-sm font-medium">Config. Barcode</div>

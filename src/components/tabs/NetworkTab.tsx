@@ -20,7 +20,7 @@ export function NetworkTab() {
             name="profileName" 
             label="Nome Profilo" 
             tab="network"
-            tooltip="L'identificativo unico per questo profilo di configurazione nell'ambiente Glink." 
+            tooltip="L'identificativo unico per questo profilo di configurazione nell'ambiente E2K Emu." 
           />
           <FormInput 
             name="hostname" 
@@ -43,7 +43,7 @@ export function NetworkTab() {
             name="licenseKey" 
             label="Chiave di Licenza" 
             tab="network"
-            tooltip="La tua chiave di attivazione della licenza Glink." 
+            tooltip="La tua chiave di attivazione della licenza E2K Emu." 
           />
           <FormInput 
             name="e2kServer" 

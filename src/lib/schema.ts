@@ -19,13 +19,6 @@ export const configSchema = z.object({
   
   // Appearance
   fontSize: z.coerce.number().int().min(8).max(48),
-  colorMagenta: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
-  colorCyan: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
-  colorBlue: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
-  colorYellow: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
-  colorWhite: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
-  colorGreen: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
-  colorRed: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code"),
   scrColor: z.coerce.number(),
   stsColor: z.coerce.number(),
   

@@ -190,7 +190,7 @@ export function SecurityTab() {
                         >
                           Resetta Template
                         </button>
-                        <InfoTooltip content="CRITICO: Il testo all'interno delle virgolette deve CORRISPONDERE ESATTAMENTE a ciò che appare sullo schermo del terminale. Glink aspetterà questa stringa prima di scrivere." align="right" />
+                        <InfoTooltip content="CRITICO: Il testo all'interno delle virgolette deve CORRISPONDERE ESATTAMENTE a ciò che appare sullo schermo del terminale. E2K Emu aspetterà questa stringa prima di scrivere." align="right" />
                       </div>
                     </div>
                     

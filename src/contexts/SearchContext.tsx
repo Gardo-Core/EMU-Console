@@ -29,13 +29,6 @@ const FIELD_REGISTRY: { id: string; label: string; tab: TabId }[] = [
   { id: "fontSize", label: "Dimensione Font", tab: "appearance" },
   { id: "scrColor", label: "Sfondo", tab: "appearance" },
   { id: "stsColor", label: "Riga di Stato", tab: "appearance" },
-  { id: "colorMagenta", label: "Magenta", tab: "appearance" },
-  { id: "colorCyan", label: "Ciano", tab: "appearance" },
-  { id: "colorBlue", label: "Blu", tab: "appearance" },
-  { id: "colorYellow", label: "Giallo", tab: "appearance" },
-  { id: "colorWhite", label: "Bianco", tab: "appearance" },
-  { id: "colorGreen", label: "Verde", tab: "appearance" },
-  { id: "colorRed", label: "Rosso", tab: "appearance" },
   // Hardware
   { id: "barcodeEnable", label: "Modalità Integrazione", tab: "hardware" },
   { id: "barcodeDoAfter", label: "Azione Post-Scansione", tab: "hardware" },

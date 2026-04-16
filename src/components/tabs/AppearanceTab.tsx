@@ -1,5 +1,4 @@
 "use client";
-import { ColorPicker } from "../ui/ColorPicker";
 import { Slider } from "../ui/Slider";
 import { FormSelect } from "../ui/FormSelect";
 import { motion } from "framer-motion";
@@ -45,21 +44,6 @@ export function AppearanceTab() {
         </div>
       </motion.div>
 
-      <motion.div 
-        variants={itemVariants}
-        className="glass-card shadow-xl"
-      >
-        <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Rimappatura tavolozza</h3>
-        <div className="grid grid-cols-12 gap-y-6 gap-x-4">
-          <ColorPicker name="colorMagenta" label="Magenta" tab="appearance" tooltip="Colore sostitutivo per il Magenta AS400" />
-          <ColorPicker name="colorCyan" label="Ciano" tab="appearance" tooltip="Colore sostitutivo per il Ciano AS400" />
-          <ColorPicker name="colorBlue" label="Blu" tab="appearance" tooltip="Colore sostitutivo per il Blu AS400" />
-          <ColorPicker name="colorYellow" label="Giallo" tab="appearance" tooltip="Colore sostitutivo per il Giallo AS400" />
-          <ColorPicker name="colorWhite" label="Bianco" tab="appearance" tooltip="Colore sostitutivo per il Bianco AS400" />
-          <ColorPicker name="colorGreen" label="Verde" tab="appearance" tooltip="Colore sostitutivo per il Verde AS400" />
-          <ColorPicker name="colorRed" label="Rosso" tab="appearance" tooltip="Colore sostitutivo per il Rosso AS400" />
-        </div>
-      </motion.div>
     </div>
   );
 }
