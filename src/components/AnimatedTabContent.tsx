@@ -9,6 +9,12 @@ import { AppearanceTab } from "./tabs/AppearanceTab";
 import { HardwareTab } from "./tabs/HardwareTab";
 import { HelpTab } from "./tabs/HelpTab";
 
+const variants: any = {
+  initial: { opacity: 0, y: 15 },
+  enter: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 25, staggerChildren: 0.05, delayChildren: 0.05 } },
+  exit: { opacity: 0, y: -15, transition: { duration: 0.2 } },
+};
+
 export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
   const renderTab = () => {
     switch (activeTab) {
