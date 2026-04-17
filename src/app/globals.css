@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* Fluid Typography System */
+@theme inline {
+  --color-emu-base: #051821;
+  --color-emu-surface: #1A4645;
+  --color-emu-border: #266867;
+  --color-emu-accent: #F58800;
+  --color-emu-highlight: #F8BC24;
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* Fluid Font Sizes using clamp() */
+  /* Formula: clamp(min, preferred, max) */
+  --font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.875rem);
+  --font-size-sm: clamp(0.8rem, 0.75rem + 0.25vw, 1rem); 
+  --font-size-base: clamp(0.9rem, 0.85rem + 0.3vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  --font-size-xl: clamp(1.25rem, 1.1rem + 0.8vw, 1.875rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2.25rem);
+  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.5vw, 3rem);
+  --font-size-4xl: clamp(2.25rem, 1.8rem + 2vw, 4rem);
+}
+
+:root {
+  color-scheme: dark;
+  --spacing-fluid: clamp(1rem, 0.8rem + 1vw, 2.5rem);
+}
+
+body {
+  background-color: var(--color-emu-base);
+  color: #ffffff;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  overflow-x: hidden; /* Prevent horizontal scroll universally */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Adaptive Glassmorphism */
+.glass-panel {
+  background: rgba(26, 70, 69, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(38, 104, 103, 0.5);
+  padding: var(--spacing-fluid);
+}
+
+.glass-card {
+  background: rgba(26, 70, 69, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(38, 104, 103, 0.4);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* Glow classes */
+.glow-text {
+  text-shadow: 0 0 10px rgba(245, 136, 0, 0.5);
+}
+
+.glow-shadow {
+  transition: box-shadow 0.2s ease-out;
+}
+.glow-shadow:hover, .glow-shadow:focus-within {
+  box-shadow: 0 0 15px rgba(245, 136, 0, 0.3);
+}
+
+/* Form inputs overrides */
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 0.25rem;
+}
+
+/* Custom scrollbar for dark UI */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-emu-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-emu-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-emu-surface);
+}
