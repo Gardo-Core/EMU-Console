@@ -49,74 +49,77 @@ export function TopBar({
   }, []);
 
   return (
-    <div className="h-16 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-4 sm:px-6 shrink-0 z-[60] sticky top-0">
-      
-      {/* Sinistra: Logo + Mobile Toggle */}
-      <div className="flex items-center gap-4">
-        <button 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 -ml-2 text-white md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors"
-          type="button"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-
-        <div className="flex items-baseline gap-1 select-none">
-          <span className="text-white font-bold tracking-tight text-xl">EMU</span>
-          <span className="text-white font-thin tracking-tight text-xl" style={{ fontWeight: 100 }}>Console</span>
-        </div>
+    <>
+      <div className="h-16 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-4 sm:px-6 shrink-0 z-[60] sticky top-0">
         
-        {isDirty && (
-          <div className="w-2.5 h-2.5 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
-        )}
-      </div>
+        {/* Sinistra: Logo + Mobile Toggle */}
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 -ml-2 text-white md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors"
+            type="button"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
 
-      {/* Centro: Campo di Ricerca */}
-      <div className="hidden md:flex items-center relative group">
-        <div className="absolute left-3 text-white/30 group-focus-within:text-emu-highlight transition-colors">
-          <Search className="w-3.5 h-3.5" />
-        </div>
-        <input 
-          ref={inputRef}
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Cerca parametri o INI..."
-          className="bg-[#1A4645]/40 focus:bg-[#1A4645]/60 border border-[#266867]/40 focus:border-emu-highlight/50 rounded-full pl-9 pr-24 py-1.5 transition-all text-white text-xs w-64 focus:w-96 outline-none placeholder:text-white/20"
-        />
-        <div className="absolute right-3 flex items-center gap-2">
-          {matches.length > 0 && searchTerm && (
-            <span className="text-[10px] font-mono text-emu-highlight/80 bg-emu-highlight/10 px-1.5 py-0.5 rounded border border-emu-highlight/20">
-              {activeMatchIndex + 1}/{matches.length}
-            </span>
+          <div className="flex items-baseline gap-1 select-none">
+            <span className="text-white font-bold tracking-tight text-xl">EMU</span>
+            <span className="text-white font-thin tracking-tight text-xl" style={{ fontWeight: 100 }}>Console</span>
+          </div>
+          
+          {isDirty && (
+            <div className="w-2.5 h-2.5 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
           )}
-          <AnimatePresence>
-            {searchTerm && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                onClick={() => setSearchTerm("")}
-                className="hover:text-white text-white/30 transition-colors"
-                type="button"
-              >
-                <X className="w-3 h-3" />
-              </motion.button>
-            )}
-          </AnimatePresence>
-          <span className="px-1.5 py-0.5 bg-black/40 rounded text-[9px] font-mono border border-white/10 text-white/30 uppercase tracking-tighter">
-            {navigator.userAgent.includes('Mac') ? '⌘K' : 'Ctrl+K'}
-          </span>
         </div>
+
+        {/* Centro: Campo di Ricerca */}
+        <div className="hidden md:flex items-center relative group">
+          <div className="absolute left-3 text-white/30 group-focus-within:text-emu-highlight transition-colors">
+            <Search className="w-3.5 h-3.5" />
+          </div>
+          <input 
+            ref={inputRef}
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Cerca parametri o INI..."
+            className="bg-[#1A4645]/40 focus:bg-[#1A4645]/60 border border-[#266867]/40 focus:border-emu-highlight/50 rounded-full pl-9 pr-24 py-1.5 transition-all text-white text-xs w-64 focus:w-96 outline-none placeholder:text-white/20"
+          />
+          <div className="absolute right-3 flex items-center gap-2">
+            {matches.length > 0 && searchTerm && (
+              <span className="text-[10px] font-mono text-emu-highlight/80 bg-emu-highlight/10 px-1.5 py-0.5 rounded border border-emu-highlight/20">
+                {activeMatchIndex + 1}/{matches.length}
+              </span>
+            )}
+            <AnimatePresence>
+              {searchTerm && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={() => setSearchTerm("")}
+                  className="hover:text-white text-white/30 transition-colors"
+                  type="button"
+                >
+                  <X className="w-3 h-3" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+            <span className="px-1.5 py-0.5 bg-black/40 rounded text-[9px] font-mono border border-white/10 text-white/30 uppercase tracking-tighter">
+              {navigator.userAgent.includes('Mac') ? '⌘K' : 'Ctrl+K'}
+            </span>
+          </div>
+        </div>
+
+        {/* Destra: Labels */}
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:block text-[10px] sm:text-xs text-emu-highlight/60 uppercase tracking-[0.2em] font-semibold">Studio di Configurazione</span>
+        </div>
+
       </div>
 
-      {/* Destra: Labels */}
-      <div className="flex items-center gap-4">
-        <span className="hidden sm:block text-[10px] sm:text-xs text-emu-highlight/60 uppercase tracking-[0.2em] font-semibold">Studio di Configurazione</span>
-      </div>
-
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Moved outside of the sticky container */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -125,14 +128,15 @@ export function TopBar({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] md:hidden"
             />
             <motion.div 
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-full w-[280px] bg-[#051821] border-r border-[#266867]/50 p-6 z-[70] md:hidden shadow-2xl"
+              style={{ backgroundColor: "#051821" }} // Solid background color
+              className="fixed top-0 left-0 h-full w-[280px] border-r border-[#266867]/50 p-6 z-[80] md:hidden shadow-2xl"
             >
               <div className="flex flex-col h-full gap-8">
                 <div className="flex items-center justify-between">
@@ -168,7 +172,6 @@ export function TopBar({
           </>
         )}
       </AnimatePresence>
-
-    </div>
+    </>
   );
 }
