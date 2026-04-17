@@ -262,8 +262,9 @@ export function TopBar({
                   </button>
                 </div>
 
-                <div className="mt-auto pt-6 border-t border-emu-border/20">
+                <div className="mt-auto pt-6 border-t border-emu-border/20 flex items-center justify-between">
                      <p className="text-[10px] text-white/30 uppercase tracking-widest">v0.1.0 Beta</p>
+                     <img src="/asset/Emu_Icon.svg" alt="EMU Logo" className="w-8 h-8 opacity-30" />
                 </div>
               </div>
             </motion.div>
