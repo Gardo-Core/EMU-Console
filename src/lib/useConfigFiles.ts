@@ -95,13 +95,12 @@ export function useConfigFiles() {
       // 1. Calcolo checksum
       const checksum = await computeChecksum(file);
 
-      // 2. Check se esiste già un record per questo filename e questo client
+      // 2. Check se esiste già un record per questo filename e questo client (anche se eliminato)
       const { data: existingFile } = await supabase
         .from("config_files")
-        .select("id, latest_version")
+        .select("id, latest_version, deleted_at")
         .eq("client_id", clientId)
         .eq("file_name", file.name)
-        .is("deleted_at", null)
         .single();
 
       let fileId: string;
@@ -110,6 +109,17 @@ export function useConfigFiles() {
       if (existingFile) {
         fileId = existingFile.id;
         newVersion = existingFile.latest_version + 1;
+
+        // Se il file era eliminato, lo "ripristiniamo" durante l'update
+        const { error: updateError } = await supabase
+          .from("config_files")
+          .update({ 
+            latest_version: newVersion,
+            deleted_at: null // Lo riattiviamo se era soft-deleted
+          })
+          .eq("id", fileId);
+
+        if (updateError) throw updateError;
 
         // 3. Check duplicato checksum vs ultima versione
         const { data: latestVersion } = await supabase
