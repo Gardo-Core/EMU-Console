@@ -1,11 +1,12 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Search, X, Menu } from "lucide-react";
+import { Search, X, Menu, Upload, AlertTriangle } from "lucide-react";
 import { ToggleSwitch } from "./ui/ToggleSwitch";
 import { useSearch } from "@/contexts/SearchContext";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { parseIniToValues } from "@/lib/iniValidator";
 
 import { TabId } from "./TabNavigation";
 import { AppMode } from "./LeftNav";
@@ -17,10 +18,12 @@ export function TopBar({
   setActiveTab: (tab: TabId) => void, 
   setAppMode: (mode: AppMode) => void 
 }) {
-  const { watch, formState } = useFormContext();
+  const { watch, formState, reset } = useFormContext();
   const { searchTerm, setSearchTerm, matches, activeMatchIndex, goToNextMatch } = useSearch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const profileName = watch("profileName") || "Profilo Senza Nome";
   const isDirty = Object.keys(formState.dirtyFields).length > 0;
@@ -34,6 +37,26 @@ export function TopBar({
         goToNextMatch(setActiveTab, setAppMode);
       }
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        const parsedValues = parseIniToValues(content);
+        // Reset the form with current values + parsed values to ensure we don't lose anything not in the INI
+        const currentValues = watch();
+        reset({ ...currentValues, ...parsedValues }, { keepDefaultValues: true });
+        setShowWarning(false);
+      }
+    };
+    reader.readAsText(file);
+    // Reset file input so same file can be uploaded again
+    e.target.value = "";
   };
 
   // Listener per la scorciatoia da tastiera (Cmd+K / Ctrl+K)
@@ -72,44 +95,63 @@ export function TopBar({
           )}
         </div>
 
-        {/* Centro: Campo di Ricerca */}
-        <div className="hidden md:flex items-center relative group">
-          <div className="absolute left-3 text-white/30 group-focus-within:text-emu-highlight transition-colors">
-            <Search className="w-3.5 h-3.5" />
-          </div>
-          <input 
-            ref={inputRef}
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Cerca parametri o INI..."
-            className="bg-[#1A4645]/40 focus:bg-[#1A4645]/60 border border-[#266867]/40 focus:border-emu-highlight/50 rounded-full pl-9 pr-24 py-1.5 transition-all text-white text-xs w-64 focus:w-96 outline-none placeholder:text-white/20"
-          />
-          <div className="absolute right-3 flex items-center gap-2">
-            {matches.length > 0 && searchTerm && (
-              <span className="text-[10px] font-mono text-emu-highlight/80 bg-emu-highlight/10 px-1.5 py-0.5 rounded border border-emu-highlight/20">
-                {activeMatchIndex + 1}/{matches.length}
-              </span>
-            )}
-            <AnimatePresence>
-              {searchTerm && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  onClick={() => setSearchTerm("")}
-                  className="hover:text-white text-white/30 transition-colors"
-                  type="button"
-                >
-                  <X className="w-3 h-3" />
-                </motion.button>
+        {/* Centro: Campo di Ricerca e Pulsante Carica */}
+        <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center relative group">
+            <div className="absolute left-3 text-white/30 group-focus-within:text-emu-highlight transition-colors">
+              <Search className="w-3.5 h-3.5" />
+            </div>
+            <input 
+              ref={inputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Cerca parametri o INI..."
+              className="bg-[#1A4645]/40 focus:bg-[#1A4645]/60 border border-[#266867]/40 focus:border-emu-highlight/50 rounded-full pl-9 pr-24 py-1.5 transition-all text-white text-xs w-64 focus:w-80 outline-none placeholder:text-white/20"
+            />
+            <div className="absolute right-3 flex items-center gap-2">
+              {matches.length > 0 && searchTerm && (
+                <span className="text-[10px] font-mono text-emu-highlight/80 bg-emu-highlight/10 px-1.5 py-0.5 rounded border border-emu-highlight/20">
+                  {activeMatchIndex + 1}/{matches.length}
+                </span>
               )}
-            </AnimatePresence>
-            <span className="px-1.5 py-0.5 bg-black/40 rounded text-[9px] font-mono border border-white/10 text-white/30 uppercase tracking-tighter">
-              {navigator.userAgent.includes('Mac') ? '⌘K' : 'Ctrl+K'}
-            </span>
+              <AnimatePresence>
+                {searchTerm && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    onClick={() => setSearchTerm("")}
+                    className="hover:text-white text-white/30 transition-colors"
+                    type="button"
+                  >
+                    <X className="w-3 h-3" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+              <span className="px-1.5 py-0.5 bg-black/40 rounded text-[9px] font-mono border border-white/10 text-white/30 uppercase tracking-tighter">
+                {navigator.userAgent.includes('Mac') ? '⌘K' : 'Ctrl+K'}
+              </span>
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setShowWarning(true)}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emu-highlight/10 border border-emu-highlight/30 text-emu-highlight text-xs font-bold hover:bg-emu-highlight hover:text-emu-base transition-all group scale-95"
+          >
+            <Upload className="w-3.5 h-3.5 group-hover:translate-y-[-1px] transition-transform" />
+            CARICA INI
+          </button>
+          
+          <input 
+            ref={fileInputRef}
+            type="file"
+            accept=".ini"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </div>
 
         {/* Destra: Labels */}
@@ -118,6 +160,54 @@ export function TopBar({
         </div>
 
       </div>
+
+      {/* Warning Popup Overlay */}
+      <AnimatePresence>
+        {showWarning && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowWarning(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-[#051821] border border-[#F8BC24]/30 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(248,188,36,0.1)] p-6"
+            >
+              <div className="flex items-start gap-4 mb-6">
+                <div className="p-3 rounded-xl bg-[#F8BC24]/10 text-[#F8BC24]">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg leading-tight mb-2">Sovrascrivere Configurazione?</h3>
+                  <p className="text-white/60 text-sm leading-relaxed">
+                    Il caricamento di un nuovo file INI sostituirà istantaneamente tutti i parametri attuali nel progetto. Questa azione non può essere annullata.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowWarning(false)}
+                  className="flex-1 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-semibold transition-colors"
+                >
+                  Annulla
+                </button>
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#F8BC24] hover:bg-[#ffca42] text-[#051821] text-sm font-bold transition-all"
+                >
+                  Conferma e Carica
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Menu Overlay - Moved outside of the sticky container */}
       <AnimatePresence>
