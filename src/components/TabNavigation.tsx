@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 
 export const TABS = [
   { id: "network", label: "Rete e Host", icon: Wifi },
-  { id: "security", label: "Sicurezza e Autenticazione", icon: Shield },
+  { id: "security", label: "Log-In", icon: Shield },
   { id: "behavior", label: "Comportamento", icon: Settings },
   { id: "appearance", label: "Aspetto", icon: Palette },
   { id: "hardware", label: "Hardware", icon: ScanBarcode },
-  { id: "help", label: "Aiuto e Documentazione", icon: BookOpen },
+  { id: "help", label: "Supporto", icon: BookOpen },
 ] as const;
 
 export type TabId = typeof TABS[number]["id"];
@@ -28,7 +28,7 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
             type="button"
             onClick={() => onSelect(tab.id)}
             className={cn(
-              "relative flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors outline-none shrink-0 min-w-max",
+              "relative flex-1 sm:flex-none flex items-center justify-center gap-2 px-2.5 sm:px-3 py-2 text-[13px] font-medium rounded-lg transition-colors outline-none shrink-0 min-w-max",
               isActive ? "text-emu-base" : "text-white/70 hover:text-white hover:bg-white/5"
             )}
             style={{
