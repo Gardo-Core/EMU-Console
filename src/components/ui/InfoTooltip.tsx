@@ -5,9 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Piccola icona a forma di punto di domanda che, al passaggio del mouse (o al tocco),
+ * mostra un fumetto informativo (tooltip) per spiegare i campi più tecnici.
+ */
 export function InfoTooltip({ content, align = "center" }: { content: string, align?: "center" | "right" | "left" }) {
   const [open, setOpen] = useState(false);
 
+  // Calcoliamo l'allineamento del fumetto rispetto all'icona
   const getAlignClasses = () => {
     switch (align) {
       case "right": return "right-0 translate-x-0";
@@ -16,6 +21,7 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     }
   };
 
+  // Calcoliamo l'allineamento della "frettina" del fumetto
   const getArrowAlignClasses = () => {
     switch (align) {
       case "right": return "right-1.5 translate-x-0";
@@ -38,16 +44,15 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            /* MODIFICHE PRINCIPALI QUI SOTTO */
             className={cn(
               "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] rounded-xl border border-white/10 bg-[#051821]/60 p-4 text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none z-[100]",
-              "backdrop-blur-md backdrop-saturate-150", // Aggiunto saturate per far risaltare i colori sotto
+              "backdrop-blur-md backdrop-saturate-150", // Glassmorphism
               getAlignClasses()
             )}
-            style={{ WebkitBackdropFilter: "blur(12px)" }} // Fix per Safari/iOS
+            style={{ WebkitBackdropFilter: "blur(12px)" }} // Fix necessario per i browser basati su WebKit (Safari)
           >
             {content}
-            {/* Freccia del tooltip corretta per non rompere il blur */}
+            {/* Freccia del fumetto */}
             <div className={cn(
               "absolute top-full border-[6px] border-transparent border-t-[#051821]/60", 
               getArrowAlignClasses()

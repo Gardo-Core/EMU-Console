@@ -4,14 +4,22 @@ import { FormSelect } from "../ui/FormSelect";
 import { FormInput } from "../ui/FormInput";
 import { motion } from "framer-motion";
 
+/**
+ * Varianti di animazione per l'ingresso morbido degli elementi.
+ */
 const itemVariants: any = {
   initial: { opacity: 0, y: 15 },
   enter: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 25 } }
 };
 
+/**
+ * Scheda Comportamento: Controlla come l'app reagisce alle azioni dell'utente,
+ * la gestione della tastiera software e la sicurezza locale del profilo.
+ */
 export function BehaviorTab() {
   return (
     <div className="space-y-6">
+      {/* BLOCCO: LOGICA DI ESECUZIONE */}
       <motion.div 
         variants={itemVariants}
         className="glass-card shadow-xl"
@@ -49,6 +57,7 @@ export function BehaviorTab() {
         </div>
       </motion.div>
 
+      {/* BLOCCO: SICUREZZA LOCALE */}
       <motion.div 
         variants={itemVariants}
         className="glass-card shadow-xl"

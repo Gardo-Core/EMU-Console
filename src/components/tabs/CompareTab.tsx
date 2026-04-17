@@ -2,12 +2,18 @@
 import { useState } from "react";
 import { DiffViewer } from "../ui/DiffViewer";
 
+/**
+ * Scheda Confronta (INI Comparer): permette di caricare due file .ini differenti
+ * per visualizzarne le differenze riga per riga. 
+ * Molto utile per debuggare configurazioni che "non funzionano" confrontandole con quelle funzionanti.
+ */
 export function CompareTab() {
   const [fileA, setFileA] = useState<string>("");
   const [fileB, setFileB] = useState<string>("");
   const [nameA, setNameA] = useState<string>("File A");
   const [nameB, setNameB] = useState<string>("File B");
 
+  // Gestore per l'upload dei file tramite FileReader
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isFileA: boolean) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -27,16 +33,19 @@ export function CompareTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Pannello Upload File di Base */}
         <div className="glass-panel p-4 rounded-lg flex flex-col space-y-2">
-           <label className="text-sm font-medium text-emu-highlight">Upload Baseline INI</label>
+           <label className="text-sm font-medium text-emu-highlight">Carica INI Originale (Baseline)</label>
            <input type="file" accept=".ini,.glinki" onChange={(e) => handleFileUpload(e, true)} className="text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emu-accent file:text-emu-base hover:file:bg-emu-highlight" />
         </div>
+        {/* Pannello Upload File Modificato */}
         <div className="glass-panel p-4 rounded-lg flex flex-col space-y-2">
-           <label className="text-sm font-medium text-emu-highlight">Upload Modified INI</label>
+           <label className="text-sm font-medium text-emu-highlight">Carica INI Modificato</label>
            <input type="file" accept=".ini,.glinki" onChange={(e) => handleFileUpload(e, false)} className="text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emu-accent file:text-emu-base hover:file:bg-emu-highlight" />
         </div>
       </div>
 
+      {/* Se almeno un file è stato caricato, mostriamo il DiffViewer */}
       {(fileA || fileB) && (
         <div className="mt-4">
           <div className="flex bg-emu-surface border border-b-0 border-emu-border rounded-t-lg p-2 font-mono text-sm shadow-md">

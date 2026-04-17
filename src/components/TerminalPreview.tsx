@@ -8,9 +8,14 @@ import { cn } from "@/lib/utils";
 import { mergeTemplate } from "@/lib/template";
 import { ConfigFormValues } from "@/lib/schema";
 
+/**
+ * Componente ScreenContent: Simula visivamente un monitor AS400.
+ * Reagisce in tempo reale al cambio di colori, font e nomi nel form.
+ */
 function ScreenContent() {
   const { watch } = useFormContext();
-  // Watch only necessary fields for the screen preview
+  
+  // Osserviamo solo i campi che impattano l'estetica del monitor
   const values = watch(["fontSize", "hostname", "profileName", "scrColor", "stsColor"]);
   const [
     fontSizeVal, hostname, profileName, scrColor, stsColor
@@ -18,33 +23,40 @@ function ScreenContent() {
   
   const fontSize = (fontSizeVal as number) || 29;
   
-  // Risoluzione dinamica dei colori basata sugli indici
+  /**
+   * Mappa dei colori standard Glink/AS400.
+   * Questi indici (0-7) corrispondono ai valori salvati nel file .ini.
+   */
   const getColorByIndex = (index: number) => {
     switch (index) {
-      case 0: return "#000000";
-      case 1: return "#f01818"; // Red
-      case 2: return "#24d830"; // Green
-      case 3: return "#7890f0"; // Blue
+      case 0: return "#000000"; // Nero
+      case 1: return "#f01818"; // Rosso
+      case 2: return "#24d830"; // Verde (Classico)
+      case 3: return "#7890f0"; // Blu
       case 4: return "#ff00ff"; // Magenta
-      case 5: return "#ffff00"; // Yellow
-      case 6: return "#58f0f0"; // Cyan
-      case 7: return "#ffffff"; // White
+      case 5: return "#ffff00"; // Giallo
+      case 6: return "#58f0f0"; // Ciano
+      case 7: return "#ffffff"; // Bianco
       default: return "#ffffff";
     }
   };
 
+  // Logica per determinare i colori dello sfondo e della riga di stato
   const bgColor = Number(scrColor) === 0 ? "#000000" : (Number(scrColor) === 7 ? "#ffffff" : "#000000");
   const stsBgColor = getColorByIndex(Number(stsColor ?? 3));
-  const stsTextColor = (Number(stsColor) === 0) ? "#ffffff" : "#ffffff";
+  const stsTextColor = "#ffffff";
 
+  // Pulizia stringhe per il monitor (troncamento e padding per mantenere l'allineamento fisso)
   const host = (hostname || "ASP.BLUSYS.IT").slice(0, 15).padEnd(15, ' ');
   const profile = (profileName || "EMUConfig").slice(0, 15).padEnd(15, ' ');
   
   return (
     <div className="flex flex-col h-full items-center justify-start py-4">
-      {/* Fixed Dimension Monitor Frame (4:5 Ratio) */}
+      {/* Cornice del Monitor: Formato 4:5 con effetto bordi arrotondati e ombre interne */}
       <div className="w-full max-w-[400px] aspect-[4/5] bg-[#1a1a1a] rounded-[2rem] overflow-hidden border-[12px] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10 flex flex-col">
+         {/* Schermo emulato */}
          <div className="flex-1 overflow-auto p-4 relative" style={{ backgroundColor: bgColor, color: getColorByIndex(2), fontFamily: "'Courier New', Courier, monospace" }}>
+           {/* Effetto bagliore radiale per simulare i vecchi schermi CRT */}
            <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
            
            <div className="h-full w-full overflow-hidden flex items-start justify-start p-2">
@@ -60,17 +72,19 @@ function ScreenContent() {
      Programma/procedura . . .  [`}<span style={{ color: getColorByIndex(1) }}>          </span>{`]
      Menu. . . . . . . . . . .  [`}<span style={{ color: getColorByIndex(4) }}>          </span>{`]
      Libreria corrente . . . .  [`}<span style={{ color: getColorByIndex(6) }}>          </span>{`]
-  
+   
   `}
              </pre>
            </div>
            
+           {/* Riga di stato inferiore (Status Line) */}
            <div className="absolute bottom-0 left-0 right-0 px-2 py-1 flex items-center justify-between font-mono" style={{ fontSize: `12px`, backgroundColor: stsBgColor, color: stsTextColor }}>
              <span>MW</span>
              <span>000/000</span>
            </div>
          </div>
          
+         {/* Simulazione tasti fisici inferiori (per palmari ruggerizzati) */}
          <div className="h-10 bg-gradient-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
            {['Esc', 'F1', 'F3', 'F4', 'F12', 'Invio'].map(btn => (
              <motion.div 
@@ -92,9 +106,13 @@ import { AlertCircle } from "lucide-react";
 import { useRef } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 
-// Static cache for templates to prevent redundant network requests
+// Cache statica per i template: evita di scaricare lo stesso file ogni volta che l'utente muove uno slider
 const templateCache = new Map<string, string>();
 
+/**
+ * Componente RawIniContent: Un editor di testo avanzato che mostra il file .ini generato.
+ * Include: numeri di riga, evidenziazione della ricerca e validazione in tempo reale.
+ */
 function RawIniContent() {
   const { watch } = useFormContext();
   const { searchTerm } = useSearch();
@@ -114,7 +132,10 @@ function RawIniContent() {
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
 
-  // Sync scroll between textarea, line numbers, and highlight layer
+  /**
+   * Sincronizzazione scroll: trucco per mantenere allineati verticalmente 
+   * la textarea invisibile e i div sottostanti che mostrano i colori e i numeri di riga.
+   */
   const handleScroll = () => {
     if (textareaRef.current) {
       if (lineNumbersRef.current) lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
@@ -122,9 +143,13 @@ function RawIniContent() {
     }
   };
 
-  // Sync from Form to INI with debounce and caching
+  /**
+   * Sincronizzazione da Form a INI.
+   * Ogni volta che il form cambia, rigeneriamo il file .ini "mergiando" i valori.
+   * Abbiamo aggiunto un debounce di 300ms per non appesantire il browser.
+   */
   useEffect(() => {
-    if (isEditing) return;
+    if (isEditing) return; // Se l'utente sta scrivendo a mano nel codice, non lo sovrascriviamo
 
     const timer = setTimeout(async () => {
       try {
@@ -149,28 +174,33 @@ function RawIniContent() {
       } catch (err) {
         setIniContent("Errore nella risoluzione del payload INI dal vivo.");
       }
-    }, 300); // 300ms debounce
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [values, isEditing]);
 
-  // Sync from INI to Form (Disabled as per user preference to avoid overwriting)
+  /**
+   * Gestione modifica manuale (opzionale).
+   * Attiva la validazione sintattica anche se l'utente digita direttamente.
+   */
   const handleIniChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setIniContent(newContent);
     const newErrors = validateIni(newContent);
     setErrors(newErrors);
-    
-    // Auto-sync back to form is disabled to preserve form integrity
   };
 
   const lineNumbers = iniContent.split('\n').length;
 
-  // Function to highlight search term in the mirrored layer
+  /**
+   * Logica di evidenziazione ricerca:
+   * Dato che una textarea non supporta l'HTML interno, usiamo un "layer fantasma" 
+   * posizionato esattamente sotto, dove inseriamo tag <mark> per evidenziare i match.
+   */
   const getHighlightedContent = () => {
     if (!searchTerm || searchTerm.length < 2) return iniContent;
     
-    // Escape HTML special characters
+    // Escapiamo i caratteri pericolosi per evitare XSS o rotture del layout
     const escaped = iniContent
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -182,6 +212,7 @@ function RawIniContent() {
 
   return (
     <div className="h-full w-full bg-[#051821] border border-[#266867] rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+       {/* Toolbar superiore dell'editor */}
        <div className="bg-[#1A4645] px-4 py-2.5 border-b border-emu-border/30 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <button 
@@ -213,17 +244,19 @@ function RawIniContent() {
               )}
             </AnimatePresence>
           </button>
+          {/* Indicatore avvisi di validazione INI */}
           {errors.length > 0 && (
             <div className="flex items-center gap-1.5 text-emu-accent animate-pulse">
               <AlertCircle className="w-3.5 h-3.5" />
-              <span className="text-[9px] font-bold uppercase tracking-widest">{errors.length} Avvisi de Formato</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{errors.length} Avvisi di Formato</span>
             </div>
           )}
         </div>
        </div>
        
+       {/* Area di editing vera e propria */}
        <div className="flex-1 relative overflow-hidden flex group/editor">
-          {/* Main Input Area (Standard Textarea) */}
+          {/* Area di input visibile (ma trasparente per far vedere gli highlight sotto) */}
           <textarea
             ref={textareaRef}
             value={iniContent}
@@ -235,14 +268,14 @@ function RawIniContent() {
             className="flex-1 h-full bg-transparent p-4 pr-14 font-mono text-sm leading-tight text-[#a1a1aa] resize-none focus:outline-none custom-scrollbar selection:bg-emu-highlight/30 whitespace-pre z-10 caret-emu-accent"
           />
 
-          {/* Highlight Mirror Layer (Behind the textarea) */}
+          {/* Layer Specchio (Mirror) per evidenziare i risultati della ricerca */}
           <div 
             ref={highlightRef}
             className="absolute inset-0 p-4 pr-14 font-mono text-sm leading-tight text-transparent whitespace-pre overflow-hidden pointer-events-none select-none z-0"
             dangerouslySetInnerHTML={{ __html: getHighlightedContent() + '\n\n' }}
           />
 
-          {/* Right Gutter for Line Numbers */}
+          {/* Gutter dei numeri di riga a destra */}
           <div 
             ref={lineNumbersRef}
             className="absolute right-0 top-0 bottom-0 w-12 bg-[#051821] border-l border-[#266867]/30 py-4 overflow-hidden pointer-events-none select-none flex flex-col pt-4 z-20"
@@ -254,6 +287,7 @@ function RawIniContent() {
             ))}
           </div>
           
+          {/* Box di spiegazione errori in tempo reale */}
           <AnimatePresence>
             {errors.length > 0 && (
               <motion.div 
@@ -282,11 +316,17 @@ function RawIniContent() {
   );
 }
 
+/**
+ * Componente TerminalPreview: Il "Monitor" laterale dell'app.
+ * Automatizza il passaggio tra Visuale e Codice, e gestisce 
+ * il pulsante flottante trascinabile su mobile.
+ */
 export function TerminalPreview() {
   const [mode, setMode] = useState<'visual' | 'raw'>('visual');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
 
+  // Monitoriamo la larghezza della finestra per scegliere il layout corretto
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     handleResize();
@@ -319,12 +359,13 @@ export function TerminalPreview() {
     </div>
   );
 
+  // LAYOUT DESKTOP: Barra laterale fissa e reattiva
   if (isDesktop) {
     return (
       <div className="sticky top-4 w-full xl:w-[25rem] h-full flex-shrink-0 flex flex-col z-20 pb-4">
          {headerContent}
          <motion.div 
-           key={mode} /* Forces re-animation on switch */
+           key={mode} 
            initial={{ opacity: 0, y: 10 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -336,9 +377,10 @@ export function TerminalPreview() {
     );
   }
 
-  // Mobile layout
+  // LAYOUT MOBILE: Bottone flottante (FAB) ed Overlay a tutto schermo
   return (
     <>
+      {/* Bottone flottante trascinabile con l'occhio */}
       <motion.button
         type="button"
         onClick={() => setIsMobileOpen(true)}
@@ -354,6 +396,7 @@ export function TerminalPreview() {
         <Eye className="w-6 h-6" />
       </motion.button>
 
+      {/* Overlay mobile della preview */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div

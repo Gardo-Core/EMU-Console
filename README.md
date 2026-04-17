@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EMU Console
 
-## Getting Started
+Benvenuti nella **EMU Console**, lo strumento definitivo per la configurazione e il management dei terminali AS400 (TN5250) basati sulla tecnologia Gallagher & Robertson.
 
-First, run the development server:
+Questo progetto non è il solito configuratore statico: è un ambiente reattivo pensato per eliminare gli errori umani durante il setup dei palmari rugged (Cipherlab, Newland, ecc.) e per velocizzare il rollout dei profili terminale.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Cosa fa EMU Console?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La console permette di gestire a 360° il file `config.ini` (o `.glinki`) dei terminali, offrendo:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+*   **Configurazione Visiva:** Modifica i parametri (IP, Port, SSL, Aspetto) tramite una UI moderna invece di editare file di testo grezzi.
+*   **Anteprima Real-Time:** Un monitor virtuale mostra istantaneamente come apparirà il terminale (colori, font, stringhe di stato) in base alle tue scelte.
+*   **Editor INI Intelligente:** Visualizza il codice generato dietro le quinte con evidenziazione sintattica e validazione degli errori in tempo reale.
+*   **Integrazione Barcode & Hardware:** Pannelli dedicati per configurare lettori laser e macro per i tasti fisici dei dispositivi.
+*   **Auto-Login Scripting:** Generatore integrato di script GLINK per automatizzare l'accesso (User, Password, Libreria) in totale sicurezza.
+*   **INI Comparer:** Carica due file diversi per vedere cosa è cambiato riga per riga.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠 Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Abbiamo scelto tecnologie moderne per garantire fluidità e manutenibilità:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+*   **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+*   **Linguaggio:** TypeScript (Tipizzazione forte per evitare bug sui parametri INI)
+*   **Stato & Form:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) per la validazione degli schemi.
+*   **Animazioni:** [Framer Motion](https://www.framer.com/motion/) (per quel feeling premium e le transizioni fluide).
+*   **ICONS:** [Lucide React](https://lucide.dev/).
+*   **Styling:** Tailwind CSS (Custom Theme "EMU" con toni petrolio e arancione).
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📂 Struttura del Progetto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Per orientarti nel codice, ecco dove trovi le cose importanti:
+
+*   `src/components/tabs/`: Qui ci sono le singole schede di configurazione (Rete, Sicurezza, Aspetto, ecc.).
+*   `src/lib/iniValidator.ts`: Il "motore" che controlla se il file INI è scritto bene.
+*   `src/lib/template.ts`: La logica che fonde i dati del form con i template INI originali.
+*   `src/lib/validationSchemas.ts`: Qui risiedono tutte le regole di business (es. "la porta deve essere numerica", "l'IP deve essere valido").
+*   `src/contexts/SearchContext.tsx`: Gestisce la ricerca globale che ti permette di saltare da una tab all'altra cercando un parametro.
+*   `public/templates/`: Contiene i file INI base per i vari modelli di palmari supportati.
+
+---
+
+## ⌨️ Comandi Rapidi
+
+Se sei il nuovo sviluppatore assegnato a questo progetto:
+
+1.  **Installa tutto:** `npm install`
+2.  **Avvia in locale:** `npm run dev`
+3.  **Password di Accesso:** L'app è protetta da un Login Gate. La password predefinita è `EMUADMIN`.
+
+---
+
+## 💡 Note per il Futuro (Manutenzione)
+
+*   **Aggiungere un parametro:** Se devi aggiungere un nuovo campo all'INI, ricordati di inserirlo in `validationSchemas.ts` (per lo stato) e aggiornare il componente `mergeTemplate` in `template.ts` per scrivere effettivamente il valore nel file finale.
+*   **Ricerca Globale:** Se aggiungi una nuova tab, assicurati di registrare i suoi campi nel `FIELD_REGISTRY` dentro `SearchContext` se vuoi che siano trovabili tramite la barra di ricerca in alto.
+*   **Mobile First:** Ogni modifica alla UI deve essere testata su mobile. Il configuratore usa molto il monitor flottante (TerminalPreview) che deve restare usabile anche su schermi piccoli.
+
+---
+
+Realizzato con cura per rendere il lavoro degli amministratori di sistema un po' meno noioso. 
+**Buon Coding, Team EMU!**

@@ -4,14 +4,22 @@ import { FormInput } from "../ui/FormInput";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { motion } from "framer-motion";
 
+/**
+ * Varianti per l'animazione di entrata.
+ */
 const itemVariants: any = {
   initial: { opacity: 0, y: 15 },
   enter: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 25 } }
 };
 
+/**
+ * Scheda Hardware: Qui configuriamo l'integrazione con il lettore barcode fisico 
+ * (tramite Intent API o tastiera) e le macro per i tasti fisici dei palmari rugged.
+ */
 export function HardwareTab() {
   return (
     <div className="space-y-6">
+      {/* BLOCCO: BARCODE SCANNER */}
       <motion.div 
         variants={itemVariants}
         className="glass-card shadow-xl"
@@ -50,6 +58,7 @@ export function HardwareTab() {
         </div>
       </motion.div>
 
+      {/* BLOCCO: MACRO TASTI FISICI */}
       <motion.div 
         variants={itemVariants}
         className="glass-card shadow-xl"

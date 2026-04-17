@@ -1,11 +1,20 @@
 import { z } from "zod";
 
+/**
+ * Definiamo le regole di validazione "parlanti". 
+ * Invece di un semplice errore, forniamo all'utente un consiglio (advice) 
+ * e un riferimento al manuale aziendale (ref) per capire cosa sta sbagliando.
+ */
 export interface ValidationRule {
   advice: string;
   ref: string;
   autoFix?: (val: string) => string;
 }
 
+/**
+ * Qui mappiamo ogni campo tecnico a una regola di business.
+ * Questi testi compariranno nei tooltip e negli avvisi dell'INI Grezzo.
+ */
 export const validationMetadata: Record<string, ValidationRule> = {
   hostname: {
     advice: "Nota dell'Amministratore: Gli indirizzi host devono essere IPv4, IPv6 validi o nomi di dominio conformi a RFC 1123. Assicurarsi che l'host sia raggiungibile dal segmento di rete del dispositivo.",
@@ -38,6 +47,7 @@ export const validationMetadata: Record<string, ValidationRule> = {
   dpadLeftMacro: {
     advice: "Regola di Sintesi: Le macro devono utilizzare la notazione caret (es. ^M per Invio) per i caratteri di controllo. Le stringhe letterali 'ESC' verranno rifiutate dall'interprete.",
     ref: "Rif: Guida dell'Amministratore Pagina 204",
+    // Piccola utility per trasformare termini comuni in codici caret che il software capisce
     autoFix: (val: string) => val.replace(/ESC/gi, "^[").replace(/ENTER/gi, "^M")
   },
   dpadRightMacro: {
@@ -47,29 +57,38 @@ export const validationMetadata: Record<string, ValidationRule> = {
   }
 };
 
+/**
+ * Lo schema Zod definisce la "verità" dei dati dell'applicazione.
+ * Tutto ciò che entra nel form deve passare da qui.
+ * Usiamo messaggi di errore parlanti così l'utente sa esattamente cosa correggere.
+ */
 export const configSchema = z.object({
   deviceTemplate: z.enum(['cipherlab95', 'newlandN7', 'plus995']),
   
-  // Rete e Host
-  profileName: z.string().min(1, "I nomi vuoti non sono consentiti dalla policy di sistema").max(30).regex(/^[A-Za-z0-9_]+$/, "Solo caratteri alfanumerici e underscore come da Guida Admin Pagina 22"),
+  // Sezione: Rete e Host
+  profileName: z.string()
+    .min(1, "I nomi vuoti non sono consentiti dalla policy di sistema")
+    .max(30)
+    .regex(/^[A-Za-z0-9_]+$/, "Solo caratteri alfanumerici e underscore come da Guida Admin Pagina 22"),
+    
   hostname: z.string().min(1, "L'identificazione dell'host è obbligatoria per la negoziazione della sessione"),
   ibm5250Model: z.coerce.number().int().min(2).max(7),
   licenseKey: z.string().min(1, "Chiave di licenza richiesta per l'attivazione enterprise"),
   e2kServer: z.string().min(1, "L'endpoint del Server E2K deve essere specificato per le distribuzioni gestite"),
   
-  // Comportamento
+  // Sezione: Comportamento
   autoConnect: z.boolean(),
   noAutoLock: z.boolean(),
   showKeyboard: z.coerce.number(),
   orientation: z.coerce.number(),
   cfgPassword: z.string().optional(),
   
-  // Aspetto
+  // Sezione: Aspetto
   fontSize: z.coerce.number().int().min(8).max(48),
   scrColor: z.coerce.number(),
   stsColor: z.coerce.number(),
   
-  // Hardware e Macro
+  // Sezione: Hardware e Macro
   barcodeEnable: z.coerce.number().min(0, "Intervallo non valido").max(20, "Fuori dai limiti di sistema"),
   barcodeDoAfter: z.coerce.number().min(0).max(5),
   barcodeShow: z.boolean(),
@@ -78,7 +97,7 @@ export const configSchema = z.object({
   dpadLeftMacro: z.string().regex(/^([ -~]|\^\$[a-fA-F0-9]{2})*$/, "Errore sintassi macro: Usa ^$Hex per i codici di controllo come da Pagina 204").optional(),
   dpadRightMacro: z.string().regex(/^([ -~]|\^\$[a-fA-F0-9]{2})*$/, "Errore sintassi macro: Usa ^$Hex per i codici di controllo come da Pagina 204").optional(),
 
-  // Sicurezza e Automazione
+  // Sezione: Sicurezza e Automazione (Log-In)
   userId: z.string().optional(),
   useSystemUser: z.boolean().default(false),
   askUserId: z.boolean().default(false),
@@ -91,4 +110,5 @@ export const configSchema = z.object({
   scriptContent: z.string().optional(),
 });
 
+// Esportiamo il tipo derivato dallo schema per usarlo come TypeScript puro in tutto il progetto
 export type ConfigFormValues = z.infer<typeof configSchema>;

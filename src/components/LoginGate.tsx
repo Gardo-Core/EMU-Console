@@ -5,12 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * LoginGate: Un semplice "cancello" di sicurezza all'ingresso dell'app.
+ * Serve a proteggere le configurazioni aziendali da accessi non autorizzati.
+ * Salva lo stato in sessionStorage per non chiedere la password ad ogni refresh,
+ * ma la richiede se si chiude il browser/tab.
+ */
 export default function LoginGate({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Verifichiamo se l'utente è già loggato in questa sessione
   useEffect(() => {
     setMounted(true);
     if (sessionStorage.getItem("emu_auth") === "true") {
@@ -18,6 +25,7 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Gestore del login locale (password Hardcoded per semplicità in questa versione)
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "EMUADMIN") {
@@ -25,16 +33,20 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(true);
     } else {
       setError(true);
+      // Animazione di errore temporaneo
       setTimeout(() => setError(false), 2000);
     }
   };
 
+  // Evitiamo problemi di idratazione (Hydration mismatch) in Next.js
   if (!mounted) return null;
 
+  // Se siamo autenticati, mostriamo l'applicazione
   if (isAuthenticated) {
     return <>{children}</>;
   }
 
+  // Altrimenti mostriamo la schermata di login "premium"
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-emu-base z-50">
       <motion.div 
@@ -42,12 +54,15 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
         animate={{ opacity: 1, y: 0 }}
         className="glass-card p-10 max-w-sm w-full mx-4 shadow-2xl relative overflow-hidden"
       >
+        {/* Barra di accento superiore */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emu-accent to-emu-highlight" />
+        
         <div className="flex justify-center mb-6">
           <div className="p-4 bg-emu-surface rounded-full shadow-inner border border-emu-border">
             <Lock className="w-8 h-8 text-emu-accent" />
           </div>
         </div>
+
         <h2 className="text-2xl font-bold text-center mb-2 text-white glow-text">EMU Console</h2>
         <p className="text-emu-highlight/80 text-center mb-8 text-sm">Accesso Limitato</p>
         
@@ -64,6 +79,7 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
             />
+            {/* Messaggio di errore con animazione di entrata/uscita */}
             <AnimatePresence>
               {error && (
                 <motion.p 

@@ -9,12 +9,22 @@ import { AppearanceTab } from "./tabs/AppearanceTab";
 import { HardwareTab } from "./tabs/HardwareTab";
 import { HelpTab } from "./tabs/HelpTab";
 
+/**
+ * Varianti di animazione per il passaggio tra le tab.
+ * Usiamo uno "stagger" per far sì che gli elementi interni
+ * entrino in sequenza, creando un effetto più organico e premium.
+ */
 const variants: any = {
   initial: { opacity: 0, y: 15 },
   enter: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 25, staggerChildren: 0.05, delayChildren: 0.05 } },
   exit: { opacity: 0, y: -15, transition: { duration: 0.2 } },
 };
 
+/**
+ * AnimatedTabContent: Il "contenitore" dinamico delle schede.
+ * Si occupa di smontare la vecchia scheda e montare la nuova 
+ * con una transizione fluida (fade + slide).
+ */
 export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
   const renderTab = () => {
     switch (activeTab) {
@@ -32,7 +42,7 @@ export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
     <div className="relative mt-4 min-h-[400px]">
       <AnimatePresence mode="wait">
         <motion.div
-          key={activeTab}
+          key={activeTab} // La chiave permette a Framer Motion di capire quando un componente cambia
           variants={variants}
           initial="initial"
           animate="enter"

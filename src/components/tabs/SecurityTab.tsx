@@ -8,14 +8,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Varianti per l'animazione degli elementi della scheda specifica.
+ */
 const itemVariants: any = {
   initial: { opacity: 0, y: 15 },
   enter: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 25 } }
 };
 
+/**
+ * Scheda Sicurezza: Gestisce credenziali, password e script di autologin.
+ */
 export function SecurityTab() {
   const { watch, setValue, register } = useFormContext();
   
+  // Osserviamo lo stato di alcuni toggle per decidere cosa mostrare a video
   const askUserId = watch("askUserId");
   const useSystemUser = watch("useSystemUser");
   
@@ -23,16 +30,22 @@ export function SecurityTab() {
   const enableAutoLogin = watch("enableAutoLogin");
   const scriptName = watch("scriptName");
   
+  // Template di base per uno script di login AS400 standard
   const defaultScript = `WAIT "User . . . . . ."\nTYPE $USER$\nENTER\nWAIT "Password . . . . . ."\nTYPE $PASS$\nENTER`;
 
+  // Funzione per ripristinare lo script al template originale
   const resetTemplate = () => setValue("scriptContent", defaultScript, { shouldValidate: true, shouldDirty: true });
   
+  // Utility per inserire tag speciali ($USER$, $PASS$) nell'editor di testo
   const insertTag = (tag: string) => {
     const current = watch("scriptContent") || "";
     setValue("scriptContent", current + tag, { shouldValidate: true, shouldDirty: true });
   };
 
-  // Automatically update input field if toggle switches are hit
+  /**
+   * Effetto collaterale: se l'utente attiva "ID di Sistema", iniettiamo 
+   * automaticamente la macro $USER$ nel campo dell'ID utente.
+   */
   useEffect(() => {
     if (useSystemUser) {
       setValue("userId", "$USER$", { shouldValidate: true, shouldDirty: true });
@@ -42,7 +55,7 @@ export function SecurityTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Sezione ID Utente */}
+        {/* BLOCCO: IDENTIFICAZIONE UTENTE */}
         <motion.div 
           variants={itemVariants}
           className="glass-card shadow-xl"
@@ -50,6 +63,7 @@ export function SecurityTab() {
           <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Identificazione utente</h3>
           <div className="grid grid-cols-12 gap-y-6 gap-x-4">
             <div className="col-span-12 relative group">
+              {/* Se abbiamo attivato il prompt interattivo, "spegniamo" il campo statico */}
               <div className={cn("transition-opacity", askUserId ? "opacity-30 pointer-events-none" : "opacity-100")}>
                 <FormInput 
                   name="userId" 
@@ -59,6 +73,7 @@ export function SecurityTab() {
                   placeholder="Inserisci ID Utente" 
                 />
               </div>
+              {/* Sovrapposizione grafica per indicare che il campo è gestito dal sistema interattivo */}
               {askUserId && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-md border border-emu-highlight/20 z-20 pointer-events-none">
                   <span className="text-emu-highlight font-medium text-xs flex items-center gap-2 bg-[#051821] px-3 py-1 rounded-full border border-emu-highlight/30 shadow-lg">
@@ -85,7 +100,7 @@ export function SecurityTab() {
           </div>
         </motion.div>
 
-        {/* Sezione Password */}
+        {/* BLOCCO: PASSWORD */}
         <motion.div 
           variants={itemVariants}
           className="glass-card shadow-xl"
@@ -93,6 +108,7 @@ export function SecurityTab() {
           <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Autenticazione</h3>
           <div className="grid grid-cols-12 gap-y-6 gap-x-4">
             <div className="col-span-12 relative group">
+              {/* Come per l'utente, se chiediamo la password a video, il campo statico si disabilita visivamente */}
               <div className={cn("transition-opacity", askPassword ? "opacity-30 pointer-events-none" : "opacity-100")}>
                 <FormInput 
                   name="password" 
@@ -124,7 +140,7 @@ export function SecurityTab() {
         </motion.div>
       </div>
 
-      {/* Sezione Cloud/Automazione */}
+      {/* BLOCCO: AUTOMAZIONE (SCRIPTING) */}
       <motion.div 
         variants={itemVariants}
         className="glass-card shadow-xl"
@@ -152,7 +168,7 @@ export function SecurityTab() {
                 className="col-span-12"
                 onAnimationComplete={(definition: any) => {
                   if ((definition as any).height === "auto") {
-                    // Permette ai tooltip di uscire dal contenitore di clipping
+                    // Fix tecnico per tooltip: ci assicuriamo che possano "uscire" visivamente dai bordi del pannello
                     const el = document.querySelector('.automation-container');
                     if (el) (el as HTMLElement).style.overflow = 'visible';
                   }
@@ -167,6 +183,7 @@ export function SecurityTab() {
                       placeholder="autologin.scrgl" 
                       tooltip="Il file script localizzato a cui l'emulatore punterà o che creerà nativamente." 
                     />
+                    {/* Avvisi rapidi sul nome dello script */}
                     {(!scriptName || scriptName.trim() === "") && (
                       <div className="text-orange-500 text-[10px] mt-1 absolute -bottom-5 left-0 pl-1">
                         Assegna un nome al tuo script (es. login.scrgl) in modo che il file .ini possa farvi riferimento.
@@ -179,6 +196,7 @@ export function SecurityTab() {
                     )}
                   </div>
                   
+                  {/* EDITOR DELLO SCRIPT */}
                   <div className="flex flex-col space-y-2 relative pt-4">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-white/50 font-medium px-1">Motore Sequenza Macro</span>
@@ -200,12 +218,14 @@ export function SecurityTab() {
                         className="w-full bg-[#051821]/80 backdrop-blur-md border border-[#266867]/40 hover:border-[#266867]/80 focus:border-emu-highlight/60 rounded-md px-4 py-4 text-[#a1a1aa] font-mono text-sm min-h-[160px] focus:outline-none transition-all custom-scrollbar outline-none shadow-inner"
                         placeholder={defaultScript}
                       />
+                      {/* Scorciatoie per inserire i tag dinamici nello script */}
                       <div className="absolute bottom-2 right-2 flex items-center gap-2">
                         <button type="button" onClick={() => insertTag('$USER$')} className="text-[10px] bg-[#1A4645] border border-[#266867] px-2 py-1 rounded hover:bg-emu-highlight/20 transition-colors text-white font-mono">$USER$</button>
                         <button type="button" onClick={() => insertTag('$PASS$')} className="text-[10px] bg-[#1A4645] border border-[#266867] px-2 py-1 rounded hover:bg-emu-highlight/20 transition-colors text-white font-mono">$PASS$</button>
                       </div>
                     </div>
                     
+                    {/* Feedback visivo d'aiuto */}
                     <div className="text-[10px] text-green-400/60 bg-green-400/5 px-3 py-2 rounded border border-green-400/10 flex items-start gap-2 italic">
                       <div className="w-1 h-1 rounded-full bg-green-400/40 mt-1.5 shrink-0" />
                       <span>Rilevato pattern AS400 standard. Abbiamo pre-compilato una sequenza 'Wait and Type'. Verifica solo se il tuo host utilizza prompt diversi.</span>

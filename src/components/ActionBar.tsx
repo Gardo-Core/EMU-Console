@@ -4,12 +4,18 @@ import { useFormContext } from "react-hook-form";
 import { Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/**
+ * La Barra delle Azioni (ActionBar): posizionata in basso, 
+ * contiene il tasto principale per generare e scaricare i file.
+ * Si adatta graficamente se lo script è abilitato, mostrando cosa verrà scaricato.
+ */
 export function ActionBar({ isGenerating }: { isGenerating: boolean }) {
   const { watch, formState } = useFormContext();
   const enableAutoLogin = watch("enableAutoLogin");
   const scriptName = watch("scriptName");
   const errs = Object.keys(formState.errors);
 
+  // Determiniamo il testo dinamico che indica i file in coda per il download
   const fileString = (enableAutoLogin && scriptName) 
     ? `config.ini + ${scriptName}`
     : `config.ini`;
@@ -17,7 +23,7 @@ export function ActionBar({ isGenerating }: { isGenerating: boolean }) {
   return (
     <div className="fixed bottom-0 left-0 md:left-16 right-0 h-24 sm:h-20 bg-[#051821]/90 backdrop-blur-xl border-t border-emu-border/40 flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-3 sm:py-0 z-50">
       
-      {/* Contenuto di sinistra: Status info */}
+      {/* AREA STATO (Sinistra): Mostra il nome dei file pronti */}
       <div className="flex flex-col mb-2 sm:mb-0 items-center sm:items-start">
         <span className="text-emu-accent text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-0.5">
           Pronto per il download
@@ -27,13 +33,14 @@ export function ActionBar({ isGenerating }: { isGenerating: boolean }) {
         </span>
       </div>
 
+      {/* AVVISO ERRORI (Centro): Appare solo se ci sono campi invalidi nel form */}
       {errs.length > 0 && (
           <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-[13px] text-red-400 bg-red-400/10 px-4 py-2 rounded-lg border border-red-400/20">
             Per favore correggi {errs.length} errore(i) di validazione
           </div>
       )}
 
-      {/* Contenuto di destra: CTA Button */}
+      {/* AZIONE PRINCIPALE (Destra): Il tastone "GENERA E SCARICA" */}
       <motion.button
         type="submit"
         whileHover={{ scale: 1.02 }}

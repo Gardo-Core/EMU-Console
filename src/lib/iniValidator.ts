@@ -1,14 +1,22 @@
 import { validationMetadata } from './validationSchemas';
 
+/**
+ * Questa interfaccia definisce la struttura di un errore riscontrato durante la validazione dell'INI.
+ * Ci serve per dare feedback precisi all'utente nella vista "INI Grezzo".
+ */
 export interface IniError {
   line: number;
   message: string;
-  advice?: string;
-  ref?: string;
+  advice?: string; // Consiglio dell'amministratore (es. "Usa solo IP statici")
+  ref?: string;    // Riferimento alla documentazione manuale
   key?: string;
   isWarning?: boolean;
 }
 
+/**
+ * Funzione principale per validare il contenuto di un file INI.
+ * Scansiona il file riga per riga e cerca discrepanze rispetto ai metadati di validazione.
+ */
 export function validateIni(content: string): IniError[] {
   const lines = content.split(/\r?\n/);
   const errors: IniError[] = [];
@@ -18,32 +26,33 @@ export function validateIni(content: string): IniError[] {
 
   lines.forEach((line, index) => {
     const trimmed = line.trim();
+    // Saltiamo righe vuote o commenti
     if (!trimmed || trimmed.startsWith(';') || trimmed.startsWith('#')) return;
 
-    // Rileva sezioni dei file [file:xxx]
+    // Rileva sezioni speciali che indicano l'inizio di un sotto-file distribuito
     if (trimmed.startsWith('[file:')) {
       currentFile = trimmed;
       currentSection = null;
       return;
     }
 
-    // Rileva sezioni interne [xxx]
+    // Rileva sezioni standard dell'INI (es. [MioProfilo])
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       currentSection = trimmed;
       return;
     }
 
-    // Coppie chiave-valore
+    // Analizziamo le coppie chiave=valore
     const eqIdx = trimmed.indexOf('=');
     if (eqIdx > 0) {
       const key = trimmed.substring(0, eqIdx).trim();
       const value = trimmed.substring(eqIdx + 1).trim();
       
-      // Check if key exists in our metadata
+      // Se la chiave è censita nei nostri metadati di validazione, facciamo dei controlli seri
       if (validationMetadata[key]) {
         const metadata = validationMetadata[key];
         
-        // Controlli sintassici di base (segnaposto per logiche più complesse)
+        // Controllo specifico per l'hostname: niente spazi!
         if (key === 'hostname' && value.includes(' ')) {
           errors.push({
             line: index + 1,
@@ -54,6 +63,7 @@ export function validateIni(content: string): IniError[] {
           });
         }
         
+        // Controllo per i colori: devono essere in formato esadecimale standard
         if (key.includes('Color') && !value.match(/^#[0-9a-fA-F]{6}$/)) {
           errors.push({
             line: index + 1,
@@ -65,10 +75,11 @@ export function validateIni(content: string): IniError[] {
         }
       }
     } else if (!trimmed.startsWith('[') && trimmed.length > 0) {
-       // Trovato testo che non è né una sezione né una coppia chiave-valore
-       // In alcune sezioni come [file:v_key], la seconda riga è solo la chiave di licenza
+       // Se troviamo del testo che non è né una sezione né un'assegnazione, 
+       // probabilmente l'utente ha fatto un pasticcio digitando.
+       // Eccezione: la sezione v_key che contiene la licenza "nuda" nella riga successiva.
        if (currentFile === '[file:v_key]') {
-          // Questo è previsto
+          // Tutto okay, qui la licenza non ha il "chiave="
        } else {
          errors.push({
             line: index + 1,
@@ -83,14 +94,15 @@ export function validateIni(content: string): IniError[] {
 }
 
 /**
- * Reverse-parses an INI string into a Partial form values record.
- * Handles EMU Console specific mapping and complex deconstruction.
+ * Questa è una funzione "magica" che converte una stringa INI grezza 
+ * negli oggetti (Record) che il nostro Form (react-hook-form) può capire.
+ * Gestisce anche la decostruzione di stringhe complesse come quella del server.
  */
 export function parseIniToValues(content: string): Record<string, any> {
   const lines = content.split(/\r?\n/);
   const values: Record<string, any> = {};
   
-  // Mapping from INI keys to Form field names
+  // Mappa di conversione tra le chiavi tecniche dell'INI e i nomi dei campi nel Form UI
   const keyMap: Record<string, string> = {
     'com.ibm5250model': 'ibm5250Model',
     'screen.autoconnect': 'autoConnect',
@@ -108,7 +120,7 @@ export function parseIniToValues(content: string): Record<string, any> {
     'keyboard.kc.4_DpadLeft': 'dpadLeftMacro',
     'keyboard.kc.5_DpadRight': 'dpadRightMacro',
     'E2KServer': 'e2kServer',
-    'config.profile': 'profileName' // Some templates use this
+    'config.profile': 'profileName' 
   };
 
   let currentFile: string | null = null;
@@ -116,24 +128,23 @@ export function parseIniToValues(content: string): Record<string, any> {
   lines.forEach(line => {
     const trimmed = line.trim();
     
-    // Track [file:xxx] sections
+    // Teniamo traccia di quale "file" virtuale stiamo leggendo
     if (trimmed.startsWith('[file:')) {
       currentFile = trimmed;
       return;
     }
 
-    // Handle profile name in section headers [SOMETHING]
+    // Cerchiamo di indovinare il nome del profilo dalle intestazioni delle sezioni
     if (trimmed.startsWith('[') && trimmed.endsWith(']') && !trimmed.startsWith('[file:')) {
       const sectionName = trimmed.substring(1, trimmed.length - 1);
-      // If we haven't found a better profile name yet, use this one
-      // (Ignoring standard internal sections if any)
+      // Evitiamo di usare i nomi delle sezioni di sistema come nome profilo
       if (sectionName !== 'file:v_key' && sectionName !== 'printers' && sectionName !== 'keyboards') {
         values['profileName'] = sectionName;
       }
       return;
     }
 
-    // Handle v_key license key (it's often just a single line in a section)
+    // Caso speciale: la chiave di licenza in v_key è su una riga da sola
     if (currentFile === '[file:v_key]' && !trimmed.includes('=') && trimmed.length > 5) {
       values['licenseKey'] = trimmed;
       return;
@@ -144,12 +155,14 @@ export function parseIniToValues(content: string): Record<string, any> {
       const iniKey = trimmed.substring(0, eqIdx).trim();
       let iniValue = trimmed.substring(eqIdx + 1).trim();
       
-      // Handle deconstruction of com.servername
+      // LOGICA CRITICA: com.servername è un "minestrone" di hostname, utente e password.
+      // Dobbiamo smontarlo usando delle RegEx per popolare i campi corretti della UI.
       if (iniKey === 'com.servername') {
-        // Example: ASP.BLUSYS.IT -du USER -d? PASS /S SCRIPT
+        // Esempio tipico: ASP.BLUSYS.IT -du USER -d? PASS /S autologin.scrgl
         const hostnameMatch = iniValue.match(/^([^ -]+)/);
         if (hostnameMatch) values['hostname'] = hostnameMatch[1];
 
+        // Cerchiamo l'utente (-du)
         const userMatch = iniValue.match(/-du ([^ ]+)/);
         if (userMatch) {
           if (userMatch[1] === '*') {
@@ -161,6 +174,7 @@ export function parseIniToValues(content: string): Record<string, any> {
           }
         }
 
+        // Cerchiamo la password (-d?)
         const passMatch = iniValue.match(/-d\? ([^ ]+)/);
         if (passMatch) {
           if (passMatch[1] === '*') {
@@ -168,10 +182,11 @@ export function parseIniToValues(content: string): Record<string, any> {
             values['password'] = '';
           } else {
             values['askPassword'] = false;
-            values['password'] = passMatch[1]; // Note: This might be hashed, but we populate it anyway
+            values['password'] = passMatch[1]; 
           }
         }
 
+        // Cerchiamo se c'è uno script di autologin associato (/S)
         const scriptMatch = iniValue.match(/\/S ([^ ]+)/);
         if (scriptMatch) {
           values['enableAutoLogin'] = true;
@@ -182,9 +197,11 @@ export function parseIniToValues(content: string): Record<string, any> {
         return;
       }
 
+      // Mappiamo la chiave INI al nome del campo usato internamente nel Form
       const formKey = keyMap[iniKey] || iniKey;
       
-      // Tenta di forzare i tipi in base ai valori previsti
+      // Cerchiamo di convertire i valori in Booleani o Numeri se possibile, 
+      // altrimenti react-hook-form si arrabbia perché si aspetta tipi specifici.
       let finalValue: any = iniValue;
       if (iniValue.toLowerCase() === 'true') finalValue = true;
       else if (iniValue.toLowerCase() === 'false') finalValue = false;

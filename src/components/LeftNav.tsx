@@ -3,13 +3,22 @@
 import { Home, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * AppMode: Definisce i due stati principali dell'applicazione.
+ * - configuratore: La modalità standard per creare file .ini.
+ * - compare: La modalità per confrontare due file .ini esistenti.
+ */
 export type AppMode = "configurator" | "compare";
 
+/**
+ * Navigazione Laterale (LeftNav): Una barra stretta e fissa a sinistra (stile moderna SaaS).
+ * Contiene il logo principale e i tasti per cambiare macro-modalità.
+ */
 export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode: (mode: AppMode) => void }) {
   return (
     <div className="w-16 h-full bg-[#051821] border-r border-[#266867]/50 flex flex-col items-center py-1 gap-6 sticky top-0 shrink-0 z-50">
 
-      {/* Brand Logo - Top Left */}
+      {/* Brand Logo: L'iconica EMU arancione */}
       <div className="w-[60px] h-[60px] flex items-center justify-center mb-2">
         <img
           src="/asset/Emu_Icon.svg"
@@ -20,6 +29,7 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
 
       <div className="w-8 h-px bg-[#266867]/30" />
 
+      {/* Pulsante: Configuratore (Home) */}
       <button
         type="button"
         title="Configuratore"
@@ -31,9 +41,10 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
         )}
         onClick={() => setAppMode("configurator")}
       >
-        <Home className="w-5 h-5" />
+        < Home className="w-5 h-5" />
       </button>
 
+      {/* Pulsante: Confronto INI (Diff) */}
       <button
         type="button"
         title="Confronto INI"

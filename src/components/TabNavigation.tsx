@@ -4,6 +4,10 @@ import { Settings, Palette, ScanBarcode, Split, BookOpen, Wifi, Shield } from "l
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+/**
+ * Definizione delle schede (TABS) disponibili.
+ * Ogni scheda ha un ID unico, un'etichetta parlante e un'icona tematica.
+ */
 export const TABS = [
   { id: "network", label: "Rete e Host", icon: Wifi },
   { id: "security", label: "Log-In", icon: Shield },
@@ -15,6 +19,11 @@ export const TABS = [
 
 export type TabId = typeof TABS[number]["id"];
 
+/**
+ * Componente di Navigazione Tab.
+ * Usa Framer Motion per creare quell'effetto "bolla" arancione 
+ * che segue la scheda selezionata in modo fluido.
+ */
 export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSelect: (id: TabId) => void }) {
   return (
     <div className="flex w-full space-x-1 p-1 bg-emu-surface/50 border border-emu-border rounded-xl overflow-x-auto no-scrollbar touch-pan-x">
@@ -35,6 +44,7 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
               WebkitTapHighlightColor: "transparent",
             }}
           >
+            {/* Sfondo arancione animato (solo per la tab attiva) */}
             {isActive && (
               <motion.span
                 layoutId="bubble"
@@ -42,6 +52,7 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
               />
             )}
+            {/* Contenuto della tab (Icona + Testo) */}
             <span className="relative z-10 flex items-center gap-2">
               <Icon className="w-4 h-4" />
               <span className="hidden sm:inline-block">{tab.label}</span>

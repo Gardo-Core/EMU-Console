@@ -3,14 +3,22 @@ import { FormInput } from "../ui/FormInput";
 import { FormSelect } from "../ui/FormSelect";
 import { motion } from "framer-motion";
 
+/**
+ * Varianti di animazione per un ingresso morbido degli elementi.
+ * Crea quell'effetto di "salita" (y: 15 -> 0) piacevole da vedere.
+ */
 const itemVariants: any = {
   initial: { opacity: 0, y: 15 },
   enter: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 25 } }
 };
 
+/**
+ * Scheda Rete: raggruppa tutti i campi relativi alla connessione AS400.
+ */
 export function NetworkTab() {
   return (
     <div className="space-y-6">
+      {/* Contenitore con effetto vetro (glass-card) */}
       <motion.div 
         variants={itemVariants}
         className="glass-card shadow-xl"

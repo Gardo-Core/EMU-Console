@@ -9,6 +9,11 @@ import { useSearch } from "@/contexts/SearchContext";
 import { useEffect, useRef } from "react";
 import { TabId } from "../TabNavigation";
 
+/**
+ * Un semplice interruttore (toggle) stilizzato. 
+ * Viene usato per i parametri booleani (Si/No, Vero/Falso).
+ * È integrato con il sistema di ricerca per evidenziarsi quando l'utente cerca l'opzione.
+ */
 export function ToggleSwitch({ 
   name, 
   label, 
@@ -25,6 +30,7 @@ export function ToggleSwitch({
   const value = watch(name);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Verifichiamo se l'interruttore è "bersaglio" della ricerca
   const isMatched = searchTerm && (
     label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -32,7 +38,7 @@ export function ToggleSwitch({
 
   const isActiveMatch = matches[activeMatchIndex]?.id === name;
 
-  // Search Jump Logic
+  // Logica per lo scroll automatico se l'utente scova il parametro tramite ricerca
   useEffect(() => {
     if (isActiveMatch && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -48,7 +54,7 @@ export function ToggleSwitch({
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label & Tooltip Region */}
+      {/* Label & Tooltip */}
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
           "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
@@ -59,7 +65,7 @@ export function ToggleSwitch({
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Input Region */}
+      {/* Area Interruttore Animato */}
       <div className="flex justify-end sm:flex-none">
         <motion.div 
           whileHover={{ scale: 1.05 }}
@@ -67,10 +73,12 @@ export function ToggleSwitch({
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
           className={cn(
             "w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors shadow-inner",
+            // Se è attivo usiamo l'arancione accent, altrimenti un teal scuro bordato
             value ? "bg-emu-accent" : "bg-emu-border/30"
           )}
           onClick={() => setValue(name, !value, { shouldValidate: true, shouldDirty: true })}
         >
+          {/* Il pallino bianco che "slitta" a destra e sinistra */}
           <motion.div 
             className="bg-white w-4 h-4 rounded-full shadow-md"
             layout
@@ -78,6 +86,7 @@ export function ToggleSwitch({
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
           />
         </motion.div>
+        {/* Input nascosto per mantenere la compatibilità con react-hook-form */}
         <input type="checkbox" className="hidden" {...register(name)} />
       </div>
     </div>

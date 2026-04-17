@@ -9,6 +9,11 @@ import { TabId } from "../TabNavigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
+/**
+ * Il componente Slider permette di selezionare un valore numerico in un range (es. 8-48).
+ * Lo usiamo principalmente per la dimensione del font (fontSize) 
+ * e per le soglie numeriche dei barcode.
+ */
 export function Slider({ 
   name, 
   label, 
@@ -29,6 +34,7 @@ export function Slider({
   const value = watch(name);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Verifichiamo se l'utente sta cercando questo parametro numerico
   const isMatched = searchTerm && (
     label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -36,7 +42,7 @@ export function Slider({
 
   const isActiveMatch = matches[activeMatchIndex]?.id === name;
 
-  // Search Jump Logic
+  // Jump-to-result logic: centratura automatica tramite ricerca
   useEffect(() => {
     if (isActiveMatch && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -52,7 +58,7 @@ export function Slider({
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label & Tooltip Region */}
+      {/* Label, Valore corrente e Tooltip */}
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
           "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
@@ -61,6 +67,7 @@ export function Slider({
           {label}
         </label>
         <div className="flex items-center gap-2">
+           {/* Badge che mostra il numero selezionato in tempo reale */}
            <span className="bg-[#051821]/50 border border-[#266867]/50 px-1.5 py-0.5 rounded text-[10px] text-emu-accent font-mono min-w-[20px] text-center">
              {value}
            </span>
@@ -68,10 +75,10 @@ export function Slider({
         </div>
       </div>
       
-      {/* Input Region */}
+      {/* Area Slider */}
       <div className="sm:w-1/2 w-full relative flex flex-col">
         <div className="relative w-full h-6 flex items-center group/slider">
-          {/* Custom Notched Track Background */}
+          {/* Sfondo dello slider "notched": crea delle piccole tacche visive per dare un feedback di precisione */}
           <div 
             className="absolute inset-x-0 h-1.5 bg-[#266867]/20 rounded-full overflow-hidden pointer-events-none"
             style={{
@@ -94,7 +101,7 @@ export function Slider({
           />
         </div>
         
-        {/* Min/Max Labels */}
+        {/* Etichette di Minimo e Massimo */}
         <div className="flex justify-between mt-1 px-0.5">
           <span className="text-[9px] text-white/30 font-mono">{min}</span>
           <span className="text-[9px] text-white/30 font-mono">{max}</span>

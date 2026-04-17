@@ -10,6 +10,11 @@ import { useSearch } from "@/contexts/SearchContext";
 import { useEffect, useRef } from "react";
 import { TabId } from "../TabNavigation";
 
+/**
+ * Un selettore di colori (Color Picker) che unisce un input di tipo "color" 
+ * (che apre la tavolozza di sistema) e un input di testo per chi preferisce 
+ * scrivere direttamente il codice Hex (es. #FF00FF).
+ */
 export function ColorPicker({ 
   name, 
   label, 
@@ -28,6 +33,7 @@ export function ColorPicker({
   const [isFocused, setIsFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Verifichiamo se l'utente sta cercando proprio questo parametro di colore
   const isMatched = searchTerm && (
     label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -35,7 +41,7 @@ export function ColorPicker({
 
   const isActiveMatch = matches[activeMatchIndex]?.id === name;
 
-  // Search Jump Logic
+  // Jump-to-result: scroll automatico verso il componente se pescato dalla ricerca
   useEffect(() => {
     if (isActiveMatch && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -51,7 +57,7 @@ export function ColorPicker({
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label & Tooltip Region */}
+      {/* Label & Tooltip */}
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
           "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
@@ -62,13 +68,14 @@ export function ColorPicker({
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Input Region */}
+      {/* Area Input Colore */}
       <div className="sm:w-1/2 w-full flex gap-2">
         <motion.div
            animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
            transition={{ type: "spring", stiffness: 500, damping: 10 }}
            className="flex gap-2 w-full"
         >
+          {/* Il quadratino colorato cliccabile (Selettore di Sistema) */}
           <motion.input 
             type="color" 
             {...register(name)}
@@ -80,6 +87,7 @@ export function ColorPicker({
               error ? "border-emu-highlight" : "border-[#266867]/50 hover:border-emu-border focus:border-emu-highlight"
             )}
           />
+          {/* Campo di testo per inserire il codice HEX manualmente */}
           <motion.input 
             type="text"
             {...register(name)}
@@ -98,6 +106,7 @@ export function ColorPicker({
           />
         </motion.div>
 
+        {/* Visualizzazione rapida dell'errore (se presente) */}
         <AnimatePresence>
           {error && (
             <motion.p

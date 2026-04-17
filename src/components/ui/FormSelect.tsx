@@ -11,6 +11,11 @@ import { AlertTriangle, ChevronDown } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
 import { TabId } from "../TabNavigation";
 
+/**
+ * Il componente FormSelect è un menu a tendina (dropdown) customizzato.
+ * Lo usiamo invece del <select> standard di HTML per avere pieno controllo 
+ * sull'estetica (glassmorphism) e sulle animazioni di apertura/chiusura.
+ */
 export function FormSelect({ 
   name, 
   label, 
@@ -24,7 +29,7 @@ export function FormSelect({
   tab: TabId,
   options: {value: string | number, label: string}[]
 }) {
-  const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const { watch, setValue, formState: { errors } } = useFormContext();
   const { searchTerm, activeMatchIndex, matches } = useSearch();
   const error = errors[name]?.message as string;
   const metadata = (validationMetadata as any)[name];
@@ -33,33 +38,37 @@ export function FormSelect({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Verifichiamo se l'utente sta cercando questo specifico campo
   const isMatched = searchTerm && (
     label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Se è il risultato "attivo" della ricerca, evidenziamolo
   const isActiveMatch = matches[activeMatchIndex]?.id === name;
 
-  // Search Jump Logic
+  // Logica per centrare il campo quando l'utente lo "scova" tramite la barra di ricerca
   useEffect(() => {
     if (isActiveMatch && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [isActiveMatch]);
 
-  const selectedLabel = options.find(o => o.value == currentValue)?.label || "Select...";
+  // Troviamo il testo dell'opzione selezionata per mostrarlo sul tasto
+  const selectedLabel = options.find(o => o.value == currentValue)?.label || "Seleziona...";
 
   return (
     <div 
       ref={containerRef}
       className={cn(
         "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
+        // Alziamo lo z-index quando il menu è aperto per non farlo finire sotto altri componenti
         isOpen ? "z-[60]" : "z-10",
         isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label & Tooltip Region */}
+      {/* Label & Tooltip */}
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
           "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
@@ -70,14 +79,14 @@ export function FormSelect({
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Input Region */}
+      {/* Area Dropdown */}
       <div className="sm:w-1/2 w-full relative">
         <motion.div
            animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
            transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
            className="relative"
         >
-          {/* Custom Select Trigger */}
+          {/* Tasto principale che attiva il menu */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -96,8 +105,10 @@ export function FormSelect({
           <AnimatePresence>
             {isOpen && (
               <>
-                {/* Backdrop to close */}
+                {/* Backdrop invisibile: se clicchi fuori dal menu, lui si chiude */}
                 <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setIsOpen(false)} />
+                
+                {/* Il pannello delle opzioni */}
                 <motion.div
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -124,6 +135,7 @@ export function FormSelect({
                         )}
                       >
                         <span>{opt.label}</span>
+                        {/* Pallino luminoso per l'opzione attualmente selezionata */}
                         {currentValue == opt.value && (
                           <motion.div 
                             layoutId={`${name}-active`}
@@ -139,6 +151,7 @@ export function FormSelect({
           </AnimatePresence>
         </motion.div>
 
+        {/* POPUP PER GLI ERRORI DI VALIDAZIONE */}
         <AnimatePresence>
           {error && (
             <motion.div
@@ -150,7 +163,7 @@ export function FormSelect({
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <div className="flex items-center gap-2 text-[#F58800]">
                   <AlertTriangle className="w-4 h-4" />
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Manual Rule Violation</span>
+                  <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Manuale</span>
                 </div>
                 {metadata?.ref && (
                   <span className="text-[9px] bg-black/40 text-white/40 px-2 py-0.5 rounded font-mono">
@@ -170,7 +183,7 @@ export function FormSelect({
                 )}
               </div>
               
-              {/* Arrow */}
+              {/* Freccetta stilizzata */}
               <div className="absolute -top-1.5 left-6 border-8 border-transparent border-b-[#F58800]/40 shrink-0" />
             </motion.div>
           )}

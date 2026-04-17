@@ -11,6 +11,11 @@ import { parseIniToValues } from "@/lib/iniValidator";
 import { TabId } from "./TabNavigation";
 import { AppMode } from "./LeftNav";
 
+/**
+ * La Barra Superiore (TopBar): il cuore della navigazione e delle azioni rapide.
+ * Gestisce la ricerca globale, il caricamento di file INI esterni, 
+ * il menu mobile e le notifiche di sistema.
+ */
 export function TopBar({ 
   setActiveTab, 
   setAppMode 
@@ -20,26 +25,36 @@ export function TopBar({
 }) {
   const { watch, formState, reset } = useFormContext();
   const { searchTerm, setSearchTerm, matches, activeMatchIndex, goToNextMatch } = useSearch();
+  
+  // Stati per la gestione dell'interfaccia
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  
   const inputRef = useRef<HTMLInputElement>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const profileName = watch("profileName") || "Profilo Senza Nome";
+  
+  // Verifichiamo se l'utente ha modificato qualcosa (dirty) per mostrare l'indicatore di stato
   const isDirty = Object.keys(formState.dirtyFields).length > 0;
 
+  // Se apriamo la ricerca su mobile, diamo subito il focus al campo di testo
   useEffect(() => {
     if (mobileSearchOpen) {
       setTimeout(() => mobileInputRef.current?.focus(), 100);
     }
   }, [mobileSearchOpen]);
 
+  /**
+   * Gestione tasto Invio nella ricerca: 
+   * permette di "saltare" al risultato successivo senza dover cliccare.
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      e.stopPropagation(); // Ferma la propagazione al form
+      e.stopPropagation(); // Evitiamo che l'invio scateni un submit del form o download
       
       if (matches.length > 0) {
         goToNextMatch(setActiveTab, setAppMode);
@@ -47,6 +62,11 @@ export function TopBar({
     }
   };
 
+  /**
+   * Logica di importazione del file INI.
+   * Legge il file, lo parsa tramite la nostra libreria iniValidator
+   * e resetta il form con i nuovi valori trovati.
+   */
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -55,34 +75,47 @@ export function TopBar({
     reader.onload = (event) => {
       const content = event.target?.result as string;
       if (content) {
+        // Estraiamo i campi dal file INI grezzo
         const parsedValues = parseIniToValues(content);
-        // Reset the form with current values + parsed values to ensure we don't lose anything not in the INI
+        
+        // Uniamo i valori correnti a quelli nuovi per non perdere configurazioni "speciali"
         const currentValues = watch();
         reset({ ...currentValues, ...parsedValues }, { keepDefaultValues: true });
+        
+        // Chiudiamo il pop-up di avviso
         setShowWarning(false);
       }
     };
     reader.readAsText(file);
-    // Reset file input so same file can be uploaded again
+    
+    // Ripuliamo l'input per permettere di ricaricare lo stesso file se necessario
     e.target.value = "";
   };
 
-  // Listener per la scorciatoia da tastiera (Cmd+K / Ctrl+K)
+  /**
+   * Scorciatoia globale Cmd/Ctrl + K per attivare la barra di ricerca.
+   * Un tocco di professionalità per gli utenti avanzati (Power Users).
+   */
   useEffect(() => {
     const handleGlobalKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        inputRef.current?.focus();
+        if (mobileSearchOpen) {
+           mobileInputRef.current?.focus();
+        } else {
+           inputRef.current?.focus();
+        }
       }
     };
     window.addEventListener('keydown', handleGlobalKey);
     return () => window.removeEventListener('keydown', handleGlobalKey);
-  }, []);
+  }, [mobileSearchOpen]);
 
   return (
     <>
       <div className="h-16 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-4 sm:px-6 shrink-0 z-[60] sticky top-0">
         
+        {/* VIEW: RICERCA MOBILE (Overlay a tutta larghezza) */}
         <AnimatePresence>
           {mobileSearchOpen && (
             <motion.div 
@@ -111,7 +144,7 @@ export function TopBar({
           )}
         </AnimatePresence>
 
-        {/* Sinistra: Logo + Mobile Toggle */}
+        {/* SINISTRA: Logo ed Hamburger Menu (Mobile) */}
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -126,12 +159,13 @@ export function TopBar({
             <span className="text-white font-thin tracking-tight text-xl" style={{ fontWeight: 100 }}>Console</span>
           </div>
           
+          {/* Pallino arancione che pulsa se ci sono modifiche non salvate */}
           {isDirty && (
             <div className="w-2.5 h-2.5 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
           )}
         </div>
 
-        {/* Centro: Campo di Ricerca e Pulsante Carica */}
+        {/* CENTRO: Barra di ricerca Desktop + Pulsante Carica */}
         <div className="hidden md:flex items-center gap-4">
           <div className="flex items-center relative group">
             <div className="absolute left-3 text-white/30 group-focus-within:text-emu-highlight transition-colors">
@@ -146,6 +180,7 @@ export function TopBar({
               placeholder="Cerca parametri o INI..."
               className="bg-[#1A4645]/40 focus:bg-[#1A4645]/60 border border-[#266867]/40 focus:border-emu-highlight/50 rounded-full pl-9 pr-24 py-1.5 transition-all text-white text-xs w-64 focus:w-80 outline-none placeholder:text-white/20"
             />
+            {/* Controlli interni all'input (contatore match e tasto clear) */}
             <div className="absolute right-3 flex items-center gap-2">
               {matches.length > 0 && searchTerm && (
                 <span className="text-[10px] font-mono text-emu-highlight/80 bg-emu-highlight/10 px-1.5 py-0.5 rounded border border-emu-highlight/20">
@@ -190,7 +225,7 @@ export function TopBar({
           />
         </div>
 
-        {/* Destra: Labels e Mobile Actions */}
+        {/* DESTRA: Azioni rapide (Specialmente per Mobile) */}
         <div className="flex items-center gap-2 sm:gap-4">
           <button
             type="button"
@@ -213,7 +248,7 @@ export function TopBar({
 
       </div>
 
-      {/* Warning Popup Overlay */}
+      {/* POP-UP DI AVVERTENZA (Sovrascrittura dati) */}
       <AnimatePresence>
         {showWarning && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -261,7 +296,7 @@ export function TopBar({
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu Overlay - Moved outside of the sticky container */}
+      {/* MENU LATERALE MOBILE (Overlay Hamburger) */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -277,7 +312,7 @@ export function TopBar({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              style={{ backgroundColor: "#051821" }} // Solid background color
+              style={{ backgroundColor: "#051821" }} 
               className="fixed top-0 left-0 h-full w-[280px] border-r border-[#266867]/50 p-6 z-[80] md:hidden shadow-2xl"
             >
               <div className="flex flex-col h-full gap-8">
@@ -306,6 +341,7 @@ export function TopBar({
                   </button>
                 </div>
 
+                {/* Logo EMU animato a piè di pagina menu (solo mobile) */}
                 <div className="mt-auto pt-6 border-t border-emu-border/20 flex items-center justify-between">
                      <p className="text-[10px] text-white/30 uppercase tracking-widest">v0.1.0 Beta</p>
                      <img src="/asset/Emu_Icon.svg" alt="EMU Logo" className="w-16 h-16 opacity-70" />
