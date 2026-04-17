@@ -96,20 +96,24 @@ export function FileRow({
             e.stopPropagation();
             onDownload();
           }}
-          title="Scarica"
-          className="p-1.5 rounded-lg text-white/40 hover:text-[#F8BC24] hover:bg-[#F8BC24]/10 transition-all"
+          className="p-1.5 rounded-lg text-white/40 hover:text-[#F8BC24] hover:bg-[#F8BC24]/10 transition-all group/btn relative"
         >
           <Download className="w-3.5 h-3.5" />
+          <span className="absolute bottom-8 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F8BC24] text-[10px] font-semibold rounded shadow-[0_0_15px_rgba(248,188,36,0.1)] opacity-0 invisible group-hover/btn:opacity-100 group-hover/btn:visible transition-all whitespace-nowrap z-[100]">
+            Scarica
+          </span>
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          title="Elimina"
-          className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all"
+          className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all group/btn relative"
         >
           <Trash2 className="w-3.5 h-3.5" />
+          <span className="absolute bottom-8 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-red-400 text-[10px] font-semibold rounded shadow-[0_0_15px_rgba(248,113,113,0.1)] opacity-0 invisible group-hover/btn:opacity-100 group-hover/btn:visible transition-all whitespace-nowrap z-[100]">
+            Elimina
+          </span>
         </button>
       </div>
     </div>

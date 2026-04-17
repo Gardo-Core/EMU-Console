@@ -161,7 +161,12 @@ export function TopBar({
           
           {/* Pallino arancione che pulsa se ci sono modifiche non salvate */}
           {isDirty && (
-            <div className="w-2.5 h-2.5 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)]" title="Modifiche non salvate" />
+            <div className="group relative">
+               <div className="w-2.5 h-2.5 rounded-full bg-[#F8BC24] shadow-[0_0_8px_rgba(248,188,36,0.8)] cursor-help" />
+               <span className="absolute top-6 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F8BC24] text-xs font-semibold rounded shadow-[0_0_15px_rgba(248,188,36,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
+                 Modifiche non salvate
+               </span>
+            </div>
           )}
         </div>
 
@@ -230,18 +235,22 @@ export function TopBar({
           <button
             type="button"
             onClick={() => setMobileSearchOpen(true)}
-            className="p-2 text-[#F8BC24] md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors"
-            title="Cerca"
+            className="p-2 text-[#F8BC24] md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors group relative"
           >
             <Search className="w-5 h-5" />
+            <span className="absolute top-12 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F8BC24] text-xs font-semibold rounded shadow-[0_0_15px_rgba(248,188,36,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
+              Cerca
+            </span>
           </button>
           <button
             type="button"
             onClick={() => setShowWarning(true)}
-            className="p-2 text-[#F8BC24] md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors"
-            title="Carica INI"
+            className="p-2 text-[#F8BC24] md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors group relative"
           >
             <Upload className="w-5 h-5" />
+            <span className="absolute top-12 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F8BC24] text-xs font-semibold rounded shadow-[0_0_15px_rgba(248,188,36,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
+              Carica INI
+            </span>
           </button>
           <span className="hidden sm:block text-[10px] sm:text-xs text-emu-highlight/60 uppercase tracking-[0.2em] font-semibold">Studio di Configurazione</span>
         </div>

@@ -216,8 +216,10 @@ function RawIniContent() {
             type="button"
             onClick={handleCopy}
             className="p-1.5 rounded-md hover:bg-emu-accent/20 transition-all group/copy relative"
-            title="Copia negli appunti"
           >
+            <span className="absolute top-8 right-0 md:left-1/2 md:-translate-x-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-emu-accent text-[10px] font-semibold rounded shadow-[0_0_15px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover/copy:opacity-100 group-hover/copy:visible transition-all whitespace-nowrap z-[100]">
+              Copia negli appunti
+            </span>
             <AnimatePresence mode="wait">
               {copied ? (
                 <motion.div

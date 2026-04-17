@@ -60,24 +60,25 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
       {/* Pulsante: Configuratore (Home) */}
       <button
         type="button"
-        title="Configuratore"
         className={cn(
-          "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
+          "group relative w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
           appMode === "configurator"
             ? "border-[#F58800] bg-[#1A4645] text-[#F58800] shadow-[0_0_15px_rgba(245,136,0,0.2)]"
             : "border-transparent text-white/50 hover:bg-[#1A4645]/50 hover:text-white"
         )}
         onClick={() => setAppMode("configurator")}
       >
-        < Home className="w-5 h-5" />
+        <Home className="w-5 h-5" />
+        <span className="absolute left-14 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F58800] text-xs font-semibold rounded shadow-[0_0_15px_rgba(245,136,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+          Configuratore
+        </span>
       </button>
 
       {/* Pulsante: Confronto INI (Diff) */}
       <button
         type="button"
-        title="Confronto INI"
         className={cn(
-          "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
+          "group relative w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
           appMode === "compare"
             ? "border-[#F58800] bg-[#1A4645] text-[#F58800] shadow-[0_0_15px_rgba(245,136,0,0.2)]"
             : "border-transparent text-white/50 hover:bg-[#1A4645]/50 hover:text-white"
@@ -85,14 +86,16 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
         onClick={() => setAppMode("compare")}
       >
         <ArrowLeftRight className="w-5 h-5" />
+        <span className="absolute left-14 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F58800] text-xs font-semibold rounded shadow-[0_0_15px_rgba(245,136,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+          Confronto INI
+        </span>
       </button>
 
       {/* Pulsante: Clienti (Registro Clienti) */}
       <button
         type="button"
-        title="Clienti"
         className={cn(
-          "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
+          "group relative w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
           appMode === "clients"
             ? "border-[#F58800] bg-[#1A4645] text-[#F58800] shadow-[0_0_15px_rgba(245,136,0,0.2)]"
             : "border-transparent text-white/50 hover:bg-[#1A4645]/50 hover:text-white"
@@ -100,6 +103,9 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
         onClick={() => setAppMode("clients")}
       >
         <ClientsIcon className="w-5 h-5" />
+        <span className="absolute left-14 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-[#051821] border border-[#266867] text-[#F58800] text-xs font-semibold rounded shadow-[0_0_15px_rgba(245,136,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+          Clienti
+        </span>
       </button>
 
     </div>

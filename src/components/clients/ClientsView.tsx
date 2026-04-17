@@ -21,6 +21,7 @@ export function ClientsView() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newClientName, setNewClientName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     fetchClients();
@@ -61,28 +62,27 @@ export function ClientsView() {
   };
 
   /**
-   * Soft-delete di un cliente con toast undo.
+   * Apre il modale di conferma per l'eliminazione
    */
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = (id: string, name: string) => {
+    setClientToDelete({ id, name });
+  };
+
+  /**
+   * Esegue l'eliminazione dopo la conferma
+   */
+  const executeDelete = async () => {
+    if (!clientToDelete) return;
+    const { id, name } = clientToDelete;
+    setClientToDelete(null); // Chiudi sùbito il modale
+
     try {
       await softDeleteClient(id);
       await fetchClients();
 
       addToast({
-        message: `"${name}" eliminato`,
-        type: "info",
-        action: {
-          label: "Ripristina",
-          onClick: async () => {
-            try {
-              await restoreClient(id);
-              await fetchClients();
-              addToast({ message: `"${name}" ripristinato`, type: "success" });
-            } catch {
-              addToast({ message: "Errore nel ripristino", type: "error" });
-            }
-          },
-        },
+        message: `Cliente "${name}" eliminato definitivamente`,
+        type: "success",
       });
     } catch (err: any) {
       addToast({ message: `Errore: ${err.message}`, type: "error" });
@@ -249,6 +249,57 @@ export function ClientsView() {
                 >
                   {creating && <Loader2 className="w-4 h-4 animate-spin" />}
                   Crea Cliente
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modale Eliminazione Cliente */}
+      <AnimatePresence>
+        {clientToDelete && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setClientToDelete(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-[#051821] border border-red-500/30 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(239,68,68,0.15)] p-6"
+            >
+              {/* Accento rosso superiore */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400" />
+
+              <div className="flex items-start gap-4 mb-6 mt-2">
+                <div className="p-3 rounded-xl bg-red-500/10 text-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg leading-tight mb-2">Eliminare questo cliente?</h3>
+                  <p className="text-white/60 text-sm leading-relaxed">
+                    Stai per eliminare definitivamente il cliente <strong className="text-white">"{clientToDelete.name}"</strong>. Verranno persi tutti i relativi file INI che hai caricato in questa cartella. Questa azione è del tutto irreversibile. Procedere?
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setClientToDelete(null)}
+                  className="flex-1 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-semibold transition-colors"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={executeDelete}
+                  className="flex-1 py-3 px-4 rounded-xl bg-red-500 hover:bg-red-400 text-white text-sm font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                >
+                  Sì, elimina tutto
                 </button>
               </div>
             </motion.div>
