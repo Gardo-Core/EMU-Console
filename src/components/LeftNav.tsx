@@ -55,7 +55,7 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
         />
       </div>
 
-      <div className="w-8 h-px bg-[#266867]/30" />
+      <div className="w-10 h-px bg-[#266867]/30 -mt-8" />
 
       {/* Pulsante: Configuratore (Home) */}
       <button
