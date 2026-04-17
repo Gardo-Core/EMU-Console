@@ -19,7 +19,6 @@ La console permette di gestire a 360° il file `config.ini` dei terminali, offre
 
 ## 🛠 Tech Stack
 
-Abbiamo scelto tecnologie moderne per garantire fluidità e manutenibilità:
 
 *   **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
 *   **Linguaggio:** TypeScript (Tipizzazione forte per evitare bug sui parametri INI)
