@@ -154,8 +154,16 @@ export function TopBar({
           />
         </div>
 
-        {/* Destra: Labels */}
+        {/* Destra: Labels e Mobile Upload */}
         <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setShowWarning(true)}
+            className="p-2 text-[#F8BC24] md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors"
+            title="Carica INI"
+          >
+            <Upload className="w-5 h-5" />
+          </button>
           <span className="hidden sm:block text-[10px] sm:text-xs text-emu-highlight/60 uppercase tracking-[0.2em] font-semibold">Studio di Configurazione</span>
         </div>
 
