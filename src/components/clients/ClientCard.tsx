@@ -81,7 +81,7 @@ export function ClientCard({ id, name, fileCount, createdAt, onClick, onRename, 
             e.stopPropagation();
             setMenuOpen(!menuOpen);
           }}
-          className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
+          className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
         >
           <MoreVertical className="w-4 h-4" />
         </button>

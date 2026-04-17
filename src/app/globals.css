@@ -33,6 +33,12 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.6;
   overflow-x: hidden; /* Prevent horizontal scroll universally */
+  caret-color: var(--color-emu-accent); /* Cambia colore del cursore e gocce su mobile */
+}
+
+::selection {
+  background: rgba(245, 136, 0, 0.4); /* #F58800 con 40% opacità per l'evidenziazione */
+  color: #ffffff;
 }
 
 h1, h2, h3, h4, h5, h6 {

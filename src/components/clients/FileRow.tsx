@@ -89,8 +89,8 @@ export function FileRow({
         <Eye className="w-3.5 h-3.5 text-[#F58800]/50 lg:hidden" />
       )}
 
-      {/* Azioni (hover-visible) */}
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Azioni (always visible on mobile, hover on desktop) */}
+      <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
         <button
           onClick={(e) => {
             e.stopPropagation();

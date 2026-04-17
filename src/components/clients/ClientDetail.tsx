@@ -366,6 +366,30 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
         </div>
       </div>
 
+      {/* MOBILE PREVIEW OVERLAY */}
+      <AnimatePresence>
+        {previewContent !== null && selectedFileId && (
+          <motion.div
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[150] lg:hidden bg-[#051821] flex flex-col"
+          >
+            <div className="flex-1 p-4 h-full overflow-hidden">
+              <IniPreview
+                fileName={previewFileName}
+                content={previewContent}
+                onClose={() => {
+                  setSelectedFileId(null);
+                  setPreviewContent(null);
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* MODALE DI CONFERMA ELIMINAZIONE FILE */}
       <AnimatePresence>
         {fileToDelete && (
