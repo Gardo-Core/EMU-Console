@@ -1,14 +1,12 @@
 # EMU Console
 
-Benvenuti nella **EMU Console**, lo strumento definitivo per la configurazione e il management dei terminali AS400 (TN5250) basati sulla tecnologia Gallagher & Robertson.
-
-Questo progetto non è il solito configuratore statico: è un ambiente reattivo pensato per eliminare gli errori umani durante il setup dei palmari rugged (Cipherlab, Newland, ecc.) e per velocizzare il rollout dei profili terminale.
+Benvenuti nella **EMU Console**
 
 ---
 
-## 🚀 Cosa fa EMU Console?
+## Cosa fa EMU Console?
 
-La console permette di gestire a 360° il file `config.ini` (o `.glinki`) dei terminali, offrendo:
+La console permette di gestire a 360° il file `config.ini` dei terminali, offrendo:
 
 *   **Configurazione Visiva:** Modifica i parametri (IP, Port, SSL, Aspetto) tramite una UI moderna invece di editare file di testo grezzi.
 *   **Anteprima Real-Time:** Un monitor virtuale mostra istantaneamente come apparirà il terminale (colori, font, stringhe di stato) in base alle tue scelte.
@@ -63,5 +61,5 @@ Se sei il nuovo sviluppatore assegnato a questo progetto:
 
 ---
 
-Realizzato con cura per rendere il lavoro degli amministratori di sistema un po' meno noioso. 
-**Buon Coding, Team EMU!**
+Realizzato per rendere il lavoro degli installatori un po' meno noioso. 
+**By Marco Gardelli**
