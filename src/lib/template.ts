@@ -154,7 +154,7 @@ export function generateDownload(
         });
     } else {
         // Download standard del singolo file INI
-        const blob = new Blob([iniContent], { type: 'text/plain' });
+        const blob = new Blob([iniContent], { type: 'application/octet-stream' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Search, X, Menu, Upload, AlertTriangle } from "lucide-react";
+import { Search, X, Menu, Upload, AlertTriangle, Home, ArrowLeftRight } from "lucide-react";
 import { ToggleSwitch } from "./ui/ToggleSwitch";
 import { useSearch } from "@/contexts/SearchContext";
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +10,30 @@ import { parseIniToValues } from "@/lib/iniValidator";
 
 import { TabId } from "./TabNavigation";
 import { AppMode } from "./LeftNav";
+
+/**
+ * Icona Clienti: 3 omini stilizzati (custom SVG).
+ */
+function ClientsIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="7" r="2.5" />
+      <path d="M7.5 20v-1.5a4.5 4.5 0 0 1 9 0V20" />
+      <circle cx="5" cy="9" r="2" />
+      <path d="M1.5 20v-1a3.5 3.5 0 0 1 4.5-3.35" />
+      <circle cx="19" cy="9" r="2" />
+      <path d="M22.5 20v-1a3.5 3.5 0 0 0-4.5-3.35" />
+    </svg>
+  );
+}
 
 /**
  * La Barra Superiore (TopBar): il cuore della navigazione e delle azioni rapide.
@@ -338,21 +362,24 @@ export function TopBar({
                 <div className="flex flex-col gap-4 mt-4">
                   <button 
                     onClick={() => { setAppMode("configurator"); setMobileMenuOpen(false); }}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30"
+                    className="flex items-center justify-between gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30 w-full"
                   >
-                    <span>Configuratore</span>
+                    <span className="font-semibold text-sm">Configuratore</span>
+                    <Home className="w-5 h-5 text-emu-accent" />
                   </button>
                   <button 
                     onClick={() => { setAppMode("compare"); setMobileMenuOpen(false); }}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30"
+                    className="flex items-center justify-between gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30 w-full"
                   >
-                    <span>Confronto INI</span>
+                    <span className="font-semibold text-sm">Confronto INI</span>
+                    <ArrowLeftRight className="w-5 h-5 text-emu-accent" />
                   </button>
                   <button 
                     onClick={() => { setAppMode("clients"); setMobileMenuOpen(false); }}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30"
+                    className="flex items-center justify-between gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30 w-full"
                   >
-                    <span>Clienti</span>
+                    <span className="font-semibold text-sm">Clienti</span>
+                    <ClientsIcon className="w-5 h-5 text-emu-accent" />
                   </button>
                 </div>
 

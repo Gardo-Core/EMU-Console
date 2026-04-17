@@ -161,7 +161,7 @@ export function useConfigFiles() {
         const { error: storageError } = await supabase.storage
           .from("configs")
           .upload(storagePath, file, {
-            contentType: "text/plain",
+            contentType: "application/octet-stream",
             upsert: false,
           });
 
@@ -176,7 +176,7 @@ export function useConfigFiles() {
             version: newVersion,
             storage_path: storagePath,
             file_size: file.size,
-            mime_type: "text/plain",
+            mime_type: "application/octet-stream",
             checksum,
             uploaded_by: FIXED_USER_ID,
           });
@@ -215,8 +215,9 @@ export function useConfigFiles() {
 
       if (downloadError) throw downloadError;
 
-      // Trigger del download nel browser
-      const url = URL.createObjectURL(data);
+      // Trigger del download nel browser - forzando il tipo MIME binario
+      const blob = new Blob([data], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
