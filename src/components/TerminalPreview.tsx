@@ -232,7 +232,7 @@ function RawIniContent() {
             onFocus={() => setIsEditing(true)}
             onBlur={() => setIsEditing(false)}
             spellCheck={false}
-            className="flex-1 h-full bg-transparent p-4 pr-14 font-mono text-sm leading-tight text-[#a1a1aa] resize-none focus:outline-none custom-scrollbar selection:bg-emu-highlight/30 whitespace-pre z-10"
+            className="flex-1 h-full bg-transparent p-4 pr-14 font-mono text-sm leading-tight text-[#a1a1aa] resize-none focus:outline-none custom-scrollbar selection:bg-emu-highlight/30 whitespace-pre z-10 caret-emu-accent"
           />
 
           {/* Highlight Mirror Layer (Behind the textarea) */}

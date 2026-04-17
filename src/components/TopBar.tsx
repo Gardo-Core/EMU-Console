@@ -21,12 +21,20 @@ export function TopBar({
   const { watch, formState, reset } = useFormContext();
   const { searchTerm, setSearchTerm, matches, activeMatchIndex, goToNextMatch } = useSearch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const mobileInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const profileName = watch("profileName") || "Profilo Senza Nome";
   const isDirty = Object.keys(formState.dirtyFields).length > 0;
+
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      setTimeout(() => mobileInputRef.current?.focus(), 100);
+    }
+  }, [mobileSearchOpen]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -75,6 +83,34 @@ export function TopBar({
     <>
       <div className="h-16 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-4 sm:px-6 shrink-0 z-[60] sticky top-0">
         
+        <AnimatePresence>
+          {mobileSearchOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute inset-0 bg-[#051821] z-[70] flex items-center px-4 gap-3 md:hidden"
+            >
+              <Search className="w-4 h-4 text-emu-highlight" />
+              <input 
+                ref={mobileInputRef}
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Cerca parametri..."
+                className="flex-1 bg-transparent border-none text-white text-sm outline-none placeholder:text-white/20"
+              />
+              <button 
+                onClick={() => { setMobileSearchOpen(false); setSearchTerm(""); }}
+                className="p-2 text-white/50 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Sinistra: Logo + Mobile Toggle */}
         <div className="flex items-center gap-4">
           <button 
@@ -154,8 +190,16 @@ export function TopBar({
           />
         </div>
 
-        {/* Destra: Labels e Mobile Upload */}
-        <div className="flex items-center gap-4">
+        {/* Destra: Labels e Mobile Actions */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button
+            type="button"
+            onClick={() => setMobileSearchOpen(true)}
+            className="p-2 text-[#F8BC24] md:hidden hover:bg-emu-surface/50 rounded-lg transition-colors"
+            title="Cerca"
+          >
+            <Search className="w-5 h-5" />
+          </button>
           <button
             type="button"
             onClick={() => setShowWarning(true)}
