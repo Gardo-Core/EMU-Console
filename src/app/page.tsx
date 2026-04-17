@@ -14,6 +14,9 @@ import { TopBar } from "@/components/TopBar";
 import { ActionBar } from "@/components/ActionBar";
 import { CompareView } from "@/components/CompareView";
 import { SearchProvider } from "@/contexts/SearchContext";
+import { ClientsView } from "@/components/clients/ClientsView";
+import { ToastProvider } from "@/lib/useToast";
+import { ToastContainer } from "@/components/ui/Toast";
 
 export default function Home() {
   const [appMode, setAppMode] = useState<AppMode>("configurator");
@@ -85,62 +88,74 @@ export default function Home() {
   }
 
   return (
-    <SearchProvider>
-      <LoginGate>
-        <FormProvider {...methods}>
-          <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#051821] text-white selection:bg-emu-accent/30">
+    <ToastProvider>
+      <SearchProvider>
+        <LoginGate>
+          <FormProvider {...methods}>
+            <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#051821] text-white selection:bg-emu-accent/30">
             
-            {/* Navigazione Globale Sinistra - Hidden on mobile, shown on md+ */}
-            <div className="hidden md:block shrink-0">
-              <LeftNav appMode={appMode} setAppMode={setAppMode} />
-            </div>
+              {/* Navigazione Globale Sinistra - Hidden on mobile, shown on md+ */}
+              <div className="hidden md:block shrink-0">
+                <LeftNav appMode={appMode} setAppMode={setAppMode} />
+              </div>
 
-            {/* Wrapper Contenuto App Principale */}
-            <div className="flex-1 flex flex-col min-w-0 relative h-full">
+              {/* Wrapper Contenuto App Principale */}
+              <div className="flex-1 flex flex-col min-w-0 relative h-full">
               
-              <TopBar setActiveTab={setActiveTab} setAppMode={setAppMode} />
+                <TopBar setActiveTab={setActiveTab} setAppMode={setAppMode} />
 
-              <form 
-                onSubmit={methods.handleSubmit(handleGenerate)} 
-                className="flex-1 flex flex-col min-h-0 relative"
-              >
-                <div className="flex-1 flex flex-row justify-center overflow-y-auto custom-scrollbar">
-                  {appMode === "compare" ? (
-                    <div className="flex-1 h-full w-full">
-                      <CompareView />
-                    </div>
-                  ) : (
-                    <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6 lg:p-8">
-                      
-                      {/* Spazio di Lavoro Centrale */}
-                      <div className="flex flex-col flex-1 min-w-0">
-                        <div className="sticky top-0 z-20 pb-4 bg-[#051821]/95 backdrop-blur-sm">
-                          <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
+                {appMode === "clients" ? (
+                  /* Schermata Clienti (fuori dal form) */
+                  <div className="flex-1 flex flex-col min-h-0">
+                    <ClientsView />
+                  </div>
+                ) : (
+                  /* Configuratore e CompareView (dentro il form) */
+                  <form 
+                    onSubmit={methods.handleSubmit(handleGenerate)} 
+                    className="flex-1 flex flex-col min-h-0 relative"
+                  >
+                    <div className="flex-1 flex flex-row justify-center overflow-y-auto custom-scrollbar">
+                      {appMode === "compare" ? (
+                        <div className="flex-1 h-full w-full">
+                          <CompareView />
                         </div>
+                      ) : (
+                        <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6 lg:p-8">
                         
-                        <div className="flex-1 pb-24">
-                          <AnimatedTabContent activeTab={activeTab} />
-                        </div>
-                      </div>
+                          {/* Spazio di Lavoro Centrale */}
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <div className="sticky top-0 z-20 pb-4 bg-[#051821]/95 backdrop-blur-sm">
+                              <TabNavigation activeTab={activeTab} onSelect={setActiveTab} />
+                            </div>
+                          
+                            <div className="flex-1 pb-24">
+                              <AnimatedTabContent activeTab={activeTab} />
+                            </div>
+                          </div>
  
-                      {/* Il pannello a destra (Monitor di Anteprima) - Hidden below LG for better focus */}
-                      <div className="lg:shrink-0 lg:w-[350px] xl:w-[400px] lg:h-[calc(100vh-12rem)] lg:sticky lg:top-8">
-                         <TerminalPreview />
-                      </div>
+                          {/* Il pannello a destra (Monitor di Anteprima) - Hidden below LG for better focus */}
+                          <div className="lg:shrink-0 lg:w-[350px] xl:w-[400px] lg:h-[calc(100vh-12rem)] lg:sticky lg:top-8">
+                             <TerminalPreview />
+                          </div>
 
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* Barra delle Azioni Universale (Footer fisso) */}
-                {appMode === "configurator" && (
-                  <ActionBar isGenerating={isGenerating} />
+                    {/* Barra delle Azioni Universale (Footer fisso) */}
+                    {appMode === "configurator" && (
+                      <ActionBar isGenerating={isGenerating} />
+                    )}
+                  </form>
                 )}
-            </form>
-          </div>
-        </div>
-      </FormProvider>
-      </LoginGate>
-    </SearchProvider>
+              </div>
+            </div>
+          </FormProvider>
+        </LoginGate>
+      </SearchProvider>
+      <ToastContainer />
+    </ToastProvider>
   );
 }
+

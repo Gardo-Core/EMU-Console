@@ -339,6 +339,12 @@ export function TopBar({
                   >
                     <span>Confronto INI</span>
                   </button>
+                  <button 
+                    onClick={() => { setAppMode("clients"); setMobileMenuOpen(false); }}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-emu-surface/30 text-white hover:bg-emu-surface/50 border border-emu-border/30"
+                  >
+                    <span>Clienti</span>
+                  </button>
                 </div>
 
                 {/* Logo EMU animato a piè di pagina menu (solo mobile) */}

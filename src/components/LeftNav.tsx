@@ -4,11 +4,39 @@ import { Home, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * AppMode: Definisce i due stati principali dell'applicazione.
- * - configuratore: La modalità standard per creare file .ini.
+ * AppMode: Definisce i tre stati principali dell'applicazione.
+ * - configurator: La modalità standard per creare file .ini.
  * - compare: La modalità per confrontare due file .ini esistenti.
+ * - clients: Il registro clienti per gestire configurazioni .ini per cliente.
  */
-export type AppMode = "configurator" | "compare";
+export type AppMode = "configurator" | "compare" | "clients";
+
+/**
+ * Icona Clienti: 3 omini stilizzati (custom SVG).
+ */
+function ClientsIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Persona centrale */}
+      <circle cx="12" cy="7" r="2.5" />
+      <path d="M7.5 20v-1.5a4.5 4.5 0 0 1 9 0V20" />
+      {/* Persona sinistra */}
+      <circle cx="5" cy="9" r="2" />
+      <path d="M1.5 20v-1a3.5 3.5 0 0 1 4.5-3.35" />
+      {/* Persona destra */}
+      <circle cx="19" cy="9" r="2" />
+      <path d="M22.5 20v-1a3.5 3.5 0 0 0-4.5-3.35" />
+    </svg>
+  );
+}
 
 /**
  * Navigazione Laterale (LeftNav): Una barra stretta e fissa a sinistra (stile moderna SaaS).
@@ -57,6 +85,21 @@ export function LeftNav({ appMode, setAppMode }: { appMode: AppMode, setAppMode:
         onClick={() => setAppMode("compare")}
       >
         <ArrowLeftRight className="w-5 h-5" />
+      </button>
+
+      {/* Pulsante: Clienti (Registro Clienti) */}
+      <button
+        type="button"
+        title="Clienti"
+        className={cn(
+          "w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-l-2",
+          appMode === "clients"
+            ? "border-[#F58800] bg-[#1A4645] text-[#F58800] shadow-[0_0_15px_rgba(245,136,0,0.2)]"
+            : "border-transparent text-white/50 hover:bg-[#1A4645]/50 hover:text-white"
+        )}
+        onClick={() => setAppMode("clients")}
+      >
+        <ClientsIcon className="w-5 h-5" />
       </button>
 
     </div>
