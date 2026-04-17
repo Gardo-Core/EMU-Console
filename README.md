@@ -31,7 +31,7 @@ La console permette di gestire a 360° il file `config.ini` dei terminali, offre
 
 ## 📂 Struttura del Progetto
 
-Qui trovi le cose importanti:
+Per orientarti nel codice, ecco dove trovi le cose importanti:
 
 *   `src/components/tabs/`: Qui ci sono le singole schede di configurazione (Rete, Sicurezza, Aspetto, ecc.).
 *   `src/lib/iniValidator.ts`: Il "motore" che controlla se il file INI è scritto bene.
