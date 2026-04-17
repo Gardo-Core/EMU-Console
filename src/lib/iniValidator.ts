@@ -1,4 +1,4 @@
-import { validationMetadata } from './validationSchemas';
+import { validationMetadata } from './schema';
 
 /**
  * Questa interfaccia definisce la struttura di un errore riscontrato durante la validazione dell'INI.

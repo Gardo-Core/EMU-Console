@@ -7,7 +7,7 @@ import { AnimatedTabContent } from "@/components/AnimatedTabContent";
 import { TerminalPreview } from "@/components/TerminalPreview";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { configSchema, ConfigFormValues } from "@/lib/validationSchemas";
+import { configSchema, ConfigFormValues } from "@/lib/schema";
 import { mergeTemplate, generateDownload } from "@/lib/template";
 import { LeftNav, AppMode } from "@/components/LeftNav";
 import { TopBar } from "@/components/TopBar";
@@ -110,7 +110,7 @@ export default function Home() {
                       <CompareView />
                     </div>
                   ) : (
-                    <div className="w-full max-w-7xl mx-auto flex flex-col xl:flex-row gap-6 p-4 sm:p-6 lg:p-8">
+                    <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6 lg:p-8">
                       
                       {/* Spazio di Lavoro Centrale */}
                       <div className="flex flex-col flex-1 min-w-0">
@@ -123,8 +123,8 @@ export default function Home() {
                         </div>
                       </div>
  
-                      {/* Il pannello a destra (Monitor di Anteprima) - Hidden below XL for better focus */}
-                      <div className="xl:shrink-0 xl:w-[400px] xl:h-[calc(100vh-12rem)] xl:sticky xl:top-8">
+                      {/* Il pannello a destra (Monitor di Anteprima) - Hidden below LG for better focus */}
+                      <div className="lg:shrink-0 lg:w-[350px] xl:w-[400px] lg:h-[calc(100vh-12rem)] lg:sticky lg:top-8">
                          <TerminalPreview />
                       </div>
 

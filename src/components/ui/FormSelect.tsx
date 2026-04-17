@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 
-import { validationMetadata } from "@/lib/validationSchemas";
+import { validationMetadata } from "@/lib/schema";
 import { AlertTriangle, ChevronDown } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
 import { TabId } from "../TabNavigation";

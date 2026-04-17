@@ -2,12 +2,14 @@
 
 import { useFormContext } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, X, TerminalSquare, FileCode, Copy, Check } from "lucide-react";
+import { Eye, X, TerminalSquare, FileCode, Copy, Check, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { mergeTemplate } from "@/lib/template";
 import { ConfigFormValues } from "@/lib/schema";
-
+import { validateIni, parseIniToValues, IniError } from "@/lib/iniValidator";
+import { useRef } from "react";
+import { useSearch } from "@/contexts/SearchContext";
 /**
  * Componente ScreenContent: Simula visivamente un monitor AS400.
  * Reagisce in tempo reale al cambio di colori, font e nomi nel form.
@@ -85,12 +87,12 @@ function ScreenContent() {
          </div>
          
          {/* Simulazione tasti fisici inferiori (per palmari ruggerizzati) */}
-         <div className="h-10 bg-gradient-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
+         <div className="h-10 bg-linear-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
            {['Esc', 'F1', 'F3', 'F4', 'F12', 'Invio'].map(btn => (
              <motion.div 
                key={btn} 
                whileTap={{ scale: 0.9 }}
-               className="bg-gradient-to-b from-zinc-600 to-zinc-700 text-white text-[9px] font-sans px-2.5 py-1 rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.5),inset_0_1px_rgba(255,255,255,0.2)] border border-zinc-800 cursor-pointer"
+               className="bg-linear-to-b from-zinc-600 to-zinc-700 text-white text-[9px] font-sans px-2.5 py-1 rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.5),inset_0_1px_rgba(255,255,255,0.2)] border border-zinc-800 cursor-pointer"
              >
                {btn}
              </motion.div>
@@ -100,11 +102,6 @@ function ScreenContent() {
     </div>
   );
 }
-
-import { validateIni, parseIniToValues, IniError } from "@/lib/iniValidator";
-import { AlertCircle } from "lucide-react";
-import { useRef } from "react";
-import { useSearch } from "@/contexts/SearchContext";
 
 // Cache statica per i template: evita di scaricare lo stesso file ogni volta che l'utente muove uno slider
 const templateCache = new Map<string, string>();
@@ -362,7 +359,7 @@ export function TerminalPreview() {
   // LAYOUT DESKTOP: Barra laterale fissa e reattiva
   if (isDesktop) {
     return (
-      <div className="sticky top-4 w-full xl:w-[25rem] h-full flex-shrink-0 flex flex-col z-20 pb-4">
+      <div className="sticky top-4 w-full h-full flex-shrink-0 flex flex-col z-20 pb-4">
          {headerContent}
          <motion.div 
            key={mode} 

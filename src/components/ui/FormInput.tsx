@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 
-import { validationMetadata } from "@/lib/validationSchemas";
+import { validationMetadata } from "@/lib/schema";
 import { AlertTriangle, Zap, Eye, EyeOff } from "lucide-react";
 import { TabId } from "../TabNavigation";
 
