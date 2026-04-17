@@ -113,7 +113,7 @@ export function TopBar({
 
       {/* Destra: Labels */}
       <div className="flex items-center gap-4">
-        <span className="text-[10px] sm:text-xs text-emu-highlight/60 uppercase tracking-[0.2em] font-semibold">Studio di Configurazione</span>
+        <span className="hidden sm:block text-[10px] sm:text-xs text-emu-highlight/60 uppercase tracking-[0.2em] font-semibold">Studio di Configurazione</span>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -132,7 +132,7 @@ export function TopBar({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-full w-[280px] bg-emu-base border-r border-emu-border p-6 z-[70] md:hidden shadow-2xl"
+              className="fixed top-0 left-0 h-full w-[280px] bg-[#051821] border-r border-[#266867]/50 p-6 z-[70] md:hidden shadow-2xl"
             >
               <div className="flex flex-col h-full gap-8">
                 <div className="flex items-center justify-between">

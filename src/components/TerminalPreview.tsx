@@ -342,10 +342,14 @@ export function TerminalPreview() {
       <motion.button
         type="button"
         onClick={() => setIsMobileOpen(true)}
+        drag
+        dragMomentum={false}
+        dragConstraints={{ left: -300, right: 0, top: -600, bottom: 0 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        whileDrag={{ scale: 1.1, cursor: "grabbing" }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className="fixed bottom-[100px] right-6 z-40 bg-emu-highlight text-black p-4 rounded-full shadow-[0_0_20px_rgba(248,188,36,0.5)] lg:hidden"
+        className="fixed bottom-[100px] right-6 z-40 bg-emu-highlight text-black p-4 rounded-full shadow-[0_0_30px_rgba(248,188,36,0.6)] lg:hidden cursor-grab active:cursor-grabbing"
       >
         <Eye className="w-6 h-6" />
       </motion.button>
