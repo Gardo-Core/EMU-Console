@@ -46,7 +46,14 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
 }
 
-/* Adaptive Glassmorphism */
+/* 
+   ADAPTIVE GLASSMORPHISM - OTTIMIZZATO GPU 💎
+   
+   Qui creiamo quell'effetto "vetro" figo.
+   IMPORTANTE: Usiamo "backdrop-filter" ma abbiamo aggiunto dei fallback.
+   Se il PC dell'utente è un catenaccio o se ha disattivato le trasparenze,
+   noi passiamo a un colore solido. Così l'app resta usabile per tutti.
+*/
 .glass-panel {
   background: rgba(26, 70, 69, 0.4);
   backdrop-filter: blur(12px);
@@ -63,6 +70,23 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 1rem;
   padding: 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-transparency) {
+  .glass-panel, .glass-card {
+    background: rgba(26, 70, 69, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 

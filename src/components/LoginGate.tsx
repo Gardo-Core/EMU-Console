@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ArrowRight } from "lucide-react";
+import { Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,6 +16,7 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Verifichiamo se l'utente è già loggato in questa sessione
   useEffect(() => {
@@ -67,18 +68,31 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
         <p className="text-emu-highlight/80 text-center mb-8 text-sm">Accesso Limitato</p>
         
         <form onSubmit={handleLogin} className="space-y-4">
-          <div>
+          <div className="relative group">
             <input 
-              type="password" 
+              type={showPassword ? "text" : "password"} 
               placeholder="Inserire Password"
               className={cn(
-                "w-full bg-emu-base/50 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all",
+                "w-full bg-emu-base/50 border rounded-lg pl-4 pr-12 py-3 text-white focus:outline-none focus:ring-2 transition-all",
                 error ? "border-emu-highlight focus:ring-emu-highlight" : "border-emu-border focus:ring-emu-accent glow-shadow"
               )}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-emu-highlight/50 hover:text-emu-accent transition-colors"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
             {/* Messaggio di errore con animazione di entrata/uscita */}
             <AnimatePresence>
               {error && (
@@ -92,7 +106,6 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
                 </motion.p>
               )}
             </AnimatePresence>
-          </div>
           <button 
             type="submit"
             className="w-full bg-emu-accent hover:bg-emu-highlight text-emu-base font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"

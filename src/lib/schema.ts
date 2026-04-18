@@ -112,3 +112,18 @@ export const configSchema = z.object({
 
 // Esportiamo il tipo derivato dallo schema per usarlo come TypeScript puro in tutto il progetto
 export type ConfigFormValues = z.infer<typeof configSchema>;
+
+/**
+ * SCHEMI PER I WORKER: Sicurezza e Type-Safety tra i thread 🧵
+ * Usati per validare postMessage e prevenire errori di runtime.
+ */
+export const WorkerMessageSchema = z.object({
+  type: z.string(),
+  payload: z.any(),
+});
+
+export const SyncConfigSchema = z.object({
+  supabaseUrl: z.string().url(),
+  supabaseKey: z.string(),
+  lastSyncAt: z.string().datetime().optional(),
+});

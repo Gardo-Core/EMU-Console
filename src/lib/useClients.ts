@@ -28,7 +28,7 @@ export function useClients() {
       // Fetch clients non-deleted
       const { data, error: fetchError } = await supabase
         .from("clients")
-        .select("*")
+        .select("id, name, created_at, created_by, deleted_at")
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
@@ -39,7 +39,7 @@ export function useClients() {
       for (const client of data || []) {
         const { count } = await supabase
           .from("config_files")
-          .select("*", { count: "exact", head: true })
+          .select("id", { count: "exact", head: true })
           .eq("client_id", client.id)
           .is("deleted_at", null);
 

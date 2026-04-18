@@ -1,64 +1,58 @@
-# EMU Console
+# 🛰️ EMU Console: La Scheggia dei Configuratori
 
-Benvenuti nella **EMU Console**
-
----
-
-## Cosa fa EMU Console?
-
-La console permette di gestire a 360° il file `config.ini` dei terminali, offrendo:
-
-*   **Configurazione Visiva:** Modifica i parametri (IP, Port, SSL, Aspetto) tramite una UI moderna invece di editare file di testo grezzi.
-*   **Anteprima Real-Time:** Un monitor virtuale mostra istantaneamente come apparirà il terminale (colori, font, stringhe di stato) in base alle tue scelte.
-*   **Editor INI Intelligente:** Visualizza il codice generato dietro le quinte con evidenziazione sintattica e validazione degli errori in tempo reale.
-*   **Integrazione Barcode & Hardware:** Pannelli dedicati per configurare lettori laser e macro per i tasti fisici dei dispositivi.
-*   **Auto-Login Scripting:** Generatore integrato di script GLINK per automatizzare l'accesso (User, Password, Libreria) in totale sicurezza.
-*   **INI Comparer:** Carica due file diversi per vedere cosa è cambiato riga per riga.
+Benvenuto nel futuro della configurazione terminali. Se sei qui, o sei un genio o ti hanno appena mollato questo progetto tra le mani. In ogni caso, rilassati: abbiamo riprogettato tutto perché vada **velocissimo** e non ti faccia esplodere il PC.
 
 ---
 
-## 🛠 Tech Stack
+## 🚀 Perché EMU Console è meglio della tua vecchia app?
 
+Semplice. Mentre le altre app si piantano appena provi a caricare un file INI più lungo di una lista della spesa, EMU Console usa una tecnologia spaziale:
 
-*   **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
-*   **Linguaggio:** TypeScript (Tipizzazione forte per evitare bug sui parametri INI)
-*   **Stato & Form:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) per la validazione degli schemi.
-*   **Animazioni:** [Framer Motion](https://www.framer.com/motion/) (per quel feeling premium e le transizioni fluide).
-*   **ICONS:** [Lucide React](https://lucide.dev/).
-*   **Styling:** Tailwind CSS (Custom Theme "EMU" con toni petrolio e arancione).
-
----
-
-## 📂 Struttura del Progetto
-
-Per orientarti nel codice, ecco dove trovi le cose importanti:
-
-*   `src/components/tabs/`: Qui ci sono le singole schede di configurazione (Rete, Sicurezza, Aspetto, ecc.).
-*   `src/lib/iniValidator.ts`: Il "motore" che controlla se il file INI è scritto bene.
-*   `src/lib/template.ts`: La logica che fonde i dati del form con i template INI originali.
-*   `src/lib/validationSchemas.ts`: Qui risiedono tutte le regole di business (es. "la porta deve essere numerica", "l'IP deve essere valido").
-*   `src/contexts/SearchContext.tsx`: Gestisce la ricerca globale che ti permette di saltare da una tab all'altra cercando un parametro.
-*   `public/templates/`: Contiene i file INI base per i vari modelli di palmari supportati.
+*   **Multi-Threading (Web Workers):** I calcoli pesanti (diff, validazione, merge) non girano nella UI. Abbiamo dei "minatori" (Workers) che lavorano nel sottosuolo così tu puoi continuare a scrollare a 60 FPS.
+*   **Next.js RSC Power:** Carichiamo solo il codice che serve davvero. Niente mattoni JavaScript al primo avvio. L'app carica prima che tu possa dire "AS400".
+*   **GPU Accelerated UI:** Effetti CRT e Glassmorphism gestiti direttamente dalla scheda video. È così fluida che sembra burro. 🧈
+*   **Editor "Nerd-Proof":** Validazione in tempo reale. Se scrivi una cavolata nell'INI, il sistema ti avvisa prima che tu faccia danni.
 
 ---
 
-## ⌨️ Comandi Rapidi
+## 🛠 Tech Stack (Roba Seria)
 
-Se sei il nuovo sviluppatore assegnato a questo progetto:
-
-1.  **Installa tutto:** `npm install`
-2.  **Avvia in locale:** `npm run dev`
-3.  **Password di Accesso:** L'app è protetta da un Login Gate. La password predefinita è `EMUADMIN`.
-
----
-
-## 💡 Note per il Futuro (Manutenzione)
-
-*   **Aggiungere un parametro:** Se devi aggiungere un nuovo campo all'INI, ricordati di inserirlo in `validationSchemas.ts` (per lo stato) e aggiornare il componente `mergeTemplate` in `template.ts` per scrivere effettivamente il valore nel file finale.
-*   **Ricerca Globale:** Se aggiungi una nuova tab, assicurati di registrare i suoi campi nel `FIELD_REGISTRY` dentro `SearchContext` se vuoi che siano trovabili tramite la barra di ricerca in alto.
-*   **Mobile First:** Ogni modifica alla UI deve essere testata su mobile. Il configuratore usa molto il monitor flottante (TerminalPreview) che deve restare usabile anche su schermi piccoli.
+*   **Framework:** Next.js 14+ (App Router).
+*   **Motore di Calcolo:** Web Workers (per non far laggare nulla).
+*   **Stile:** Tailwind CSS + Glassmorphism adattivo.
+*   **Animazioni:** Framer Motion (versione `m` per bundle leggeri).
+*   **Database:** Supabase (con query ottimizzate al millimetro).
 
 ---
 
-Realizzato per rendere il lavoro degli installatori un po' meno noioso. 
-**By Marco Gardelli**
+## 📂 Guida per il Nuovo Sviluppatore (Orientati o Muori)
+
+Se vuoi metterci le mani senza rompere tutto, ecco i posti magici:
+
+1.  `src/app/page.tsx`: Il punto di ingresso. È un Server Component, non sporcarlo con logica client!
+2.  `src/components/AppShell.tsx`: Il "Capo". Gestisce lo stato e carica i componenti pesanti solo quando serve.
+3.  `src/workers/engine.worker.ts`: Qui c'è la forza bruta. Se devi fare calcoli pesanti, aggiungili qui.
+4.  `src/hooks/useWorker.ts`: Il ponte radio per parlare con i minatori (i Workers).
+5.  `src/components/TerminalPreview.tsx`: Il pezzo forte. Gestisce il monitor virtuale e l'editor INI.
+
+---
+
+## ⌨️ Comandi Veloci
+
+1.  `npm install`: Scarica tutto il necessario.
+2.  `npm run dev`: Lancia l'app in locale e vai su `localhost:3000`.
+3.  **Password:** Se vedi il lucchetto, la combinazione segreta è `EMUADMIN`.
+
+---
+
+## 💡 Pro Tips for Maintenance
+
+*   **Evita il "Lag":** Se devi aggiungere una funzione che cicla migliaia di righe, **NON** metterla nel componente. Mettila nel `engine.worker.ts`. La UI deve restare sacra e libera.
+*   **Pensa al Mobile:** Molti installatori usano tablet o telefoni. Testa sempre il monitor flottante (TerminalPreview) su schermi piccoli.
+*   **Query Pulite:** Quando chiedi dati a Supabase, non usare `.select("*")`. Sii specifico, risparmia banda e la batteria dei dispositivi ti ringrazierà.
+
+---
+
+Buona fortuna, ne avrai bisogno. Se l'app va come una scheggia, è merito del nostro refactoring. Se crasha... beh, controlla i log! 😉
+
+**By Marco Gardelli & Antigravity AI**

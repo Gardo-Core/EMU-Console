@@ -1,6 +1,14 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+/**
+ * ANIMATED TAB CONTENT: IL CAMBIO SCENA 🎭
+ * 
+ * Questo componente si occupa di far apparire e scomparire le varie sezioni
+ * del form con una transizione fluida. 
+ * Se l'utente ha attivato "Riduci movimento" nelle impostazioni di sistema,
+ * noi siamo bravi e disattiviamo le animazioni per non dargli fastidio.
+ */
+import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { TabId } from "./TabNavigation";
 import { NetworkTab } from "./tabs/NetworkTab";
 import { SecurityTab } from "./tabs/SecurityTab";
@@ -26,6 +34,8 @@ const variants: any = {
  * con una transizione fluida (fade + slide).
  */
 export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
+  const shouldReduceMotion = useReducedMotion();
+
   const renderTab = () => {
     switch (activeTab) {
       case "network": return <NetworkTab />;
@@ -41,16 +51,21 @@ export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
   return (
     <div className="relative mt-4 min-h-[400px]">
       <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab} // La chiave permette a Framer Motion di capire quando un componente cambia
+        <m.div
+          key={activeTab}
           variants={variants}
           initial="initial"
           animate="enter"
           exit="exit"
-          className="w-full min-h-full"
+          transition={shouldReduceMotion ? { duration: 0 } : undefined}
+          style={{ 
+            contentVisibility: 'auto', 
+            containIntrinsicSize: '0 500px' // Stima dell'altezza media di una tab
+          }}
+          className="w-full min-h-full will-change-transform"
         >
           {renderTab()}
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </div>
   );

@@ -1,9 +1,17 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+/**
+ * COMPARE VIEW: TROVA LE DIFFERENZE 🔍
+ * 
+ * Hai due file INI e non sai cosa cambia? Ci pensa lui.
+ * Anche qui, il calcolo del diff è pesantissimo, quindi lo mandiamo 
+ * in gita dal Worker per non far bloccare la pagina.
+ */
+import React, { useState, useRef, ChangeEvent } from "react";
 import { UploadCloud, FileJson } from "lucide-react";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { generateSideBySide } from "@/lib/diffEngine";
+import { useWorker } from "@/hooks/useWorker";
 
 type DiffLine = {
   type: 'added' | 'removed' | 'modified' | 'unchanged';
@@ -16,9 +24,33 @@ type FileState = {
   lines: DiffLine[];
 };
 
+/**
+ * Componente riga memoizzato per evitare il ricalcolo di migliaia di nodi 
+ * DOM ad ogni piccolo scroll o aggiornamento di stato.
+ */
+const DiffRow = ({ line, idx, side }: { line: DiffLine; idx: number; side: 1 | 2 }) => {
+  const isLeft = side === 1;
+  const bgColor = line.type === 'unchanged' ? "opacity-50 border-transparent" :
+                  line.type === 'removed' ? (isLeft ? "bg-red-500/20 border-red-500/50 text-red-200" : "border-transparent opacity-0") :
+                  line.type === 'added' ? (!isLeft ? "bg-[#F58800]/20 border-[#F58800]/50 text-[#F58800]" : "border-transparent opacity-0") :
+                  line.type === 'modified' ? "bg-[#F8BC24]/20 border-[#F8BC24]/50 text-white" : "";
+
+  return (
+    <div className={cn("px-4 py-0.5 whitespace-pre border-l-2", bgColor)}>
+      <span className="inline-block w-8 text-white/30 select-none border-r border-[#266867]/30 mr-4 font-mono text-[10px]">
+        {idx + 1}
+      </span>
+      {line.text || " "}
+    </div>
+  );
+};
+
+const MemoizedDiffRow = React.memo(DiffRow);
+
 export function CompareView() {
   const [file1, setFile1] = useState<FileState>({ name: null, text: null, lines: [] });
   const [file2, setFile2] = useState<FileState>({ name: null, text: null, lines: [] });
+  const { runTask } = useWorker();
 
   const scrollRef1 = useRef<HTMLDivElement>(null);
   const scrollRef2 = useRef<HTMLDivElement>(null);
@@ -49,12 +81,12 @@ export function CompareView() {
     reader.readAsText(file);
   };
 
-  const computeDiff = (t1: string, t2: string) => {
+  const computeDiff = async (t1: string, t2: string) => {
     const lines1 = t1.split(/\r?\n/);
     const lines2 = t2.split(/\r?\n/);
 
-    // Use the robust diff engine for sequence alignment and sync padding
-    const { map1, map2 } = generateSideBySide(lines1, lines2);
+    // OFFLOAD AL WORKER: Calcolo del DIFF
+    const { map1, map2 } = await runTask('DIFF_INI', { contentA: lines1, contentB: lines2 });
 
     setFile1(prev => ({ ...prev, lines: map1 }));
     setFile2(prev => ({ ...prev, lines: map2 }));
@@ -79,16 +111,7 @@ export function CompareView() {
         ) : (
           <div ref={scrollRef1} onScroll={() => handleScroll(1)} className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-[#051821]/50 font-mono text-xs sm:text-sm">
             {file1.lines.map((line, idx) => (
-              <div key={idx} className={cn(
-                "px-4 py-0.5 whitespace-pre border-l-2",
-                line.type === 'unchanged' && "opacity-50 border-transparent",
-                line.type === 'removed' && "bg-red-500/20 border-red-500/50 text-red-200",
-                line.type === 'modified' && "bg-[#F8BC24]/20 border-[#F8BC24]/50 text-white",
-                line.type === 'added' && "border-transparent opacity-0" // Riempimento vuoto
-              )}>
-                <span className="inline-block w-8 text-white/30 select-none border-r border-[#266867]/30 mr-4">{idx + 1}</span>
-                {line.text || " "}
-              </div>
+              <MemoizedDiffRow key={idx} line={line} idx={idx} side={1} />
             ))}
           </div>
         )}
@@ -110,16 +133,7 @@ export function CompareView() {
         ) : (
           <div ref={scrollRef2} onScroll={() => handleScroll(2)} className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-[#051821]/50 font-mono text-xs sm:text-sm">
             {file2.lines.map((line, idx) => (
-              <div key={idx} className={cn(
-                "px-4 py-0.5 whitespace-pre border-l-2",
-                line.type === 'unchanged' && "opacity-50 border-transparent",
-                line.type === 'added' && "bg-[#F58800]/20 border-[#F58800]/50 text-[#F58800]",
-                line.type === 'modified' && "bg-[#F8BC24]/20 border-[#F8BC24]/50 text-white",
-                line.type === 'removed' && "border-transparent opacity-0" // Riempimento vuoto
-              )}>
-                <span className="inline-block w-8 text-white/30 select-none border-r border-[#266867]/30 mr-4">{idx + 1}</span>
-                {line.text || " "}
-              </div>
+              <MemoizedDiffRow key={idx} line={line} idx={idx} side={2} />
             ))}
           </div>
         )}

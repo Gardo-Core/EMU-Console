@@ -1,10 +1,9 @@
 /**
- * Algoritmo di Diff di Myers (Versione Greedy) con supporto al Fuzzy Matching.
+ * Diff Engine: Modulo di computazione differenziale basata su algoritmo di Myers.
  * 
- * Questo modulo serve a confrontare due file INI in modo "intelligente". 
- * Invece di una semplice riga per riga, cerchiamo di mantenere l'allineamento visivo
- * anche se vengono aggiunte o rimosse intere sezioni, evitando il fastidioso 
- * "effetto trascinamento" dove tutto il resto del file sembra cambiato solo per un offset.
+ * Ruolo: Confronto tra file di configurazione con supporto al fuzzy matching.
+ * Implementazione: Utilizza l'algoritmo di Myers per il calcolo del percorso minimo di modifica,
+ * garantendo l'allineamento visivo anche in presenza di offset causati da righe vuote o commenti.
  */
 
 // Tipi di modifica possibili durante il confronto
@@ -204,4 +203,20 @@ export function generateSideBySide(A: string[], B: string[]) {
   }
   
   return { map1: mapA, map2: mapB };
+}
+/**
+ * runDiffWorker: Orchestratore asincrono per il calcolo del diff.
+ * 
+ * Rationale: Delega il calcolo intensivo al Web Worker per mantenere la reattività
+ * dell'interfaccia utente durante il confronto di file di grandi dimensioni.
+ */
+export async function runDiffWorker(a: string[], b: string[]): Promise<Edit[]> {
+  return new Promise((resolve) => {
+    const worker = new Worker(new URL('../workers/diff.worker.ts', import.meta.url));
+    worker.onmessage = (e) => {
+      resolve(e.data);
+      worker.terminate();
+    };
+    worker.postMessage({ type: 'CALCULATE_DIFF', payload: { a, b } });
+  });
 }

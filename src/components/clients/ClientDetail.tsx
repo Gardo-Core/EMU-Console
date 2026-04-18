@@ -30,6 +30,10 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
   const [previewLoading, setPreviewLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  
+  // Stati per il Commit Dialog
+  const [pendingUploadFiles, setPendingUploadFiles] = useState<FileList | null>(null);
+  const [commitMessage, setCommitMessage] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,16 +76,25 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
   );
 
   /**
-   * Upload handler.
+   * Upload handler - Intercetta l'evento e apre il modale
    */
-  const handleUpload = useCallback(
-    async (fileList: FileList | null) => {
-      if (!fileList || fileList.length === 0) return;
+  const handleUploadIntent = useCallback((fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    setPendingUploadFiles(fileList);
+    setCommitMessage(""); // resetta il messaggio
+  }, []);
+
+  /**
+   * Esegue l'upload effettivo dopo aver confermato il commit message
+   */
+  const executeUpload = useCallback(
+    async () => {
+      if (!pendingUploadFiles) return;
 
       setUploading(true);
       let uploadedCount = 0;
 
-      for (const file of Array.from(fileList)) {
+      for (const file of Array.from(pendingUploadFiles)) {
         if (!file.name.endsWith(".ini")) {
           addToast({
             message: `"${file.name}" non è un file .ini — ignorato`,
@@ -91,7 +104,8 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
         }
 
         try {
-          await uploadFile(clientId, file);
+          // Passiamo il commit message al motore di upload
+          await uploadFile(clientId, file, commitMessage || "Aggiornamento manuale file");
           uploadedCount++;
         } catch (err: any) {
           addToast({
@@ -103,15 +117,16 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
 
       if (uploadedCount > 0) {
         addToast({
-          message: `${uploadedCount} file caricato/i con successo`,
+          message: `${uploadedCount} file aggiornato/i con il messaggio: "${commitMessage}"`,
           type: "success",
         });
         await fetchFiles(clientId);
       }
 
       setUploading(false);
+      setPendingUploadFiles(null);
     },
-    [clientId, uploadFile, fetchFiles, addToast]
+    [clientId, uploadFile, fetchFiles, addToast, pendingUploadFiles, commitMessage]
   );
 
   /**
@@ -190,7 +205,7 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    handleUpload(e.dataTransfer.files);
+    handleUploadIntent(e.dataTransfer.files);
   };
 
   return (
@@ -236,7 +251,7 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
           multiple
           className="hidden"
           onChange={(e) => {
-            handleUpload(e.target.files);
+            handleUploadIntent(e.target.files);
             e.target.value = "";
           }}
         />
@@ -278,7 +293,7 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
                 multiple
                 className="hidden"
                 onChange={(e) => {
-                  handleUpload(e.target.files);
+                  handleUploadIntent(e.target.files);
                   e.target.value = "";
                 }}
               />
@@ -434,6 +449,74 @@ export function ClientDetail({ clientId, clientName, onBack }: ClientDetailProps
                   className="flex-1 py-3 px-4 rounded-xl bg-red-500 hover:bg-red-400 text-white text-sm font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                 >
                   Sì, elimina file
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODALE DI COMMIT (Versioning) */}
+      <AnimatePresence>
+        {pendingUploadFiles && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !uploading && setPendingUploadFiles(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="relative w-full max-w-lg bg-[#051821] border border-[#F58800]/30 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(245,136,0,0.15)] flex flex-col"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#F58800] to-emu-highlight" />
+              
+              <div className="p-6 border-b border-white/5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-[#F58800]/10 rounded-xl text-[#F58800]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white glow-text">Aggiornamento in corso...</h3>
+                    <p className="text-white/50 text-sm">Stai per caricare {pendingUploadFiles.length} file .ini</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6">
+                <label className="block text-[#F58800] text-sm font-semibold mb-2">Messaggio di Commit (Obbligatorio)</label>
+                <textarea
+                  value={commitMessage}
+                  onChange={(e) => setCommitMessage(e.target.value)}
+                  placeholder="Es: Modificato timeout rete per il magazzino 3..."
+                  rows={3}
+                  className="w-full bg-[#051821]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#F58800] focus:ring-1 focus:ring-[#F58800] transition-all resize-none shadow-inner"
+                  autoFocus
+                />
+                <p className="text-white/30 text-xs mt-2 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  Il messaggio salverà questa modifica nello storico. Ti aiuterà se dovrai fare un ripristino in futuro.
+                </p>
+              </div>
+
+              <div className="p-6 bg-white/5 flex items-center gap-3 border-t border-white/5">
+                <button
+                  onClick={() => setPendingUploadFiles(null)}
+                  disabled={uploading}
+                  className="flex-1 py-3 px-4 rounded-xl text-white/70 hover:text-white hover:bg-white/10 text-sm font-semibold transition-colors disabled:opacity-50"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={executeUpload}
+                  disabled={commitMessage.trim().length === 0 || uploading}
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emu-accent to-emu-highlight hover:brightness-110 text-[#051821] text-sm font-bold transition-all shadow-[0_0_20px_rgba(245,136,0,0.3)] disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2"
+                >
+                  {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salva Versione"}
                 </button>
               </div>
             </motion.div>

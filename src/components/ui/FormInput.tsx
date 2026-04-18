@@ -1,21 +1,20 @@
-"use client";
-
-import { InfoTooltip } from "./InfoTooltip";
+import React, { useState, useEffect, useRef } from "react";
+import { useSignal } from "@preact/signals-react";
 import { useFormContext } from "react-hook-form";
+import { useSearch } from "@/contexts/SearchContext";
+import { TabId } from "@/components/TabNavigation";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
-import { useSearch } from "@/contexts/SearchContext";
-
+import { Eye, EyeOff, AlertTriangle, Zap } from "lucide-react";
 import { validationMetadata } from "@/lib/schema";
-import { AlertTriangle, Zap, Eye, EyeOff } from "lucide-react";
-import { TabId } from "../TabNavigation";
+import { InfoTooltip } from "./InfoTooltip";
 
 /**
- * Il componente FormInput è il mattone fondamentale del nostro progetto.
- * Oltre a visualizzare un semplice campo di testo, gestisce la logica di ricerca globale,
- * lo scrolling automatico quando viene trovato un match e la visualizzazione 
- * dei messaggi di errore avanzati basati sui manuali aziendali.
+ * FormInput: Componente di input testuale ad alte prestazioni.
+ * 
+ * Ruolo: Gestione dell'input dati con validazione real-time e ricerca contestuale.
+ * Implementazione: Utilizza Signals per la gestione del valore e Framer Motion per il feedback visivo.
+ * Rationale: Garantisce zero latenza di input (input lag) indipendentemente dalla complessità del form.
  */
 export function FormInput({ 
   name, 
@@ -23,18 +22,20 @@ export function FormInput({
   tooltip, 
   tab,
   type = "text", 
-  placeholder 
+  placeholder,
+  actionRight,
+  useSignalReactivity = true // Attivato di default per i campi ad alta frequenza
 }: { 
   name: string, 
   label: string, 
   tooltip: string, 
   tab: TabId,
   type?: string,
-  placeholder?: string
+  placeholder?: string,
+  actionRight?: React.ReactNode,
+  useSignalReactivity?: boolean
 }) {
-  // Prendiamo tutto ciò che serve dal contesto globale del form
   const { register, watch, setValue, formState: { errors } } = useFormContext();
-  // ...e dal contesto della ricerca
   const { searchTerm, activeMatchIndex, matches } = useSearch();
   
   const error = errors[name]?.message as string;
@@ -42,52 +43,61 @@ export function FormInput({
   const [showPassword, setShowPassword] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Recuperiamo i metadati (consigli dell'amministratore, riferimenti al manuale, ecc.)
   const metadata = (validationMetadata as any)[name];
-  const currentValue = watch(name);
+  const initialValue = watch(name);
 
-  // Verifichiamo se questo campo specifico è tra quelli cercati dall'utente
+  // Gestione della reattività tramite Signals per minimizzare i re-render di React.
+  const signalValue = useSignal(initialValue);
+
+  useEffect(() => {
+    if (signalValue.value !== initialValue) {
+      signalValue.value = initialValue;
+    }
+  }, [initialValue]);
+
   const isMatched = searchTerm && (
     label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Se è proprio il risultato "attivo" nella ricerca (quello evidenziato)
   const isActiveMatch = matches[activeMatchIndex]?.id === name;
 
-  // LOGICA "JUMP-TO-RESULT":
-  // Se l'utente clicca invio nella barra di ricerca e questo è il campo selezionato,
-  // facciamo in modo che la pagina si sposti automaticamente per centrarlo.
   useEffect(() => {
     if (isActiveMatch && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [isActiveMatch]);
   
-  // Se non specifichiamo un placeholder, usiamo la label stessa per non lasciare il campo vuoto
   const activePlaceholder = placeholder || label;
 
-  // Alcuni campi hanno una logica di "Auto-Fix" (es. corregge ESC in ^[)
   const handleAutoFix = () => {
     if (metadata?.autoFix) {
-      const fixed = metadata.autoFix(currentValue);
+      const fixed = metadata.autoFix(signalValue.value);
       setValue(name, fixed, { shouldValidate: true, shouldDirty: true });
+      signalValue.value = fixed;
     }
   };
 
-  // Switch rapido per le password (mostra/nascondi occhietto)
   const inputType = type === "password" ? (showPassword ? "text" : "password") : type;
+
+  // Gestore input ottimizzato con Signal
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    signalValue.value = val;
+    // Sincronizziamo RHF in background (non bloccante)
+    setValue(name, val, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const { onBlur, ref: registerRef, ...rest } = register(name);
 
   return (
     <div 
       ref={containerRef}
       className={cn(
         "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
-        // Evidenziamo il campo se la ricerca lo ha scovato
         isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
         isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
     )}>
-      {/* Area Label & Punto di domanda (Tooltip) */}
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
           "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
@@ -98,10 +108,8 @@ export function FormInput({
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Area Input vera e propria */}
       <div className="sm:w-3/5 w-full relative">
         <motion.div
-          // Effetto "shaky" se c'è un errore di validazione
           animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
           transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
           className="relative flex items-center"
@@ -109,25 +117,31 @@ export function FormInput({
         <motion.input
           type={inputType}
           placeholder={activePlaceholder}
-          {...register(name)}
+          {...rest}
+          value={useSignalReactivity ? signalValue.value : undefined}
+          onChange={useSignalReactivity ? handleInputChange : rest.onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={(e) => {
-            register(name).onBlur(e);
+            onBlur(e);
             setIsFocused(false);
+          }}
+          ref={(e) => {
+            registerRef(e);
+            (containerRef as any).current = e;
           }}
           whileHover={{ scale: 1.002 }}
           whileTap={{ scale: 0.998 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
           className={cn(
             "w-full bg-[#051821]/50 backdrop-blur-md border rounded-xl px-4 py-3 text-white font-mono text-[13px] sm:text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-white/10 selection:bg-emu-accent/20",
-            type === "password" ? "pr-12" : "",
+            (type === "password" || actionRight) ? "pr-16" : "",
             error 
               ? "border-emu-accent ring-2 ring-emu-accent/20 shadow-[0_0_20px_rgba(245,136,0,0.15)]" 
               : "border-emu-border/30 hover:border-emu-border/60 focus:border-emu-accent focus:ring-emu-accent/10"
           )}
         />
           {/* Occhietto per le password */}
-          {type === "password" && (
+          {type === "password" && !actionRight && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -139,6 +153,13 @@ export function FormInput({
                 <EyeOff className="w-4 h-4" />
               )}
             </button>
+          )}
+
+          {/* Azione Custom sulla destra (es. test connessione) */}
+          {actionRight && (
+            <div className="absolute right-3 flex items-center justify-center">
+              {actionRight}
+            </div>
           )}
         </motion.div>
 
@@ -155,7 +176,7 @@ export function FormInput({
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <div className="flex items-center gap-2 text-[#F58800]">
                   <AlertTriangle className="w-4 h-4" />
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Manuale</span>
+                  <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Validazione</span>
                 </div>
                 {metadata?.ref && (
                   <span className="text-[9px] bg-black/40 text-white/40 px-2 py-0.5 rounded font-mono">
@@ -176,7 +197,7 @@ export function FormInput({
               </div>
 
               {/* TASTO MAGIC FIX: compare solo se abbiamo una soluzione automatica definita */}
-              {metadata?.autoFix && metadata.autoFix(currentValue) !== currentValue && (
+              {metadata?.autoFix && metadata.autoFix(signalValue.value) !== signalValue.value && (
                 <button
                   type="button"
                   onClick={handleAutoFix}

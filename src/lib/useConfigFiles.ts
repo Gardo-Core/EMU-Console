@@ -26,6 +26,7 @@ export type ConfigFileVersion = {
   checksum: string;
   uploaded_by: string;
   created_at: string;
+  commit_message?: string;
 };
 
 /**
@@ -53,7 +54,7 @@ export function useConfigFiles() {
     try {
       const { data, error: fetchError } = await supabase
         .from("config_files")
-        .select("*")
+        .select("id, client_id, file_name, latest_version, created_at, created_by, deleted_at")
         .eq("client_id", clientId)
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
@@ -65,7 +66,7 @@ export function useConfigFiles() {
       for (const f of data || []) {
         const { data: versionData } = await supabase
           .from("config_file_versions")
-          .select("file_size, storage_path")
+          .select("file_size, storage_path, commit_message")
           .eq("file_id", f.id)
           .eq("version", f.latest_version)
           .is("deleted_at", null)
@@ -89,9 +90,10 @@ export function useConfigFiles() {
 
   /**
    * Upload atomico di un file .ini con logica di cleanup per prevenire file orfani.
+   * Include la logica per il salvataggio del commit message.
    */
   const uploadFile = useCallback(
-    async (clientId: string, file: File) => {
+    async (clientId: string, file: File, commitMessage: string = "Aggiornamento manuale file") => {
       // 1. Calcolo checksum
       const checksum = await computeChecksum(file);
 
@@ -179,6 +181,7 @@ export function useConfigFiles() {
             mime_type: "application/octet-stream",
             checksum,
             uploaded_by: FIXED_USER_ID,
+            commit_message: commitMessage,
           });
 
         if (versionError) throw versionError;
@@ -262,6 +265,21 @@ export function useConfigFiles() {
     if (restoreError) throw restoreError;
   }, []);
 
+  /**
+   * Recupera lo storico delle versioni di un singolo file
+   */
+  const fetchFileHistory = useCallback(async (fileId: string) => {
+    const { data, error } = await supabase
+      .from("config_file_versions")
+      .select("id, file_id, version, storage_path, file_size, mime_type, checksum, uploaded_by, created_at, commit_message")
+      .eq("file_id", fileId)
+      .is("deleted_at", null)
+      .order("version", { ascending: false });
+
+    if (error) throw error;
+    return data as ConfigFileVersion[];
+  }, []);
+
   return {
     files,
     loading,
@@ -272,5 +290,6 @@ export function useConfigFiles() {
     previewFile,
     softDeleteFile,
     restoreFile,
+    fetchFileHistory,
   };
 }

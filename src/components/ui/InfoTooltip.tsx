@@ -1,65 +1,17 @@
-"use client";
-
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
 import { HelpCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 /**
- * Piccola icona a forma di punto di domanda che, al passaggio del mouse (o al tocco),
- * mostra un fumetto informativo (tooltip) per spiegare i campi più tecnici.
+ * Tooltip informativo condiviso per le etichette del form.
+ * Fornisce spiegazioni contestuali basate sugli standard aziendali.
  */
-export function InfoTooltip({ content, align = "center" }: { content: string, align?: "center" | "right" | "left" }) {
-  const [open, setOpen] = useState(false);
-
-  // Calcoliamo l'allineamento del fumetto rispetto all'icona
-  const getAlignClasses = () => {
-    switch (align) {
-      case "right": return "right-0 translate-x-0";
-      case "left": return "left-0 translate-x-0";
-      default: return "left-1/2 -translate-x-1/2";
-    }
-  };
-
-  // Calcoliamo l'allineamento della "frettina" del fumetto
-  const getArrowAlignClasses = () => {
-    switch (align) {
-      case "right": return "right-1.5 translate-x-0";
-      case "left": return "left-1.5 translate-x-0";
-      default: return "left-1/2 -translate-x-1/2";
-    }
-  };
-
+export function InfoTooltip({ content, align }: { content: string, align?: string }) {
   return (
-    <div 
-      className="relative flex items-center ml-1 flex-shrink-0" 
-      onMouseEnter={() => setOpen(true)} 
-      onMouseLeave={() => setOpen(false)}
-    >
-      <HelpCircle className="w-4 h-4 text-emu-highlight/70 cursor-help flex-shrink-0" />
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className={cn(
-              "absolute bottom-full mb-3 w-[min(calc(100vw-2rem),18rem)] rounded-xl border border-white/10 bg-[#051821]/60 p-4 text-[13px] text-white/90 leading-relaxed flex flex-col gap-1 pointer-events-none z-[100]",
-              "backdrop-blur-md backdrop-saturate-150", // Glassmorphism
-              getAlignClasses()
-            )}
-            style={{ WebkitBackdropFilter: "blur(12px)" }} // Fix necessario per i browser basati su WebKit (Safari)
-          >
-            {content}
-            {/* Freccia del fumetto */}
-            <div className={cn(
-              "absolute top-full border-[6px] border-transparent border-t-[#051821]/60", 
-              getArrowAlignClasses()
-            )} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="group/tooltip relative inline-flex items-center">
+      <HelpCircle className="w-3 h-3 text-white/20 hover:text-emu-accent cursor-help transition-colors" />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-3 py-2 bg-[#051821] border border-[#266867] text-white text-[10px] rounded shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all whitespace-normal w-48 z-50 pointer-events-none box-border backdrop-blur-md">
+        {content}
+      </div>
     </div>
   );
 }

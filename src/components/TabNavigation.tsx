@@ -1,7 +1,14 @@
 "use client";
 
+/**
+ * NAVIGAZIONE TAB: LO SLIDER ARANCIONE 🟠
+ * 
+ * Qui gestiamo i bottoni in alto. 
+ * Abbiamo usato Framer Motion per quell'effetto "bolla" che segue il click.
+ * È una chicca estetica che fa sembrare l'app molto più premium.
+ */
 import { Settings, Palette, ScanBarcode, Split, BookOpen, Wifi, Shield } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /**
@@ -46,9 +53,9 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
           >
             {/* Sfondo arancione animato (solo per la tab attiva) */}
             {isActive && (
-              <motion.span
+              <m.span
                 layoutId="bubble"
-                className="absolute inset-0 z-0 bg-emu-accent rounded-lg"
+                className="absolute inset-0 z-0 bg-emu-accent rounded-lg will-change-transform"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
               />
             )}
