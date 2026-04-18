@@ -113,6 +113,7 @@ export function FormInput({
           animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
           transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
           className="relative flex items-center"
+          style={{ isolation: 'isolate' }}
         >
         <motion.input
           type={inputType}

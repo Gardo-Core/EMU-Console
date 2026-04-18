@@ -110,7 +110,7 @@ const ScreenContent = React.memo(function ScreenContent() {
               className="w-full h-full object-contain"
             />
             {/* Effetto CRT overlay (sempre accelerato) */}
-            <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply will-change-transform" />
+            <div className="absolute inset-0 bg-gradient-radial from-transparent to-black/20 pointer-events-none mix-blend-multiply" />
          </div>
          
          <div className="h-10 bg-linear-to-b from-zinc-800 to-zinc-900 flex items-center px-2 space-x-2 overflow-hidden shrink-0 border-t border-zinc-700/50">
@@ -118,7 +118,7 @@ const ScreenContent = React.memo(function ScreenContent() {
              <m.div 
                key={btn} 
                whileTap={{ scale: 0.9 }}
-               className="bg-linear-to-b from-zinc-600 to-zinc-700 text-white text-[9px] font-sans px-2.5 py-1 rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.5),inset_0_1px_rgba(255,255,255,0.2)] border border-zinc-800 cursor-pointer will-change-transform"
+               className="bg-linear-to-b from-zinc-600 to-zinc-700 text-white text-[9px] font-sans px-2.5 py-1 rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.5),inset_0_1px_rgba(255,255,255,0.2)] border border-zinc-800 cursor-pointer"
              >
                {btn}
              </m.div>
@@ -373,7 +373,7 @@ const RawIniContent = React.memo(function RawIniContent() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute bottom-4 left-4 right-14 bg-orange-500/10 backdrop-blur-md border border-orange-500/20 p-3 rounded-lg flex flex-col gap-2 shadow-xl z-30 will-change-transform"
+                className="absolute bottom-4 left-4 right-14 bg-orange-500/10 backdrop-blur-md border border-orange-500/20 p-3 rounded-lg flex flex-col gap-2 shadow-xl z-30"
               >
                 {errors.slice(0, 2).map((err, i) => (
                   <div key={i} className="flex flex-col">
@@ -449,7 +449,7 @@ export function TerminalPreview() {
            initial={{ opacity: 0, y: 10 }}
            animate={{ opacity: 1, y: 0 }}
            transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 25 }}
-           className="flex-1 min-h-0 relative will-change-transform"
+           className="flex-1 min-h-0 relative"
          >
            {mode === 'visual' ? <ScreenContent /> : <RawIniContent />}
          </m.div>
@@ -473,7 +473,7 @@ export function TerminalPreview() {
         whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
         whileDrag={shouldReduceMotion ? {} : { scale: 1.1, cursor: "grabbing" }}
         transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 25 }}
-        className="fixed bottom-[100px] right-6 z-40 bg-emu-highlight text-black p-4 rounded-full shadow-[0_0_30px_rgba(248,188,36,0.6)] lg:hidden cursor-grab active:cursor-grabbing will-change-transform"
+        className="fixed bottom-[100px] right-6 z-40 bg-emu-highlight text-black p-4 rounded-full shadow-[0_0_30px_rgba(248,188,36,0.6)] lg:hidden cursor-grab active:cursor-grabbing"
       >
         <Eye className="w-6 h-6" />
       </m.button>
@@ -492,7 +492,7 @@ export function TerminalPreview() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 25 }}
-              className="w-full max-w-[400px] h-full max-h-[750px] relative flex flex-col bg-[#051821] border border-[#266867] rounded-2xl p-4 shadow-2xl will-change-transform"
+              className="w-full max-w-[400px] h-full max-h-[750px] relative flex flex-col bg-[#051821] border border-[#266867] rounded-2xl p-4 shadow-2xl"
             >
               <div className="flex justify-between items-center shrink-0 mb-4">
                  <div className="flex-1 pr-4">{headerContent}</div>

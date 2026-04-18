@@ -116,6 +116,7 @@ export function FormSelect({
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
                   className="absolute left-0 right-0 top-full mt-2 z-[110] bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5"
                   style={{ 
+                    isolation: 'isolate',
                     WebkitBackdropFilter: "blur(24px) saturate(150%)",
                     transform: "translateZ(0)",
                     backfaceVisibility: "hidden"

@@ -55,7 +55,7 @@ export function TabNavigation({ activeTab, onSelect }: { activeTab: TabId, onSel
             {isActive && (
               <m.span
                 layoutId="bubble"
-                className="absolute inset-0 z-0 bg-emu-accent rounded-lg will-change-transform"
+                className="absolute inset-0 z-0 bg-emu-accent rounded-lg"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
               />
             )}
