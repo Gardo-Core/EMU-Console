@@ -80,12 +80,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Solo su Mobile: rendiamo le schede più scure per migliorare il contrasto */
+/* Solo su Mobile: armonizziamo con il colore delle schede clienti */
 @media (max-width: 768px) {
   .glass-card {
-    background: rgba(5, 24, 33, 0.8) !important;
+    background: rgba(26, 70, 69, 0.5) !important;
     backdrop-filter: blur(12px);
-    border-color: rgba(38, 104, 103, 0.2);
+    border-color: rgba(38, 104, 103, 0.4);
   }
 }
 
