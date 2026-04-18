@@ -20,7 +20,7 @@ export function AppearanceTab() {
     <div className="space-y-6">
       <motion.div 
         variants={itemVariants}
-        className="glass-card shadow-xl"
+        className="glass-card shadow-xl relative z-10 overflow-visible mb-20"
       >
         <h3 className="text-[13px] font-bold text-emu-highlight/90 mb-6">Geometria schermo</h3>
         <div className="grid grid-cols-12 gap-y-6 gap-x-4">

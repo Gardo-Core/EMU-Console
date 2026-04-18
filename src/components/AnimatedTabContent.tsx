@@ -59,8 +59,7 @@ export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
           exit="exit"
           transition={shouldReduceMotion ? { duration: 0 } : undefined}
           style={{ 
-            contentVisibility: 'auto', 
-            containIntrinsicSize: '0 500px' // Stima dell'altezza media di una tab
+            willChange: 'transform, opacity',
           }}
           className="w-full min-h-full will-change-transform"
         >
