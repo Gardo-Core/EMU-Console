@@ -1,6 +1,6 @@
 import { validateIni } from '../lib/iniValidator';
 import { mergeTemplate } from '../lib/template';
-import { generateSideBySide } from '../lib/diffEngine';
+import { generateSideBySide } from '../lib/diffLogic';
 
 /**
  * Engine Worker: Modulo di computazione asincrona.

@@ -94,9 +94,9 @@ export function FormInput({
     <div 
       ref={containerRef}
       className={cn(
-        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
-        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
-        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
+        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500 hover:z-[80] focus-within:z-[80]",
+        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)] z-[70]" : "",
+        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)] z-[75]" : ""
     )}>
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
@@ -170,7 +170,7 @@ export function FormInput({
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="absolute left-0 right-0 top-full mt-3 z-[100] bg-[#1A4645]/80 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover"
+              className="absolute left-0 right-0 top-full mt-3 z-[110] bg-[#1A4645]/80 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover"
               style={{ WebkitBackdropFilter: "blur(24px) saturate(150%)" }}
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-2">

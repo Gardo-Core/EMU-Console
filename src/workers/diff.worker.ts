@@ -6,7 +6,16 @@
  * con ripiego (fallback) sulla versione TypeScript in caso di indisponibilità.
  */
 
-import { myersDiff, fuzzyMatch, Edit } from '../lib/diffEngine';
+import { myersDiff, fuzzyMatch, Edit } from '../lib/diffLogic';
+
+/**
+ * Diff Worker: Thread dedicato per il calcolo delle differenze.
+ * 
+ * Ruolo: Esegue il confronto tra due sequenze di stringhe in background.
+ * Implementazione: Utilizza l'algoritmo di Myers implementato in diffLogic.
+ * Rationale: Isola gli algoritmi ad alta intensita' di calcolo per prevenire
+ * il congelamento del thread principale (UI).
+ */
 
 let wasmModule: any = null;
 

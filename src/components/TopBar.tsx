@@ -137,7 +137,7 @@ export function TopBar({
 
   return (
     <>
-      <div className="h-16 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-4 sm:px-6 shrink-0 z-[60] sticky top-0">
+      <div className="h-16 w-full bg-[#051821]/80 backdrop-blur-md border-b border-[#266867]/50 flex items-center justify-between px-4 sm:px-6 shrink-0 z-40 sticky top-0">
         
         {/* VIEW: RICERCA MOBILE (Overlay a tutta larghezza) */}
         <AnimatePresence>
@@ -146,7 +146,7 @@ export function TopBar({
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute inset-0 bg-[#051821] z-[70] flex items-center px-4 gap-3 md:hidden"
+              className="absolute inset-0 bg-[#051821] z-50 flex items-center px-4 gap-3 md:hidden"
             >
               <Search className="w-4 h-4 text-emu-highlight" />
               <input 

@@ -62,10 +62,10 @@ export function FormSelect({
       ref={containerRef}
       className={cn(
         "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
-        // Alziamo lo z-index quando il menu è aperto per non farlo finire sotto altri componenti
-        isOpen ? "z-[60]" : "z-10",
-        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
-        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
+        // Alziamo lo z-index quando il menu è aperto o interagito per non farlo finire sotto altri componenti
+        isOpen ? "z-[100]" : "z-10 hover:z-[80] focus-within:z-[80]",
+        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)] z-[70]" : "",
+        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)] z-[75]" : ""
       )}
     >
       {/* Label & Tooltip */}
@@ -114,7 +114,7 @@ export function FormSelect({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
-                  className="absolute left-0 right-0 top-full mt-2 z-[70] bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5"
+                  className="absolute left-0 right-0 top-full mt-2 z-[110] bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5"
                   style={{ WebkitBackdropFilter: "blur(24px) saturate(150%)" }}
                 >
                   <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
@@ -158,7 +158,7 @@ export function FormSelect({
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="absolute left-0 right-0 top-full mt-3 z-[100] bg-[#1A4645]/95 backdrop-blur-xl border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3"
+              className="absolute left-0 right-0 top-full mt-3 z-[110] bg-[#1A4645]/95 backdrop-blur-xl border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3"
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <div className="flex items-center gap-2 text-[#F58800]">

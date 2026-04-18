@@ -48,7 +48,7 @@ export function SignalInput({ name, label, className, ...props }: SignalInputPro
   };
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
+    <div className="flex flex-col gap-1.5 w-full relative hover:z-[80] focus-within:z-[80] transition-all">
       {label && (
         <label className="text-[10px] font-bold uppercase tracking-wider text-emu-accent/70 px-1">
           {label}

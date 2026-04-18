@@ -52,9 +52,9 @@ export function ColorPicker({
     <div 
       ref={containerRef}
       className={cn(
-        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
-        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
-        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
+        "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500 hover:z-[80] focus-within:z-[80]",
+        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)] z-[70]" : "",
+        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)] z-[75]" : ""
       )}
     >
       {/* Label & Tooltip */}
@@ -114,7 +114,7 @@ export function ColorPicker({
               animate={{ opacity: 1, height: 'auto', y: 0 }}
               exit={{ opacity: 0, height: 0, y: -10 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="text-emu-accent text-xs mt-1 bg-[#2b170c] px-3 py-1 rounded-sm border border-emu-accent/20 absolute z-10 w-full"
+              className="text-emu-accent text-xs mt-1 bg-[#2b170c] px-3 py-1 rounded-sm border border-emu-accent/20 absolute z-[110] w-full"
             >
               {error}
             </motion.p>
