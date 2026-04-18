@@ -12,7 +12,7 @@ import { Portal } from "./Portal";
 
 /**
  * FormInput: Componente di input testuale ad alte prestazioni.
- * Ora utilizza i Portali per i popup di errore per evitare clipping e problemi di sfocatura.
+ * Ora calibrato per essere pixel-perfect su Portal 2.0.
  */
 export function FormInput({ 
   name, 
@@ -39,7 +39,7 @@ export function FormInput({
   const error = errors[name]?.message as string;
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, height: 0 });
+  const [coords, setCoords] = useState<{ top: number, left: number, width: number, height: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   
@@ -179,18 +179,23 @@ export function FormInput({
         </motion.div>
 
         <AnimatePresence>
-          {error && (
+          {error && coords && (
             <Portal>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: 0,
+                  top: coords.top + coords.height + 12,
+                  left: coords.left,
+                  width: coords.width
+                }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 className="fixed bg-[#051821]/95 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover z-[9999]"
                 style={{ 
-                  top: coords.top + coords.height + 12,
-                  left: coords.left,
-                  width: coords.width,
-                  WebkitBackdropFilter: "blur(24px) saturate(150%)" 
+                  WebkitBackdropFilter: "blur(24px) saturate(150%)",
+                  transformOrigin: "top center"
                 }}
               >
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
@@ -235,4 +240,5 @@ export function FormInput({
     </div>
   );
 }
+
 

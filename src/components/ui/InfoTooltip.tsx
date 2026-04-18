@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,18 +7,18 @@ import { Portal } from "./Portal";
 /**
  * InfoTooltip: Componente di supporto informativo universale.
  * 
- * Miglioramenti apportati:
- * 1. Supporto Portal: Ora renderizzato alla radice (document.body) per evitare clipping.
- * 2. Glassmorphism: Blur perfetto anche su mobile grazie alla rimozione dei vincoli di layering.
- * 3. Positioning: Calcolo dinamico delle coordinate rispetto all'icona d'origine.
+ * Versione Portale 2.0:
+ * - Risolto: Posizionamento "a caso" causato dai conflitti tra CSS e Framer Motion.
+ * - Risolto: Testo tagliato ai bordi dello schermo (Screen-Boundary Check).
+ * - Risolto: Tracking preciso dello scroll.
  */
 export function InfoTooltip({ content, align = "center" }: { content: string, align?: "left" | "center" | "right" }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
+  const [coords, setCoords] = useState<{ top: number, left: number, width: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  // Calcola la posizione dell'icona per posizionare il tooltip correttamente
+  // Calcola la posizione precisa dell'icona "?"
   const updatePosition = () => {
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
@@ -32,10 +30,10 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     }
   };
 
-  // Aggiorna la posizione quando il tooltip si apre o la finestra cambia
   useLayoutEffect(() => {
     if (isOpen) {
       updatePosition();
+      // Usiamo una frequenza di campionamento alta per lo scroll
       window.addEventListener('scroll', updatePosition, true);
       window.addEventListener('resize', updatePosition);
     }
@@ -45,7 +43,6 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     };
   }, [isOpen]);
 
-  // Chiude il tooltip se si clicca fuori
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -60,19 +57,30 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     };
   }, [isOpen]);
 
-  // Logica di allineamento orizzontale
-  const getAlignmentStyle = () => {
-    const offset = 28; // Spazio dall'icona
-    const baseTop = coords.top - offset;
+  /**
+   * Calcolo Dinamico dell'Allineamento:
+   * Non usiamo più transform: translate(-50%) per evitare conflitti con le animazioni.
+   * Calcoliamo invece i pixel esatti di 'left'.
+   */
+  const getPositionalStyles = () => {
+    if (!coords) return { top: 0, left: 0, opacity: 0 };
     
-    if (align === "left") {
-      return { top: baseTop, left: coords.left, transform: "translateY(-100%)" };
-    }
-    if (align === "right") {
-      return { top: baseTop, left: coords.left + coords.width, transform: "translate(-100%, -100%)" };
-    }
-    // Default: center
-    return { top: baseTop, left: coords.left + coords.width / 2, transform: "translate(-50%, -100%)" };
+    const tooltipWidth = window.innerWidth < 768 ? 260 : 300; // Larghezza mobile vs desktop
+    const screenWidth = window.innerWidth;
+    const margin = 16;
+    
+    // Punto di partenza: centro dell'icona
+    let left = coords.left + (coords.width / 2) - (tooltipWidth / 2);
+    
+    // Correzione forzata se usciamo dallo schermo (Boundary Check)
+    if (left < margin) left = margin;
+    if (left + tooltipWidth > screenWidth - margin) left = screenWidth - tooltipWidth - margin;
+    
+    return {
+      top: coords.top - 12, // Appena sopra l'icona
+      left: left,
+      width: tooltipWidth
+    };
   };
 
   return (
@@ -82,7 +90,6 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      {/* Icona "?" Arancione */}
       <button
         ref={triggerRef}
         type="button"
@@ -98,34 +105,40 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
       </button>
 
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && coords && (
           <Portal>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1, 
+                y: -10, // Manteniamo il translate Y per stare sopra
+                ...getPositionalStyles() 
+              }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
               className={cn(
-                "fixed px-4 py-3 min-w-[240px] w-64 md:w-72",
-                "bg-[#051821]/40 backdrop-blur-2xl border border-[#266867]/60",
+                "fixed px-4 py-3 bg-[#051821]/40 backdrop-blur-2xl border border-[#266867]/60",
                 "rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_30px_rgba(245,136,0,0.05)]",
-                "z-[9999] pointer-events-none select-none"
+                "z-[9999] pointer-events-none select-none overflow-visible"
               )}
               style={{ 
-                ...getAlignmentStyle(),
                 WebkitBackdropFilter: "blur(24px) saturate(160%)",
+                transformOrigin: "bottom center",
+                transform: "translateY(-100%)" // Questo sposta il tooltip SOPRA il punto 'top'
               }}
             >
-              {/* Contenuto Testuale */}
               <p className="text-white text-[11px] md:text-xs leading-relaxed font-sans tracking-wide">
                 {content}
               </p>
               
-              {/* Freccetta Stilizzata */}
-              <div className={cn(
-                 "absolute -bottom-1.5 w-3 h-3 bg-[#051821]/40 border-r border-b border-[#266867]/60 rotate-45",
-                 align === "center" ? "left-1/2 -translate-x-1/2" : align === "left" ? "left-4" : "right-4"
-              )} />
+              {/* Freccetta: Ora posizionata dinamicamente sotto l'icona originaria */}
+              <div 
+                className="absolute -bottom-1.5 w-3 h-3 bg-[#051821]/40 border-r border-b border-[#266867]/60 rotate-45"
+                style={{
+                   left: coords.left + (coords.width / 2) - getPositionalStyles().left - 6
+                }}
+              />
             </motion.div>
           </Portal>
         )}
@@ -133,4 +146,5 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     </div>
   );
 }
+
 

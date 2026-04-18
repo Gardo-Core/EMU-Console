@@ -14,8 +14,7 @@ import { TabId } from "../TabNavigation";
 
 /**
  * Il componente FormSelect è un menu a tendina (dropdown) customizzato.
- * Ora utilizza i Portali per garantire che il menu sia sempre sopra l'header
- * e che l'effetto glassmorphism non venga bloccato dai layer genitori.
+ * Ora calibrato per essere pixel-perfect su Portal 2.0.
  */
 export function FormSelect({ 
   name, 
@@ -37,7 +36,7 @@ export function FormSelect({
   const currentValue = watch(name);
   
   const [isOpen, setIsOpen] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, height: 0 });
+  const [coords, setCoords] = useState<{ top: number, left: number, width: number, height: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -124,7 +123,7 @@ export function FormSelect({
           </button>
 
           <AnimatePresence>
-            {isOpen && (
+            {isOpen && coords && (
               <Portal>
                 {/* Backdrop invisibile */}
                 <div className="fixed inset-0 z-[9998] bg-black/5" onClick={() => setIsOpen(false)} />
@@ -132,14 +131,18 @@ export function FormSelect({
                 {/* Il pannello delle opzioni */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    y: 0,
+                    top: coords.top + coords.height + 8,
+                    left: coords.left,
+                    width: coords.width
+                  }}
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
                   className="fixed bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5 z-[9999]"
                   style={{ 
-                    top: coords.top + coords.height + 8,
-                    left: coords.left,
-                    width: coords.width,
                     WebkitBackdropFilter: "blur(24px) saturate(150%)",
                   }}
                 >
@@ -177,18 +180,23 @@ export function FormSelect({
         </motion.div>
 
         <AnimatePresence>
-          {error && (
+          {error && coords && (
             <Portal>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: 0,
+                  top: coords.top + coords.height + 12,
+                  left: coords.left,
+                  width: coords.width
+                }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 className="fixed bg-[#051821]/95 backdrop-blur-xl border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 z-[9999]"
                 style={{
-                  top: coords.top + coords.height + 12,
-                  left: coords.left,
-                  width: coords.width,
                   WebkitBackdropFilter: "blur(24px) saturate(150%)",
+                  transformOrigin: "top center"
                 }}
               >
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
@@ -223,4 +231,5 @@ export function FormSelect({
     </div>
   );
 }
+
 
