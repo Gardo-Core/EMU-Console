@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { useSignal } from "@preact/signals-react";
 import { useFormContext } from "react-hook-form";
 import { useSearch } from "@/contexts/SearchContext";
@@ -8,13 +8,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, AlertTriangle, Zap } from "lucide-react";
 import { validationMetadata } from "@/lib/schema";
 import { InfoTooltip } from "./InfoTooltip";
+import { Portal } from "./Portal";
 
 /**
  * FormInput: Componente di input testuale ad alte prestazioni.
- * 
- * Ruolo: Gestione dell'input dati con validazione real-time e ricerca contestuale.
- * Implementazione: Utilizza Signals per la gestione del valore e Framer Motion per il feedback visivo.
- * Rationale: Garantisce zero latenza di input (input lag) indipendentemente dalla complessità del form.
+ * Ora utilizza i Portali per i popup di errore per evitare clipping e problemi di sfocatura.
  */
 export function FormInput({ 
   name, 
@@ -24,7 +22,7 @@ export function FormInput({
   type = "text", 
   placeholder,
   actionRight,
-  useSignalReactivity = true // Attivato di default per i campi ad alta frequenza
+  useSignalReactivity = true 
 }: { 
   name: string, 
   label: string, 
@@ -41,13 +39,39 @@ export function FormInput({
   const error = errors[name]?.message as string;
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
   
   const metadata = (validationMetadata as any)[name];
   const initialValue = watch(name);
 
-  // Gestione della reattività tramite Signals per minimizzare i re-render di React.
   const signalValue = useSignal(initialValue);
+
+  // Forza il ricalcolo della posizione del popup
+  const updatePosition = () => {
+    if (inputWrapperRef.current) {
+      const rect = inputWrapperRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height
+      });
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (error) {
+      updatePosition();
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [error]);
 
   useEffect(() => {
     if (signalValue.value !== initialValue) {
@@ -80,11 +104,9 @@ export function FormInput({
 
   const inputType = type === "password" ? (showPassword ? "text" : "password") : type;
 
-  // Gestore input ottimizzato con Signal
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     signalValue.value = val;
-    // Sincronizziamo RHF in background (non bloccante)
     setValue(name, val, { shouldValidate: true, shouldDirty: true });
   };
 
@@ -108,12 +130,11 @@ export function FormInput({
         <InfoTooltip content={tooltip} />
       </div>
       
-      <div className="sm:w-3/5 w-full relative">
+      <div className="sm:w-3/5 w-full relative" ref={inputWrapperRef}>
         <motion.div
           animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
           transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
           className="relative flex items-center"
-          style={{ isolation: 'isolate' }}
         >
         <motion.input
           type={inputType}
@@ -128,7 +149,6 @@ export function FormInput({
           }}
           ref={(e) => {
             registerRef(e);
-            (containerRef as any).current = e;
           }}
           whileHover={{ scale: 1.002 }}
           whileTap={{ scale: 0.998 }}
@@ -141,22 +161,16 @@ export function FormInput({
               : "border-emu-border/30 hover:border-emu-border/60 focus:border-emu-accent focus:ring-emu-accent/10"
           )}
         />
-          {/* Occhietto per le password */}
           {type === "password" && !actionRight && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 text-white/30 hover:text-emu-highlight transition-colors p-1"
             >
-              {showPassword ? (
-                <Eye className="w-4 h-4" />
-              ) : (
-                <EyeOff className="w-4 h-4" />
-              )}
+              {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
           )}
 
-          {/* Azione Custom sulla destra (es. test connessione) */}
           {actionRight && (
             <div className="absolute right-3 flex items-center justify-center">
               {actionRight}
@@ -164,56 +178,61 @@ export function FormInput({
           )}
         </motion.div>
 
-        {/* POPUP ERRORE: Compare quando il valore non rispetta le regole aziendali */}
         <AnimatePresence>
           {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="absolute left-0 right-0 top-full mt-3 z-[110] bg-[#051821]/95 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover"
-              style={{ WebkitBackdropFilter: "blur(24px) saturate(150%)" }}
-            >
-              <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <div className="flex items-center gap-2 text-[#F58800]">
-                  <AlertTriangle className="w-4 h-4" />
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Validazione</span>
+            <Portal>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                className="fixed bg-[#051821]/95 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover z-[9999]"
+                style={{ 
+                  top: coords.top + coords.height + 12,
+                  left: coords.left,
+                  width: coords.width,
+                  WebkitBackdropFilter: "blur(24px) saturate(150%)" 
+                }}
+              >
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <div className="flex items-center gap-2 text-[#F58800]">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Validazione</span>
+                  </div>
+                  {metadata?.ref && (
+                    <span className="text-[9px] bg-black/40 text-white/40 px-2 py-0.5 rounded font-mono">
+                      {metadata.ref}
+                    </span>
+                  )}
                 </div>
-                {metadata?.ref && (
-                  <span className="text-[9px] bg-black/40 text-white/40 px-2 py-0.5 rounded font-mono">
-                    {metadata.ref}
-                  </span>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <p className="text-white font-medium text-xs leading-tight">
-                  {error}
-                </p>
-                {metadata?.advice && (
-                  <p className="text-white/60 text-[11px] leading-relaxed italic border-l-2 border-[#F58800]/20 pl-3">
-                    {metadata.advice}
+                
+                <div className="space-y-2">
+                  <p className="text-white font-medium text-xs leading-tight">
+                    {error}
                   </p>
-                )}
-              </div>
+                  {metadata?.advice && (
+                    <p className="text-white/60 text-[11px] leading-relaxed italic border-l-2 border-[#F58800]/20 pl-3">
+                      {metadata.advice}
+                    </p>
+                  )}
+                </div>
 
-              {/* TASTO MAGIC FIX: compare solo se abbiamo una soluzione automatica definita */}
-              {metadata?.autoFix && metadata.autoFix(signalValue.value) !== signalValue.value && (
-                <button
-                  type="button"
-                  onClick={handleAutoFix}
-                  className="w-full mt-1 bg-[#F58800]/10 hover:bg-[#F58800]/20 border border-[#F58800]/30 text-[#F58800] py-2 rounded-lg text-[10px] font-bold uppercase flex items-center justify-center gap-2 transition-all"
-                >
-                  <Zap className="w-3 h-3" /> Correggi Automaticamente
-                </button>
-              )}
-              
-              {/* Freccetta stilizzata che punta al campo in errore */}
-              <div className="absolute -top-1.5 left-6 border-8 border-transparent border-b-[#F58800]/40 shrink-0" />
-            </motion.div>
+                {metadata?.autoFix && metadata.autoFix(signalValue.value) !== signalValue.value && (
+                  <button
+                    type="button"
+                    onClick={handleAutoFix}
+                    className="w-full mt-1 bg-[#F58800]/10 hover:bg-[#F58800]/20 border border-[#F58800]/30 text-[#F58800] py-2 rounded-lg text-[10px] font-bold uppercase flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Zap className="w-3 h-3" /> Correggi Automaticamente
+                  </button>
+                )}
+                
+                <div className="absolute -top-1.5 left-6 border-8 border-transparent border-b-[#F58800]/40 shrink-0" />
+              </motion.div>
+            </Portal>
           )}
         </AnimatePresence>
       </div>
     </div>
   );
 }
+

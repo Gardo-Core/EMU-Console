@@ -4,7 +4,8 @@ import { InfoTooltip } from "./InfoTooltip";
 import { useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { Portal } from "./Portal";
 
 import { validationMetadata } from "@/lib/schema";
 import { AlertTriangle, ChevronDown } from "lucide-react";
@@ -13,8 +14,8 @@ import { TabId } from "../TabNavigation";
 
 /**
  * Il componente FormSelect è un menu a tendina (dropdown) customizzato.
- * Lo usiamo invece del <select> standard di HTML per avere pieno controllo 
- * sull'estetica (glassmorphism) e sulle animazioni di apertura/chiusura.
+ * Ora utilizza i Portali per garantire che il menu sia sempre sopra l'header
+ * e che l'effetto glassmorphism non venga bloccato dai layer genitori.
  */
 export function FormSelect({ 
   name, 
@@ -36,25 +37,48 @@ export function FormSelect({
   const currentValue = watch(name);
   
   const [isOpen, setIsOpen] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
-  // Verifichiamo se l'utente sta cercando questo specifico campo
+  // Calcola la posizione del tasto per agganciare il menu e il popup
+  const updatePosition = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height
+      });
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (isOpen || error) {
+      updatePosition();
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isOpen, error]);
+
   const isMatched = searchTerm && (
     label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Se è il risultato "attivo" della ricerca, evidenziamolo
   const isActiveMatch = matches[activeMatchIndex]?.id === name;
 
-  // Logica per centrare il campo quando l'utente lo "scova" tramite la barra di ricerca
   useEffect(() => {
     if (isActiveMatch && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [isActiveMatch]);
 
-  // Troviamo il testo dell'opzione selezionata per mostrarlo sul tasto
   const selectedLabel = options.find(o => o.value == currentValue)?.label || "Seleziona...";
 
   return (
@@ -62,13 +86,11 @@ export function FormSelect({
       ref={containerRef}
       className={cn(
         "col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative p-2 rounded-lg transition-all duration-500",
-        // Alziamo lo z-index quando il menu è aperto o interagito per non farlo finire sotto altri componenti
-        isOpen ? "z-[100]" : "z-10 hover:z-[80] focus-within:z-[80]",
-        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)] z-[70]" : "",
-        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)] z-[75]" : ""
+        isOpen ? "z-[100]" : "z-10",
+        isMatched ? "bg-emu-highlight/5 ring-1 ring-emu-highlight/20 shadow-[0_0_20px_rgba(245,136,0,0.05)]" : "",
+        isActiveMatch ? "scale-[1.02] ring-2 ring-emu-highlight shadow-[0_0_30px_rgba(245,136,0,0.2)]" : ""
       )}
     >
-      {/* Label & Tooltip */}
       <div className="flex items-center gap-2 flex-1">
         <label className={cn(
           "text-[13px] font-semibold transition-colors duration-300 min-w-fit",
@@ -79,15 +101,14 @@ export function FormSelect({
         <InfoTooltip content={tooltip} />
       </div>
       
-      {/* Area Dropdown */}
       <div className="sm:w-1/2 w-full relative">
         <motion.div
            animate={error ? { x: [-3, 3, -3, 3, 0] } : { x: 0 }}
            transition={{ duration: 0.4, repeat: error ? 1 : 0 }}
            className="relative"
         >
-          {/* Tasto principale che attiva il menu */}
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
@@ -104,22 +125,22 @@ export function FormSelect({
 
           <AnimatePresence>
             {isOpen && (
-              <>
-                {/* Backdrop invisibile: se clicchi fuori dal menu, lui si chiude */}
-                <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setIsOpen(false)} />
+              <Portal>
+                {/* Backdrop invisibile */}
+                <div className="fixed inset-0 z-[9998] bg-black/5" onClick={() => setIsOpen(false)} />
                 
                 {/* Il pannello delle opzioni */}
                 <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
-                  className="absolute left-0 right-0 top-full mt-2 z-[110] bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5"
+                  className="fixed bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5 z-[9999]"
                   style={{ 
-                    isolation: 'isolate',
+                    top: coords.top + coords.height + 8,
+                    left: coords.left,
+                    width: coords.width,
                     WebkitBackdropFilter: "blur(24px) saturate(150%)",
-                    transform: "translateZ(0)",
-                    backfaceVisibility: "hidden"
                   }}
                 >
                   <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
@@ -140,7 +161,6 @@ export function FormSelect({
                         )}
                       >
                         <span>{opt.label}</span>
-                        {/* Pallino luminoso per l'opzione attualmente selezionata */}
                         {currentValue == opt.value && (
                           <motion.div 
                             layoutId={`${name}-active`}
@@ -151,49 +171,56 @@ export function FormSelect({
                     ))}
                   </div>
                 </motion.div>
-              </>
+              </Portal>
             )}
           </AnimatePresence>
         </motion.div>
 
-        {/* POPUP PER GLI ERRORI DI VALIDAZIONE */}
         <AnimatePresence>
           {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="absolute left-0 right-0 top-full mt-3 z-[110] bg-[#051821]/95 backdrop-blur-xl border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3"
-            >
-              <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <div className="flex items-center gap-2 text-[#F58800]">
-                  <AlertTriangle className="w-4 h-4" />
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Manuale</span>
+            <Portal>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                className="fixed bg-[#051821]/95 backdrop-blur-xl border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 z-[9999]"
+                style={{
+                  top: coords.top + coords.height + 12,
+                  left: coords.left,
+                  width: coords.width,
+                  WebkitBackdropFilter: "blur(24px) saturate(150%)",
+                }}
+              >
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <div className="flex items-center gap-2 text-[#F58800]">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="text-[10px] uppercase font-bold tracking-widest">Violazione Regole Manuale</span>
+                  </div>
+                  {metadata?.ref && (
+                    <span className="text-[9px] bg-black/40 text-white/40 px-2 py-0.5 rounded font-mono">
+                      {metadata.ref}
+                    </span>
+                  )}
                 </div>
-                {metadata?.ref && (
-                  <span className="text-[9px] bg-black/40 text-white/40 px-2 py-0.5 rounded font-mono">
-                    {metadata.ref}
-                  </span>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <p className="text-white font-medium text-xs leading-tight">
-                  {error}
-                </p>
-                {metadata?.advice && (
-                  <p className="text-white/60 text-[11px] leading-relaxed italic border-l-2 border-[#F58800]/20 pl-3">
-                    {metadata.advice}
+                
+                <div className="space-y-2">
+                  <p className="text-white font-medium text-xs leading-tight">
+                    {error}
                   </p>
-                )}
-              </div>
-              
-              {/* Freccetta stilizzata */}
-              <div className="absolute -top-1.5 left-6 border-8 border-transparent border-b-[#F58800]/40 shrink-0" />
-            </motion.div>
+                  {metadata?.advice && (
+                    <p className="text-white/60 text-[11px] leading-relaxed italic border-l-2 border-[#F58800]/20 pl-3">
+                      {metadata.advice}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="absolute -top-1.5 left-6 border-8 border-transparent border-b-[#F58800]/40 shrink-0" />
+              </motion.div>
+            </Portal>
           )}
         </AnimatePresence>
       </div>
     </div>
   );
 }
+
