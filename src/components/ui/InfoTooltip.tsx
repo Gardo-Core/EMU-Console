@@ -17,8 +17,9 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
   const [coords, setCoords] = useState<{ top: number, left: number, width: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
-  // Calcola la posizione precisa dell'icona "?"
+  // Forza il ricalcolo della posizione del tooltip
   const updatePosition = () => {
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
@@ -33,9 +34,15 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
   useLayoutEffect(() => {
     if (isOpen) {
       updatePosition();
-      // Usiamo una frequenza di campionamento alta per lo scroll
       window.addEventListener('scroll', updatePosition, true);
       window.addEventListener('resize', updatePosition);
+      
+      // Su mobile, chiudiamo il tooltip se l'utente scrolla (comportamento standard premium)
+      if (window.innerWidth < 768) {
+        const handleMobileScroll = () => setIsOpen(false);
+        window.addEventListener('scroll', handleMobileScroll);
+        return () => window.removeEventListener('scroll', handleMobileScroll);
+      }
     }
     return () => {
       window.removeEventListener('scroll', updatePosition, true);
@@ -43,17 +50,26 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     };
   }, [isOpen]);
 
+  // Gestione chiusura universale (Click fuori / Touch fuori)
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      const target = event.target as Node;
+      // Consideriamo click fuori se non è nell'icona E non è nel tooltip stesso
+      const isInsideIcon = containerRef.current?.contains(target);
+      const isInsideTooltip = tooltipRef.current?.contains(target);
+      
+      if (!isInsideIcon && !isInsideTooltip) {
         setIsOpen(false);
       }
     }
+
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside, { passive: true });
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -108,6 +124,7 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
         {isOpen && coords && (
           <Portal>
             <motion.div
+              ref={tooltipRef}
               initial={{ opacity: 0, scale: 0.96, y: "-98%" }}
               animate={{ 
                 opacity: 1, 
