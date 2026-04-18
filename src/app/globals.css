@@ -80,6 +80,15 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Solo su Mobile: rendiamo le schede più scure per migliorare il contrasto */
+@media (max-width: 768px) {
+  .glass-card {
+    background: rgba(5, 24, 33, 0.8) !important;
+    backdrop-filter: blur(12px);
+    border-color: rgba(38, 104, 103, 0.2);
+  }
+}
+
 @media (prefers-reduced-motion) {
   * {
     animation-duration: 0.01ms !important;
