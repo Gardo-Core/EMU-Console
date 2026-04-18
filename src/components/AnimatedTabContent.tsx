@@ -59,9 +59,9 @@ export function AnimatedTabContent({ activeTab }: { activeTab: TabId }) {
           exit="exit"
           transition={shouldReduceMotion ? { duration: 0 } : undefined}
           style={{ 
-            willChange: 'transform, opacity',
+            opacity: 1 // Placeholder for non-empty style if needed
           }}
-          className="w-full min-h-full will-change-transform"
+          className="w-full min-h-full"
         >
           {renderTab()}
         </m.div>

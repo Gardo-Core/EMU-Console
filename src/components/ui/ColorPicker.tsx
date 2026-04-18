@@ -114,7 +114,7 @@ export function ColorPicker({
               animate={{ opacity: 1, height: 'auto', y: 0 }}
               exit={{ opacity: 0, height: 0, y: -10 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="text-emu-accent text-xs mt-1 bg-[#1A4645]/90 backdrop-blur-xl px-3 py-1 rounded-sm border border-emu-accent/20 absolute z-[110] w-full"
+              className="text-emu-accent text-xs mt-1 bg-[#051821]/95 backdrop-blur-xl px-3 py-1 rounded-sm border border-emu-accent/20 absolute z-[110] w-full"
             >
               {error}
             </motion.p>

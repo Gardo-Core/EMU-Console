@@ -170,7 +170,7 @@ export function FormInput({
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="absolute left-0 right-0 top-full mt-3 z-[110] bg-[#1A4645]/90 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover"
+              className="absolute left-0 right-0 top-full mt-3 z-[110] bg-[#051821]/95 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover"
               style={{ WebkitBackdropFilter: "blur(24px) saturate(150%)" }}
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-2">

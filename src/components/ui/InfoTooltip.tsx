@@ -69,12 +69,16 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
             className={cn(
               "absolute bottom-7 px-4 py-3 min-w-[240px] w-64 md:w-72",
-              "bg-[#1A4645]/80 backdrop-blur-xl border border-[#266867]/50",
+              "bg-[#051821]/70 backdrop-blur-2xl border border-[#266867]/60",
               "rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_30px_rgba(245,136,0,0.05)]",
               "z-[120] pointer-events-none select-none",
               alignmentClasses[align]
             )}
-            style={{ WebkitBackdropFilter: "blur(20px) saturate(160%)" }}
+            style={{ 
+              WebkitBackdropFilter: "blur(24px) saturate(160%)",
+              transform: "translateZ(0)",
+              backfaceVisibility: "hidden"
+            }}
           >
             {/* Contenuto Testuale Ottimizzato */}
             <p className="text-white text-[11px] md:text-xs leading-relaxed font-sans tracking-wide">
@@ -83,7 +87,7 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
             
             {/* Freccetta Stilizzata */}
             <div className={cn(
-               "absolute -bottom-1.5 w-3 h-3 bg-[#1A4645]/80 border-r border-b border-[#266867]/50 rotate-45",
+               "absolute -bottom-1.5 w-3 h-3 bg-[#051821]/70 border-r border-b border-[#266867]/60 rotate-45",
                align === "center" ? "left-1/2 -translate-x-1/2" : align === "left" ? "left-4" : "right-4"
             )} />
           </motion.div>
