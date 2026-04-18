@@ -77,7 +77,7 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
     if (left + tooltipWidth > screenWidth - margin) left = screenWidth - tooltipWidth - margin;
     
     return {
-      top: coords.top - 12, // Appena sopra l'icona
+      top: coords.top - 16, // Alzato leggermente per distanziarlo dall'icona
       left: left,
       width: tooltipWidth
     };
@@ -108,12 +108,13 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
         {isOpen && coords && (
           <Portal>
             <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, scale: 0.96, y: "-98%" }}
               animate={{ 
                 opacity: 1, 
-                scale: 1 
+                scale: 1,
+                y: "-100%" 
               }}
-              exit={{ opacity: 0, scale: 0.96 }}
+              exit={{ opacity: 0, scale: 0.96, y: "-98%" }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
               className={cn(
                 "fixed px-4 py-3 bg-[#051821]/40 backdrop-blur-2xl border border-[#266867]/60",
@@ -124,8 +125,7 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
                 ...getPositionalStyles(),
                 WebkitBackdropFilter: "blur(24px) saturate(160%)",
                 transformOrigin: "bottom center",
-                position: "fixed",
-                transform: "translateY(-100%)" // Fondamentale per stare SOPRA il punto 'top'
+                position: "fixed"
               }}
             >
               <p className="text-white text-[11px] md:text-xs leading-relaxed font-sans tracking-wide">
