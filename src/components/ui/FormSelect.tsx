@@ -130,19 +130,19 @@ export function FormSelect({
                 
                 {/* Il pannello delle opzioni */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  initial={{ opacity: 0, scale: 0.98, y: -8 }}
                   animate={{ 
                     opacity: 1, 
                     scale: 1, 
-                    y: 0,
-                    top: coords.top + coords.height + 8,
-                    left: coords.left,
-                    width: coords.width
+                    y: 0
                   }}
-                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
                   className="fixed bg-[#051821]/70 border border-[#266867]/60 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(245,136,0,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-white/5 z-[9999]"
                   style={{ 
+                    top: coords.top + coords.height + 8,
+                    left: coords.left,
+                    width: coords.width,
                     WebkitBackdropFilter: "blur(24px) saturate(150%)",
                   }}
                 >
@@ -183,18 +183,18 @@ export function FormSelect({
           {error && coords && (
             <Portal>
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                initial={{ opacity: 0, scale: 0.9, y: 8 }}
                 animate={{ 
                   opacity: 1, 
                   scale: 1, 
-                  y: 0,
-                  top: coords.top + coords.height + 12,
-                  left: coords.left,
-                  width: coords.width
+                  y: 0
                 }}
-                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                exit={{ opacity: 0, scale: 0.9, y: 8 }}
                 className="fixed bg-[#051821]/95 backdrop-blur-xl border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 z-[9999]"
                 style={{
+                  top: coords.top + coords.height + 12,
+                  left: coords.left,
+                  width: coords.width,
                   WebkitBackdropFilter: "blur(24px) saturate(150%)",
                   transformOrigin: "top center"
                 }}

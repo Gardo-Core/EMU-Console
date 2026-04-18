@@ -108,24 +108,24 @@ export function InfoTooltip({ content, align = "center" }: { content: string, al
         {isOpen && coords && (
           <Portal>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              initial={{ opacity: 0, scale: 0.96 }}
               animate={{ 
                 opacity: 1, 
-                scale: 1, 
-                y: -10, // Manteniamo il translate Y per stare sopra
-                ...getPositionalStyles() 
+                scale: 1 
               }}
-              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
               className={cn(
                 "fixed px-4 py-3 bg-[#051821]/40 backdrop-blur-2xl border border-[#266867]/60",
                 "rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_30px_rgba(245,136,0,0.05)]",
                 "z-[9999] pointer-events-none select-none overflow-visible"
               )}
               style={{ 
+                ...getPositionalStyles(),
                 WebkitBackdropFilter: "blur(24px) saturate(160%)",
                 transformOrigin: "bottom center",
-                transform: "translateY(-100%)" // Questo sposta il tooltip SOPRA il punto 'top'
+                position: "fixed",
+                transform: "translateY(-100%)" // Fondamentale per stare SOPRA il punto 'top'
               }}
             >
               <p className="text-white text-[11px] md:text-xs leading-relaxed font-sans tracking-wide">

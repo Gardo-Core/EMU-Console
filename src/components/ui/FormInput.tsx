@@ -182,18 +182,18 @@ export function FormInput({
           {error && coords && (
             <Portal>
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                initial={{ opacity: 0, scale: 0.9, y: 8 }}
                 animate={{ 
                   opacity: 1, 
                   scale: 1, 
-                  y: 0,
-                  top: coords.top + coords.height + 12,
-                  left: coords.left,
-                  width: coords.width
+                  y: 0
                 }}
-                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                exit={{ opacity: 0, scale: 0.9, y: 8 }}
                 className="fixed bg-[#051821]/95 backdrop-blur-xl backdrop-saturate-150 border border-[#F58800]/40 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex flex-col gap-3 group/popover z-[9999]"
                 style={{ 
+                  top: coords.top + coords.height + 12,
+                  left: coords.left,
+                  width: coords.width,
                   WebkitBackdropFilter: "blur(24px) saturate(150%)",
                   transformOrigin: "top center"
                 }}
